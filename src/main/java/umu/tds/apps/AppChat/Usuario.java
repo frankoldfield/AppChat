@@ -48,4 +48,9 @@ public class Usuario {
 		return 0;
 	}
 	
+	public int registrarMensaje(Mensaje mensaje, Contacto contacto) {
+		contacto.addMensaje(mensaje);
+		return 0;
+	}
+	
 }
