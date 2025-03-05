@@ -4,7 +4,7 @@ public class ContactoIndividual extends Contacto {
 	
 	private String numero;
 	
-	public ContactoIndividual(String numero, String nombre) {
+	public ContactoIndividual(String nombre, String numero) {
 		super(nombre);
 		this.numero = numero;
 	}

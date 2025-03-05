@@ -6,7 +6,7 @@ public class Grupo extends Contacto{
 
 	private ArrayList<ContactoIndividual> contactos;
 	
-	public Grupo(String nombre) {
+	public Grupo(String nombre, ArrayList<ContactoIndividual> contactos) {
 		super(nombre);
 		this.contactos = new ArrayList<>();
 	}
