@@ -6,12 +6,14 @@ public class Mensaje {
 	private String hora;
 	private String emoji;
 	private String tipo;
+	private boolean emisor;
 	
-	public Mensaje (String texto, String hora, String emoji, String tipo) {
+	public Mensaje (String texto, String hora, String emoji, String tipo, boolean emisor) {
 		this.texto = texto;
 		this.hora = hora;
 		this.emoji = emoji;
 		this.tipo = tipo;
+		this.emisor = emisor;
 	}
 
 	public String getTexto() {
@@ -44,5 +46,9 @@ public class Mensaje {
 
 	public void setTipo(String tipo) {
 		this.tipo = tipo;
+	}
+
+	public boolean isEmisor() {
+		return emisor;
 	}
 }
