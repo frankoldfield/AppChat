@@ -11,8 +11,9 @@ public class Grupo extends Contacto{
 		this.contactos = new ArrayList<>();
 	}
 	
-	public void agregarContactos(ContactoIndividual contacto) {
+	public int addContactos(ContactoIndividual contacto) {
 		contactos.add(contacto);
+		return 0;
 	}
 	
 	public ArrayList<ContactoIndividual> getMiembros(){
