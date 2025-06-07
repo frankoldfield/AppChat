@@ -1,4 +1,4 @@
-package umu.tds.apps.AppChat;
+package umu.tds.apps.AppChat.dominio;
 
 public class ContactoIndividual extends Contacto {
 	
@@ -15,5 +15,10 @@ public class ContactoIndividual extends Contacto {
 	
 	public void setNumero(String numero) {
 		this.numero = numero;
+	}
+
+	public Usuario getUsuario() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -1,4 +1,4 @@
-package umu.tds.apps.AppChat;
+package umu.tds.apps.AppChat.dominio;
 
 import java.util.ArrayList;
 
@@ -8,6 +8,7 @@ public class Usuario {
 	private String nombre;
 	private String password;
 	private String imagen;
+	private String saludo;
 	private boolean isPremium;
 	private Contacto contactoActual;
 	private ArrayList<Contacto> Contactos;
@@ -33,7 +34,11 @@ public class Usuario {
 	public void setPremium(boolean isPremium) {
 		this.isPremium = isPremium;
 	}
+	
+	public ContactoIndividual getContactoIndividual(String numero_telefono) {return null;}
 
+	
+	
 	public Contacto getContactoActual() {return contactoActual;}
 
 	public ArrayList<Contacto> getContactos() {return Contactos;}
@@ -51,6 +56,10 @@ public class Usuario {
 	public int registrarMensaje(Mensaje mensaje, Contacto contacto) {
 		contacto.addMensaje(mensaje);
 		return 0;
+	}
+
+	public String getSaludo() {
+		return saludo;
 	}
 	
 }

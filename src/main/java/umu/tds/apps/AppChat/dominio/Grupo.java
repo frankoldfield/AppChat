@@ -1,4 +1,4 @@
-package umu.tds.apps.AppChat;
+package umu.tds.apps.AppChat.dominio;
 
 import java.util.ArrayList;
 

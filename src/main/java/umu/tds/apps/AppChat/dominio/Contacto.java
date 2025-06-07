@@ -1,4 +1,4 @@
-package umu.tds.apps.AppChat;
+package umu.tds.apps.AppChat.dominio;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ public class Contacto {
 		return 0;
 	}
 	
-	public String getNombre(String nombre) {
+	public String getNombre() {
 		return this.nombre;
 	}
 	
