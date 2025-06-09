@@ -12,19 +12,27 @@ public class AppChat {
 
 	public Usuario usuarioActual;
 	public RepositorioUsuarios repositorio;
-	public static AppChat INSTANCE = new AppChat();
-	
-	public int enviarMensaje(Usuario usuario_emisor, Usuario usuario_receptor) {
-		//Llama a usuario_emisor.registrarMensaje(usuario_receptor)
-		//Llama a usuario_receptor.registrarMensaje(usuario_emisor)
-		return 0;
+	public static AppChat INSTANCE = null;
+
+	//Patrón singleton
+	public static AppChat getInstance() {
+		if (INSTANCE == null)
+			INSTANCE = new AppChat();
+		return INSTANCE;
 	}
 	
-	public int enviarMensaje(Usuario usuario_emisor, Usuario[] grupo_receptor) {
+	public void enviarMensajeContacto(ContactoIndividual ContactoDestino, String string, int i, TipoMensaje tipo_mensaje) {
+		// TODO Auto-generated method stub
+		//Llama a usuario_emisor.registrarMensaje(usuario_receptor)
+		//Llama a usuario_receptor.registrarMensaje(usuario_emisor)
+	}
+	
+	public void enviarMensajeGrupo(Grupo grupo_receptor, String string, int i, TipoMensaje tipo_mensaje) {
+		// TODO Auto-generated method stub
 		//Llama a usuario_emisor.registrarMensaje(grupo_receptor)
 		//for usuario_receptor in grupo_receptor:
 		//	Llama a usuario_receptor.registrarMensaje(usuario_emisor)
-		return 0;
+		
 	}
 	
 	public Usuario getUsuario(String numero_telefono) { //Desde aquí se llama a getUsuario del repositorio
@@ -37,13 +45,18 @@ public class AppChat {
 		return null;
 	}
 	
-	public ContactoIndividual agregarContacto(int numeroTelefono) { //Desde aquí se le dice al usuario que registre un nuevo contacto
+	public ContactoIndividual agregarContacto_Empty(int numeroTelefono) { //Desde aquí se le dice al usuario que registre un nuevo contacto
 		//usuarioActual.registrarContacto(numeroTelefono)
 		return null;
 	}
 	
 	public Grupo registrarGrupo(String[] contactos_grupo) { //Desde aquí se le dice al usuario que registre un nuevo grupo
 		//usuarioActual.registrarContacto(nuevo_contacto)
+		return null;
+	}
+	
+	public Grupo addContactoAGrupo(Grupo grupo, ContactoIndividual contacto_nuevo) {
+		
 		return null;
 	}
 	
@@ -55,22 +68,34 @@ public class AppChat {
 	
 	public int removePremium() {
 		//usuarioActual.removePremium();
+		//saveUsuarioActual
 		return 0;
 	}
 
-	public void registrarUsuario(String string, String string2, String string3, LocalDate of, String string4,
-			String string5) {
+	//Called from: VentanaRegistro, CargarAppChat
+	public void registrarUsuario(String nombre, String apellidos, String password, String telefono, String confirma_password, LocalDate fecha, String ruta_imagen, String saludo) {
 		// TODO Auto-generated method stub
+		//Comprobar que no esté ya registrado el número de teléfono
+		//Comprobar fecha válida
+		//Pillar imagen
+		
+		Usuario usuarioNuevo = new Usuario(nombre, apellidos, password, telefono, fecha, ruta_imagen, saludo);
+		
+		//Añadir usuarioNuevo a repositorio
+		//retornar a vista
+	}
+
+	//Called from: VentanaLogin, CargarAppChat
+	public void login(String telefono, String password) {
+		// TODO Comprobar log-in correcto y guardar usuario actual
+		//Buscar en repositorio
+		//Si está el número pero la contraseña es errónea lanzar un error
+		//Si no está el número lanzar otro error
+		//Si todo correcto
+		//Usuario actual = repositorio.buscarUsuario(telefono)
+		//return sin error
 		
 	}
 
-	public void login(String string, String string2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void enviarMensajeContacto(ContactoIndividual c1, String string, int i, TipoMensaje enviado) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 }

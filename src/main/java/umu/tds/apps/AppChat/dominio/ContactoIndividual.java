@@ -2,7 +2,13 @@ package umu.tds.apps.AppChat.dominio;
 
 public class ContactoIndividual extends Contacto {
 	
+	private String id;
 	private String numero;
+	
+	public ContactoIndividual(String numero) {
+		super("");
+		this.numero = numero;
+	}
 	
 	public ContactoIndividual(String nombre, String numero) {
 		super(nombre);

@@ -1,11 +1,14 @@
 package umu.tds.apps.AppChat.dominio;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Usuario {
 
-	private String movil;
+	private String id;
+	private String telefono;
 	private String nombre;
+	private String apellidos;
 	private String password;
 	private String imagen;
 	private String saludo;
@@ -13,15 +16,19 @@ public class Usuario {
 	private Contacto contactoActual;
 	private ArrayList<Contacto> Contactos;
 	
-	public Usuario(String movil, String nombre, String password, String imagen, boolean isPremium) {
-		this.movil = movil;
+	public Usuario(String nombre, String apellidos, String password, String telefono, LocalDate fecha, String imagen, String saludo) {
 		this.nombre = nombre;
+		this.apellidos = apellidos;
 		this.password = password;
+		this.telefono = telefono;
+		this.nombre = nombre;
 		this.imagen = imagen;
-		this.isPremium = isPremium;
+		this.saludo = saludo;
+		this.isPremium = false;
+		Contactos = new ArrayList<Contacto>();
 	}
 
-	public String getMovil() {return movil;}
+	public String getMovil() {return telefono;}
 
 	public String getNombre() {return nombre;}
 
@@ -35,7 +42,17 @@ public class Usuario {
 		this.isPremium = isPremium;
 	}
 	
-	public ContactoIndividual getContactoIndividual(String numero_telefono) {return null;}
+	public ContactoIndividual getContactoIndividual(String numero_telefono) {
+
+		for(Contacto contacto: Contactos) {
+			if(contacto instanceof ContactoIndividual) {
+				if(((ContactoIndividual) contacto).getNumero() == numero_telefono) {
+					return (ContactoIndividual)contacto;
+				}
+			}
+		}
+		return null;
+	}
 
 	
 	
@@ -45,6 +62,11 @@ public class Usuario {
 	
 	public int addContacto(String movil, String nombre) {
 		Contactos.add(new ContactoIndividual(nombre, movil));
+		return 0;
+	}
+	
+	public int addContacto(String movil) {
+		Contactos.add(new ContactoIndividual(movil));
 		return 0;
 	}
 	

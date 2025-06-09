@@ -2,13 +2,14 @@ package umu.tds.apps.AppChat.dominio;
 
 public class Mensaje {
 	
+	private String id;
 	private String texto;
 	private String hora;
 	private String emoji;
-	private String tipo;
+	private TipoMensaje tipo;
 	private boolean emisor;
 	
-	public Mensaje (String texto, String hora, String emoji, String tipo, boolean emisor) {
+	public Mensaje (String texto, String hora, String emoji, TipoMensaje tipo, boolean emisor) {
 		this.texto = texto;
 		this.hora = hora;
 		this.emoji = emoji;
@@ -40,11 +41,11 @@ public class Mensaje {
 		this.emoji = emoji;
 	}
 
-	public String getTipo() {
+	public TipoMensaje getTipo() {
 		return tipo;
 	}
 
-	public void setTipo(String tipo) {
+	public void setTipo(TipoMensaje tipo) {
 		this.tipo = tipo;
 	}
 

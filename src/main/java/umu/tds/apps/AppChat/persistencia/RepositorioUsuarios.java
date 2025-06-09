@@ -9,6 +9,7 @@ public class RepositorioUsuarios {
 
 	public Usuario buscarUsuarioPorMovil(String numero_telefono) {
 		// TODO Auto-generated method stub
-		return new Usuario("ñpñ", "lol", "aaaa", "scororo", true);
+		//return new Usuario("ñpñ", "lol", "aaaa", "scororo", true);
+		return null;
 	}
 }
