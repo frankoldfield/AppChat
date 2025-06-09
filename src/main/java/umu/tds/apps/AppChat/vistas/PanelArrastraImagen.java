@@ -16,6 +16,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -103,6 +104,31 @@ public class PanelArrastraImagen extends JDialog {
 		botonElegir.setForeground(Color.WHITE);
 		botonElegir.setBackground(SystemColor.textHighlight);
 		contentPane.add(botonElegir);
+		botonElegir.addActionListener(ev -> {
+		    JFileChooser fileChooser = new JFileChooser();
+		    fileChooser.setDialogTitle("Seleccionar imagen");
+		    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		    fileChooser.setAcceptAllFileFilterUsed(false);
+
+		    //Filtro solo para imágenes
+		    fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+		        "Imágenes (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"
+		    ));
+
+		    int resultado = fileChooser.showOpenDialog(this);
+		    if (resultado == JFileChooser.APPROVE_OPTION) {
+		        File archivo = fileChooser.getSelectedFile();
+		        if (archivo != null && archivo.exists()) {
+		            archivosSubidos.clear();
+		            archivosSubidos.add(archivo);
+
+		            //Mostrar la imagen
+		            ImageIcon icon = new ImageIcon(archivo.getAbsolutePath());
+		            Image img = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+		            imagenLabel.setIcon(new ImageIcon(img));
+		        }
+		    }
+		});
 		
 		// Panel de botones Aceptar y Cancelar
         JPanel panelBotones = new JPanel();

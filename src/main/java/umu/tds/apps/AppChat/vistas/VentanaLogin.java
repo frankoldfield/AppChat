@@ -107,7 +107,7 @@ public class VentanaLogin {
 	        System.exit(0);
 	    });
 	    
-	    //TODO Comprobacion de usuario
+	    //TODO LLAMADA A CONTROLADOR: COMPROBACION DE USUARIO
 	    btnAceptar.addActionListener(null);
 	    
 	    panelPrincipal.add(panelBotones);
