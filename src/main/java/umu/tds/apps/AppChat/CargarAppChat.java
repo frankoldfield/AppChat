@@ -6,6 +6,7 @@ import umu.tds.apps.AppChat.controlador.AppChat;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.persistencia.RepositorioUsuarios;
+import umu.tds.apps.AppChat.vistas.*;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
 
@@ -14,6 +15,12 @@ public class CargarAppChat {
 
 	public static void main(String[] args) {
 		AppChat appChat = AppChat.INSTANCE;
+		VentanaLogin ventana = new VentanaLogin();
+		VentanaRegistro ventana1 = new VentanaRegistro();
+		VentanaPrincipal ventana2 = new VentanaPrincipal();
+		VentanaContactos ventana3 = new VentanaContactos();
+		VentanaBuscar ventana4 = new VentanaBuscar();
+		ventana.mostrarVentana();
 		appChat.registrarUsuario("aa", "11", "aa", LocalDate.of(1960, 10, 03),"/usuarios/fotoJGM.png", "Hola, soy jesus");
 		appChat.registrarUsuario("bb", "22", "bb", LocalDate.of(1995, 12, 28), "/usuarios/foto-elena.png", "hola, soy elena");
 		appChat.registrarUsuario("cc", "33", "cc", LocalDate.of(2000, 5, 15), "/usuarios/rosalia.jpg", "hola, soy rosalia");
