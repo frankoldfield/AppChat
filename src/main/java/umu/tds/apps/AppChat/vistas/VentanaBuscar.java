@@ -120,7 +120,7 @@ public class VentanaBuscar{
         } else {
             for (Mensaje m : resultados) {
             	System.out.println(m);
-                String emisor = m.getNumero_emisor().equals(miNumero) ? "Yo" : "Él/Ella";
+                String emisor = m.getContacto_emisor().getMovil().equals(miNumero) ? "Yo" : "Él/Ella";
                 JLabel lbl = new JLabel(emisor + ": " + m.getTexto());
                 lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
                 panelResultados.add(lbl);

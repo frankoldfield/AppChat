@@ -9,16 +9,16 @@ public class Mensaje {
 	private LocalDateTime hora;
 	private int emoji;
 	private TipoMensaje tipo;
-	private String numero_emisor;
-	private String numero_receptor;
+	private ContactoIndividual contacto_emisor;
+	private Contacto contacto_receptor;
 	
-	public Mensaje(String texto, LocalDateTime hora, int emoji, TipoMensaje tipo, String numero_emisor, String numero_receptor) {
+	public Mensaje(String texto, LocalDateTime hora, int emoji, TipoMensaje tipo, ContactoIndividual contacto_emisor, Contacto contacto_receptor) {
 		this.texto = texto;
 		this.hora = hora;
 		this.emoji = emoji;
 		this.tipo = tipo;
-		this.numero_emisor = numero_emisor;
-		this.numero_receptor = numero_receptor;
+		this.contacto_emisor = contacto_emisor;
+		this.contacto_receptor = contacto_receptor;
 	}
 
 	public String getTexto() {
@@ -53,20 +53,20 @@ public class Mensaje {
 		this.tipo = tipo;
 	}
 
-	public String getNumero_emisor() {
-		return numero_emisor;
+	public ContactoIndividual getContacto_emisor() {
+		return contacto_emisor;
 	}
 
-	public void setNumero_emisor(String numero_emisor) {
-		this.numero_emisor = numero_emisor;
+	public void setContacto_emisor(ContactoIndividual contacto_emisor) {
+		this.contacto_emisor = contacto_emisor;
 	}
 
-	public String getNumero_receptor() {
-		return numero_receptor;
+	public Contacto getContacto_receptor() {
+		return contacto_receptor;
 	}
 
-	public void setNumero_receptor(String numero_receptor) {
-		this.numero_receptor = numero_receptor;
+	public void setContacto_receptor(ContactoIndividual contacto_receptor) {
+		this.contacto_receptor = contacto_receptor;
 	}
 
 }

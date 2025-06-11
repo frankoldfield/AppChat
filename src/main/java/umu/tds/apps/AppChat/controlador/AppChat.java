@@ -10,6 +10,7 @@ import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
+import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
 import umu.tds.apps.AppChat.persistencia.RepositorioUsuarios;
 
 public class AppChat {
@@ -31,12 +32,12 @@ public class AppChat {
 		//Llama a usuario_emisor.registrarMensaje(usuario_receptor)
 		//Llama a usuario_receptor.registrarMensaje(usuario_emisor)
 		
-		Mensaje mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getMovil(), ContactoDestino.getMovil());
+		Mensaje mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), ContactoDestino);
 		ContactoDestino.addMensaje(mensaje);
 		mensaje.setTipo(TipoMensaje.RECIBIDO);
 		for(Usuario usuarioReceptor: RepositorioUsuarios.INSTANCE.usuarios) {
 			if(usuarioReceptor.getMovil().equals(ContactoDestino.getMovil())) {
-				usuarioReceptor.registrarMensaje(mensaje, usuarioActual.getMovil());
+				usuarioReceptor.registrarMensaje(mensaje);
 			}
 		}
 		
@@ -49,14 +50,15 @@ public class AppChat {
 		//for usuario_receptor in grupo_receptor:
 		//	Llama a usuario_receptor.registrarMensaje(usuario_emisor)
 		Mensaje mensaje;
+		mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), grupo_receptor);
+		grupo_receptor.addMensaje(mensaje);
+		mensajes.add(mensaje);
 		for(ContactoIndividual contacto: grupo_receptor.getMiembros()) {
-			mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getMovil(), contacto.getMovil());
-			contacto.addMensaje(mensaje);
-			mensajes.add(mensaje);
+			
 			for(Usuario usuarioReceptor: RepositorioUsuarios.INSTANCE.usuarios) {
 				if(usuarioReceptor.getMovil().equals(contacto.getMovil())) {
 					mensaje.setTipo(TipoMensaje.RECIBIDO);
-					usuarioReceptor.registrarMensaje(mensaje, usuarioActual.getMovil());
+					usuarioReceptor.registrarMensaje(mensaje);
 				}
 			}	
 		}
@@ -67,9 +69,9 @@ public class AppChat {
 		return repositorio.buscarUsuarioPorMovil(numero_telefono);
 	}
 	
-	public ContactoIndividual agregarContacto(String movil, String nombre) { //Desde aquí se le dice al usuario que registre un nuevo contacto
+	public ContactoIndividual agregarContacto(String nombre, String movil) { //Desde aquí se le dice al usuario que registre un nuevo contacto
 		//usuarioActual.registrarContacto(numeroTelefono, username)
-		return usuarioActual.addContacto(movil, nombre);
+		return usuarioActual.addContacto(nombre, movil);
 	}
 	
 	public ContactoIndividual agregarContacto_Empty(int numeroTelefono) { //Desde aquí se le dice al usuario que registre un nuevo contacto
@@ -144,6 +146,34 @@ public class AppChat {
 		}
 		System.out.println("Código de login: "+ returnCode);
 		return returnCode;
+	}
+	
+	public List<Mensaje> buscarMensajes(String texto, String numero, String nombre_contacto) {
+		if(texto.isEmpty() && numero.isEmpty() && !nombre_contacto.isEmpty()) {
+			return RepositorioMensajes.INSTANCE.buscar_Contacto(usuarioActual.getMovil(), nombre_contacto);
+		}
+		else if (texto.isEmpty() && !numero.isEmpty() && nombre_contacto.isEmpty()) {
+			return RepositorioMensajes.INSTANCE.buscar_Numero(usuarioActual.getMovil(), numero);
+		}
+		else if (!texto.isEmpty() && numero.isEmpty() && !nombre_contacto.isEmpty()) {
+			return RepositorioMensajes.INSTANCE.buscar_Texto_y_Contacto(texto, usuarioActual.getMovil(), nombre_contacto);
+		}
+		
+		else if (!texto.isEmpty() && !numero.isEmpty() && nombre_contacto.isEmpty()) {
+			return RepositorioMensajes.INSTANCE.buscar_Texto_y_Numero(texto, usuarioActual.getMovil(), numero);
+		}
+		
+		else if (texto.isEmpty() && numero.isEmpty() && nombre_contacto.isEmpty()) {
+			return RepositorioMensajes.INSTANCE.buscar_Todos(usuarioActual.getMovil());
+		}
+		else if (!texto.isEmpty() && numero.isEmpty() && nombre_contacto.isEmpty()) {
+			return RepositorioMensajes.INSTANCE.buscar_Texto(texto, usuarioActual.getMovil());
+		}
+		else {
+			
+		}
+		
+		return null;
 	}
 
 	

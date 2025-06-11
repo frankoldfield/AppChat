@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Usuario {
 
 	private String id;
-	private String telefono;
+	private String movil;
 	private String nombre;
 	private String apellidos;
 	private String password;
@@ -14,21 +14,23 @@ public class Usuario {
 	private String saludo;
 	private boolean isPremium;
 	private Contacto contactoActual;
+	private ContactoIndividual contactoPropio;
 	private ArrayList<Contacto> Contactos;
 	
-	public Usuario(String nombre, String apellidos, String password, String telefono, LocalDate fecha, String imagen, String saludo) {
+	public Usuario(String nombre, String apellidos, String password, String movil, LocalDate fecha, String imagen, String saludo) {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.password = password;
-		this.telefono = telefono;
+		this.movil = movil;
 		this.nombre = nombre;
 		this.imagen = imagen;
 		this.saludo = saludo;
 		this.isPremium = false;
+		this.contactoPropio = new ContactoIndividual(nombre, movil);
 		Contactos = new ArrayList<Contacto>();
 	}
 
-	public String getMovil() {return telefono;}
+	public String getMovil() {return movil;}
 
 	public String getNombre() {return nombre;}
 
@@ -62,7 +64,7 @@ public class Usuario {
 
 	public ArrayList<Contacto> getContactos() {return Contactos;}
 	
-	public ContactoIndividual addContacto(String movil, String nombre) {
+	public ContactoIndividual addContacto(String nombre, String movil) {
 		ContactoIndividual contactoNuevo = new ContactoIndividual(nombre, movil);
 		Contactos.add(contactoNuevo);
 		return contactoNuevo;
@@ -79,18 +81,18 @@ public class Usuario {
 		return 0;
 	}
 	
-	public int registrarMensaje(Mensaje mensaje, String numero_telefono) { //USAR LAMBDAS
+	public int registrarMensaje(Mensaje mensaje) { //USAR LAMBDAS
 		boolean registrado = false;
 		for(Contacto contacto: Contactos) {
 			if(contacto instanceof ContactoIndividual) {
-				if(((ContactoIndividual) contacto).getMovil().equals(numero_telefono)) {
+				if(((ContactoIndividual) contacto).getMovil().equals(mensaje.getContacto_emisor().getMovil())) {
 					contacto.addMensaje(mensaje);
 					registrado = true;
 				}
 			}
 		}
 		if(!registrado) {
-			ContactoIndividual contactoVacio = new ContactoIndividual(numero_telefono);
+			ContactoIndividual contactoVacio = new ContactoIndividual(mensaje.getContacto_emisor().getMovil());
 			contactoVacio.addMensaje(mensaje);
 			Contactos.add(contactoVacio);
 		}
@@ -100,6 +102,10 @@ public class Usuario {
 
 	public String getSaludo() {
 		return saludo;
+	}
+
+	public ContactoIndividual getContactoPropio() {
+		return contactoPropio;
 	}
 	
 }

@@ -10,17 +10,17 @@ public class ContactoIndividual extends Contacto {
 		this.movil = movil;
 	}
 	
-	public ContactoIndividual(String nombre, String numero) {
+	public ContactoIndividual(String nombre, String movil) {
 		super(nombre);
-		this.movil = numero;
+		this.movil = movil;
 	}
 	
 	public String getMovil() {
 		return this.movil;
 	}
 	
-	public void setMovil(String numero) {
-		this.movil = numero;
+	public void setMovil(String movil) {
+		this.movil = movil;
 	}
 
 	public Usuario getUsuario() {
