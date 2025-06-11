@@ -1,6 +1,9 @@
 package umu.tds.apps.AppChat.vistas;
 
 import javax.swing.*;
+
+import umu.tds.apps.AppChat.controlador.AppChat;
+
 import java.awt.*;
 
 public class VentanaLogin {
@@ -108,7 +111,11 @@ public class VentanaLogin {
 	    });
 	    
 	    //TODO LLAMADA A CONTROLADOR: COMPROBACION DE USUARIO
-	    btnAceptar.addActionListener(null);
+	    btnAceptar.addActionListener(e -> {
+	    	int returnCode = AppChat.INSTANCE.login(textUsuario.getText(), new String(textPassword.getPassword()));
+	    	// TODO switch...
+	    });
+	    
 	    
 	    panelPrincipal.add(panelBotones);
 	}

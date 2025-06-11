@@ -1,20 +1,24 @@
 package umu.tds.apps.AppChat.dominio;
 
+import java.time.LocalDateTime;
+
 public class Mensaje {
 	
 	private String id;
 	private String texto;
-	private String hora;
-	private String emoji;
+	private LocalDateTime hora;
+	private int emoji;
 	private TipoMensaje tipo;
-	private boolean emisor;
+	private String numero_emisor;
+	private String numero_receptor;
 	
-	public Mensaje (String texto, String hora, String emoji, TipoMensaje tipo, boolean emisor) {
+	public Mensaje(String texto, LocalDateTime hora, int emoji, TipoMensaje tipo, String numero_emisor, String numero_receptor) {
 		this.texto = texto;
 		this.hora = hora;
 		this.emoji = emoji;
 		this.tipo = tipo;
-		this.emisor = emisor;
+		this.numero_emisor = numero_emisor;
+		this.numero_receptor = numero_receptor;
 	}
 
 	public String getTexto() {
@@ -25,19 +29,19 @@ public class Mensaje {
 		this.texto = texto;
 	}
 
-	public String getHora() {
+	public LocalDateTime getHora() {
 		return hora;
 	}
 
-	public void setHora(String hora) {
+	public void setHora(LocalDateTime hora) {
 		this.hora = hora;
 	}
 
-	public String getEmoji() {
+	public int getEmoji() {
 		return emoji;
 	}
 
-	public void setEmoji(String emoji) {
+	public void setEmoji(int emoji) {
 		this.emoji = emoji;
 	}
 
@@ -49,7 +53,20 @@ public class Mensaje {
 		this.tipo = tipo;
 	}
 
-	public boolean isEmisor() {
-		return emisor;
+	public String getNumero_emisor() {
+		return numero_emisor;
 	}
+
+	public void setNumero_emisor(String numero_emisor) {
+		this.numero_emisor = numero_emisor;
+	}
+
+	public String getNumero_receptor() {
+		return numero_receptor;
+	}
+
+	public void setNumero_receptor(String numero_receptor) {
+		this.numero_receptor = numero_receptor;
+	}
+
 }

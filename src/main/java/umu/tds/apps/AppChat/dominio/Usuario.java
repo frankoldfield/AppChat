@@ -46,12 +46,14 @@ public class Usuario {
 
 		for(Contacto contacto: Contactos) {
 			if(contacto instanceof ContactoIndividual) {
-				if(((ContactoIndividual) contacto).getNumero() == numero_telefono) {
+				if(((ContactoIndividual) contacto).getMovil().equals(numero_telefono)) {
 					return (ContactoIndividual)contacto;
 				}
 			}
 		}
-		return null;
+		ContactoIndividual contactoVacio = new ContactoIndividual(numero_telefono);
+		Contactos.add(contactoVacio);
+		return contactoVacio;
 	}
 
 	
@@ -60,14 +62,16 @@ public class Usuario {
 
 	public ArrayList<Contacto> getContactos() {return Contactos;}
 	
-	public int addContacto(String movil, String nombre) {
-		Contactos.add(new ContactoIndividual(nombre, movil));
-		return 0;
+	public ContactoIndividual addContacto(String movil, String nombre) {
+		ContactoIndividual contactoNuevo = new ContactoIndividual(nombre, movil);
+		Contactos.add(contactoNuevo);
+		return contactoNuevo;
 	}
 	
-	public int addContacto(String movil) {
-		Contactos.add(new ContactoIndividual(movil));
-		return 0;
+	public ContactoIndividual addContacto(String movil) {
+		ContactoIndividual contactoNuevo = new ContactoIndividual(movil);
+		Contactos.add(contactoNuevo);
+		return contactoNuevo;
 	}
 	
 	public int addGrupo(String nombre, ArrayList<ContactoIndividual> ContactosGrupo) {
@@ -75,8 +79,22 @@ public class Usuario {
 		return 0;
 	}
 	
-	public int registrarMensaje(Mensaje mensaje, Contacto contacto) {
-		contacto.addMensaje(mensaje);
+	public int registrarMensaje(Mensaje mensaje, String numero_telefono) { //USAR LAMBDAS
+		boolean registrado = false;
+		for(Contacto contacto: Contactos) {
+			if(contacto instanceof ContactoIndividual) {
+				if(((ContactoIndividual) contacto).getMovil().equals(numero_telefono)) {
+					contacto.addMensaje(mensaje);
+					registrado = true;
+				}
+			}
+		}
+		if(!registrado) {
+			ContactoIndividual contactoVacio = new ContactoIndividual(numero_telefono);
+			contactoVacio.addMensaje(mensaje);
+			Contactos.add(contactoVacio);
+		}
+		
 		return 0;
 	}
 

@@ -1,9 +1,13 @@
 package umu.tds.apps.AppChat.controlador;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Grupo;
+import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
 import umu.tds.apps.AppChat.persistencia.RepositorioUsuarios;
@@ -13,6 +17,7 @@ public class AppChat {
 	public Usuario usuarioActual;
 	public RepositorioUsuarios repositorio;
 	public static AppChat INSTANCE = null;
+	public List<Mensaje> mensajes= new ArrayList<Mensaje>();
 
 	//Patrón singleton
 	public static AppChat getInstance() {
@@ -21,18 +26,40 @@ public class AppChat {
 		return INSTANCE;
 	}
 	
-	public void enviarMensajeContacto(ContactoIndividual ContactoDestino, String string, int i, TipoMensaje tipo_mensaje) {
+	public void enviarMensajeContacto(ContactoIndividual ContactoDestino, String texto, int emoji, TipoMensaje tipo_mensaje) {
 		// TODO Auto-generated method stub
 		//Llama a usuario_emisor.registrarMensaje(usuario_receptor)
 		//Llama a usuario_receptor.registrarMensaje(usuario_emisor)
+		
+		Mensaje mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getMovil(), ContactoDestino.getMovil());
+		ContactoDestino.addMensaje(mensaje);
+		mensaje.setTipo(TipoMensaje.RECIBIDO);
+		for(Usuario usuarioReceptor: RepositorioUsuarios.INSTANCE.usuarios) {
+			if(usuarioReceptor.getMovil().equals(ContactoDestino.getMovil())) {
+				usuarioReceptor.registrarMensaje(mensaje, usuarioActual.getMovil());
+			}
+		}
+		
+		mensajes.add(mensaje);
 	}
 	
-	public void enviarMensajeGrupo(Grupo grupo_receptor, String string, int i, TipoMensaje tipo_mensaje) {
+	public void enviarMensajeGrupo(Grupo grupo_receptor, String texto, int emoji, TipoMensaje tipo_mensaje) {
 		// TODO Auto-generated method stub
 		//Llama a usuario_emisor.registrarMensaje(grupo_receptor)
 		//for usuario_receptor in grupo_receptor:
 		//	Llama a usuario_receptor.registrarMensaje(usuario_emisor)
-		
+		Mensaje mensaje;
+		for(ContactoIndividual contacto: grupo_receptor.getMiembros()) {
+			mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getMovil(), contacto.getMovil());
+			contacto.addMensaje(mensaje);
+			mensajes.add(mensaje);
+			for(Usuario usuarioReceptor: RepositorioUsuarios.INSTANCE.usuarios) {
+				if(usuarioReceptor.getMovil().equals(contacto.getMovil())) {
+					mensaje.setTipo(TipoMensaje.RECIBIDO);
+					usuarioReceptor.registrarMensaje(mensaje, usuarioActual.getMovil());
+				}
+			}	
+		}
 	}
 	
 	public Usuario getUsuario(String numero_telefono) { //Desde aquí se llama a getUsuario del repositorio
@@ -40,9 +67,9 @@ public class AppChat {
 		return repositorio.buscarUsuarioPorMovil(numero_telefono);
 	}
 	
-	public ContactoIndividual agregarContacto(String numeroTelefono, String username) { //Desde aquí se le dice al usuario que registre un nuevo contacto
+	public ContactoIndividual agregarContacto(String movil, String nombre) { //Desde aquí se le dice al usuario que registre un nuevo contacto
 		//usuarioActual.registrarContacto(numeroTelefono, username)
-		return null;
+		return usuarioActual.addContacto(movil, nombre);
 	}
 	
 	public ContactoIndividual agregarContacto_Empty(int numeroTelefono) { //Desde aquí se le dice al usuario que registre un nuevo contacto
@@ -73,28 +100,50 @@ public class AppChat {
 	}
 
 	//Called from: VentanaRegistro, CargarAppChat
-	public void registrarUsuario(String nombre, String apellidos, String password, String telefono, String confirma_password, LocalDate fecha, String ruta_imagen, String saludo) {
+	public int registrarUsuario(String nombre, String apellidos, String password, String telefono, String confirma_password, LocalDate fecha, String ruta_imagen, String saludo) {
 		// TODO Auto-generated method stub
+		int returnCode = 0;
 		//Comprobar que no esté ya registrado el número de teléfono
+		for(Usuario usuarioRegistrado: RepositorioUsuarios.INSTANCE.usuarios) {
+			if(usuarioRegistrado.getMovil().equals(telefono)) {
+				returnCode = -1;
+			}
+		}
 		//Comprobar fecha válida
-		//Pillar imagen
+		if(fecha.isBefore(LocalDate.of(1930, 1, 1))) {
+			returnCode = -2;
+		}
+		// TODO Pillar imagen
 		
-		Usuario usuarioNuevo = new Usuario(nombre, apellidos, password, telefono, fecha, ruta_imagen, saludo);
-		
-		//Añadir usuarioNuevo a repositorio
-		//retornar a vista
+		if(returnCode==0) {
+			Usuario usuarioNuevo = new Usuario(nombre, apellidos, password, telefono, fecha, ruta_imagen, saludo);
+			RepositorioUsuarios.INSTANCE.usuarios.add(usuarioNuevo);
+		}
+		System.out.println("Código de registro: "+ returnCode);
+		return returnCode;
 	}
 
 	//Called from: VentanaLogin, CargarAppChat
-	public void login(String telefono, String password) {
+	public int login(String telefono, String password) {
+		
 		// TODO Comprobar log-in correcto y guardar usuario actual
 		//Buscar en repositorio
-		//Si está el número pero la contraseña es errónea lanzar un error
-		//Si no está el número lanzar otro error
-		//Si todo correcto
-		//Usuario actual = repositorio.buscarUsuario(telefono)
-		//return sin error
-		
+		int returnCode = -1;
+		for(Usuario usuarioRegistrado: RepositorioUsuarios.INSTANCE.usuarios) {
+			if(usuarioRegistrado.getMovil().equals(telefono)) {
+				if(usuarioRegistrado.getPassword().equals(password)) {
+					usuarioActual = usuarioRegistrado;
+					returnCode = 0;
+				}
+				else {
+					returnCode = -2;
+				}
+				System.out.println("Código de login: "+ returnCode);
+				return returnCode;
+			}
+		}
+		System.out.println("Código de login: "+ returnCode);
+		return returnCode;
 	}
 
 	

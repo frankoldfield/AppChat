@@ -3,24 +3,24 @@ package umu.tds.apps.AppChat.dominio;
 public class ContactoIndividual extends Contacto {
 	
 	private String id;
-	private String numero;
+	private String movil;
 	
-	public ContactoIndividual(String numero) {
+	public ContactoIndividual(String movil) {
 		super("");
-		this.numero = numero;
+		this.movil = movil;
 	}
 	
 	public ContactoIndividual(String nombre, String numero) {
 		super(nombre);
-		this.numero = numero;
+		this.movil = numero;
 	}
 	
-	public String getNumero() {
-		return this.numero;
+	public String getMovil() {
+		return this.movil;
 	}
 	
-	public void setNumero(String numero) {
-		this.numero = numero;
+	public void setMovil(String numero) {
+		this.movil = numero;
 	}
 
 	public Usuario getUsuario() {
