@@ -16,6 +16,8 @@ public class VentanaBuscar{
     private JTextField txtNombreContacto;
     private JPanel panelResultados;
     private JFrame frmBuscar;
+    private JScrollPane scrollPanelResultados; // Nuevo: guarda el JScrollPane
+
 
 
     public VentanaBuscar() {
@@ -33,7 +35,9 @@ public class VentanaBuscar{
         frmBuscar.setSize(700, 500);
 
         frmBuscar.add(crearPanelBusqueda(), BorderLayout.NORTH);
-        frmBuscar.add(crearPanelResultados(), BorderLayout.CENTER);
+        scrollPanelResultados = crearPanelResultados();
+        frmBuscar.add(scrollPanelResultados, BorderLayout.CENTER);
+
 
         frmBuscar.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
@@ -95,8 +99,8 @@ public class VentanaBuscar{
     }
 
     private void buscarMensajes() {
-        panelResultados.removeAll();
-
+    	limpiarPanelResultados();
+        
         String texto = txtTexto.getText().trim();
         String telefono = txtTelefono.getText().trim();
         String nombre = txtNombreContacto.getText().trim();
@@ -126,8 +130,19 @@ public class VentanaBuscar{
                 panelResultados.add(lbl);
             }
         }	
-
-        panelResultados.revalidate();
-        panelResultados.repaint();
+    	frmBuscar.revalidate(); // Actualiza el layout
+        frmBuscar.repaint(); // Redibuja
+        scrollPanelResultados.revalidate(); // Actualiza el layout
+        scrollPanelResultados.repaint(); // Redibuja
+        
     }
+    
+    private void limpiarPanelResultados() {
+        frmBuscar.remove(scrollPanelResultados); // Quitar el viejo
+        scrollPanelResultados = crearPanelResultados(); // Crear uno nuevo con datos actualizados
+        frmBuscar.add(scrollPanelResultados, BorderLayout.CENTER); // Agregar el nuevo
+        frmBuscar.revalidate(); // Actualiza el layout
+        frmBuscar.repaint(); // Redibuja
+    }
+
 }

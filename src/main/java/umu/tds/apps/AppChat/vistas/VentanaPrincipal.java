@@ -2,6 +2,7 @@ package umu.tds.apps.AppChat.vistas;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import tds.BubbleText;
 import umu.tds.apps.AppChat.controlador.AppChat;
@@ -15,6 +16,8 @@ import java.awt.*;
 public class VentanaPrincipal {
     private JFrame frame;
     private JPanel panelChats;
+    private JScrollPane scrollPanelIzquierdo;
+    int filtroContactos = 0;
 
     public VentanaPrincipal() {
         initialize();
@@ -23,6 +26,7 @@ public class VentanaPrincipal {
     public void mostrarVentana() {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        
     }
 
     private void initialize() {
@@ -30,9 +34,11 @@ public class VentanaPrincipal {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(900, 600);
         frame.setLayout(new BorderLayout());
+        
 
         frame.add(crearPanelSuperior(), BorderLayout.NORTH);
-        frame.add(crearPanelIzquierdo(), BorderLayout.WEST);
+        scrollPanelIzquierdo = crearPanelIzquierdo();
+        frame.add(scrollPanelIzquierdo, BorderLayout.WEST);
         frame.add(crearPanelDerecho(), BorderLayout.CENTER);
     }
 
@@ -40,8 +46,8 @@ public class VentanaPrincipal {
         JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelSuperior.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        JComboBox<String> comboBusqueda = new JComboBox<>(new String[]{"Contacto o teléfono"});
-        JButton btnAceptar = new JButton("->");
+        JComboBox<String> comboBusqueda = new JComboBox<>(new String[]{"Contactos o teléfonos", "Contactos", "Teléfonos"});
+        JButton btnAceptar = new JButton("Filtrar");
         JButton btnBuscar = new JButton("🔍");
         JButton btnContactos = new JButton("Contactos");
         JButton btnPremium = new JButton("$ Premium");
@@ -58,6 +64,11 @@ public class VentanaPrincipal {
         	VentanaBuscar ventana = new VentanaBuscar();
         	ventana.mostrarVentana();
         });
+        
+        btnAceptar.addActionListener(e->{
+        	filtroContactos = comboBusqueda.getSelectedIndex();
+        	refrescarPanelIzquierdo();
+        });
 
         panelSuperior.add(comboBusqueda);
         panelSuperior.add(btnAceptar);
@@ -70,27 +81,52 @@ public class VentanaPrincipal {
     }
 
     private JScrollPane crearPanelIzquierdo() {
+    	if(panelChats != null) {
+    		
+    	}
         panelChats = new JPanel();
         panelChats.setLayout(new BoxLayout(panelChats, BoxLayout.Y_AXIS));
 
         String miNumero = AppChat.getInstance().usuarioActual.getMovil();
-
-        for (Contacto contacto : AppChat.getInstance().usuarioActual.getContactos()) {
+        List<Contacto> contactos;
+        switch(filtroContactos) {
+        case 0:
+        	contactos = AppChat.getInstance().usuarioActual.getContactos();
+        	break;
+        case 1:
+        	contactos = AppChat.getInstance().usuarioActual.getContactos().stream().filter(c -> !c.getNombre().isEmpty()).collect(Collectors.toList());
+        	break;
+        case 2:
+        	contactos = AppChat.getInstance().usuarioActual.getContactos().stream().filter(c -> c.getNombre().isEmpty()).collect(Collectors.toList());
+        	break;
+        default:
+        	contactos = AppChat.getInstance().usuarioActual.getContactos();
+        	break;
+        }
+        
+        for (Contacto contacto : contactos) {
             String otroNumero = "";
 
             if (contacto instanceof ContactoIndividual) {
                 otroNumero = ((ContactoIndividual) contacto).getMovil();
+                List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", miNumero, otroNumero);
+                
+                String ultimo = "";           
+                if (!conversacion.isEmpty()) {
+                	ultimo = conversacion.get(conversacion.size() - 1).getTexto();
+                }
+                if(!contacto.getNombre().isEmpty()) {
+                	panelChats.add(crearElementoChat(contacto.getNombre(), ultimo, ((ContactoIndividual) contacto).getMovil()));
+                }
+                else {
+                	panelChats.add(crearElementoChat("", ultimo, ((ContactoIndividual) contacto).getMovil()));
+                }
             } else {
                 continue; //TODO GRUPOS
             }
 
-            List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", miNumero, otroNumero);
             
-            String ultimo = "";           
-            if (!conversacion.isEmpty()) {
-            	ultimo = conversacion.get(conversacion.size() - 1).getTexto();
-            }
-            panelChats.add(crearElementoChat(contacto.getNombre(), ultimo));
+            
         }
 
         JScrollPane scroll = new JScrollPane(panelChats);
@@ -98,28 +134,32 @@ public class VentanaPrincipal {
         return scroll;
     }
 
-    private JPanel crearElementoChat(String nombre, String ultimoMensaje) {
+    private JPanel crearElementoChat(String nombre, String ultimoMensaje, String movil) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
 
         JLabel icono = new JLabel("🧑");
         icono.setPreferredSize(new Dimension(40, 40));
-        JButton btnAñadir = new JButton("+");
-        btnAñadir.addActionListener(e -> {
-        	mostrarDialogoNuevoContacto();
-        });
-        
-        panelChats.add(btnAñadir);
         JPanel texto = new JPanel(new GridLayout(2, 1));
-        texto.add(new JLabel(nombre));
-        texto.add(new JLabel(ultimoMensaje));
         
         
         panel.add(icono, BorderLayout.WEST);
-        panel.add(btnAñadir, BorderLayout.EAST);
         panel.add(texto, BorderLayout.CENTER);
-
+        
+        if(nombre.isEmpty()) {
+        	texto.add(new JLabel(movil));
+        	JButton btnAñadir = new JButton("+");
+            btnAñadir.addActionListener(e -> {
+            	mostrarDialogoNuevoContacto(movil);
+            });
+            panelChats.add(btnAñadir);
+            panel.add(btnAñadir, BorderLayout.EAST);
+        } else {
+        	texto.add(new JLabel(nombre));
+        }
+        texto.add(new JLabel(ultimoMensaje));
+        
         return panel;
     }
 
@@ -151,7 +191,7 @@ public class VentanaPrincipal {
     	return scrollPane;
     }
     
-    private void mostrarDialogoNuevoContacto() {
+    private void mostrarDialogoNuevoContacto(String movil) {
         JDialog dialog = new JDialog(frame, "Nuevo Contacto", true);
         dialog.setSize(500, 200);
         dialog.setLayout(new GridLayout(3, 1, 10, 10)); 
@@ -168,6 +208,8 @@ public class VentanaPrincipal {
 
         JLabel lblTelefono = new JLabel("Teléfono:");
         JTextField txtTelefono = new JTextField(20);
+        txtTelefono.setText(movil);
+        txtTelefono.setEditable(false);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -199,6 +241,13 @@ public class VentanaPrincipal {
         btnAceptar.setPreferredSize(botonDim);
         btnCancelar.setPreferredSize(botonDim);
 
+        btnAceptar.addActionListener(e -> {
+            AppChat.INSTANCE.agregarContacto(txtNombre.getText(), txtTelefono.getText());
+            refrescarPanelIzquierdo(); // ← Esto actualiza visualmente el panel izquierdo
+            dialog.dispose();
+        });
+
+        
         btnCancelar.addActionListener(e -> dialog.dispose());
 
         panelBotones.add(btnAceptar);
@@ -209,4 +258,13 @@ public class VentanaPrincipal {
 
         dialog.setVisible(true);
     }
+    
+    private void refrescarPanelIzquierdo() {
+        frame.remove(scrollPanelIzquierdo); // Quitar el viejo
+        scrollPanelIzquierdo = crearPanelIzquierdo(); // Crear uno nuevo con datos actualizados
+        frame.add(scrollPanelIzquierdo, BorderLayout.WEST); // Agregar el nuevo
+        frame.revalidate(); // Actualiza el layout
+        frame.repaint(); // Redibuja
+    }
+
 }

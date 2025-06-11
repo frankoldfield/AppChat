@@ -65,6 +65,15 @@ public class Usuario {
 	public ArrayList<Contacto> getContactos() {return Contactos;}
 	
 	public ContactoIndividual addContacto(String nombre, String movil) {
+		for(Contacto contacto: Contactos) {
+			if(contacto instanceof ContactoIndividual) {
+				if(((ContactoIndividual) contacto).getMovil().equals(movil)) {
+					contacto.setNombre(nombre);
+					return ((ContactoIndividual) contacto);
+				}
+			}
+			
+		}
 		ContactoIndividual contactoNuevo = new ContactoIndividual(nombre, movil);
 		Contactos.add(contactoNuevo);
 		return contactoNuevo;

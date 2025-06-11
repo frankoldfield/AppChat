@@ -18,7 +18,6 @@ public class AppChat {
 	public Usuario usuarioActual;
 	public RepositorioUsuarios repositorio;
 	public static AppChat INSTANCE = null;
-	public List<Mensaje> mensajes= new ArrayList<Mensaje>();
 
 	//Patrón singleton
 	public static AppChat getInstance() {
@@ -40,8 +39,7 @@ public class AppChat {
 				usuarioReceptor.registrarMensaje(mensaje);
 			}
 		}
-		
-		mensajes.add(mensaje);
+		RepositorioMensajes.INSTANCE.mensajes.add(mensaje);
 	}
 	
 	public void enviarMensajeGrupo(Grupo grupo_receptor, String texto, int emoji, TipoMensaje tipo_mensaje) {
@@ -52,7 +50,7 @@ public class AppChat {
 		Mensaje mensaje;
 		mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), grupo_receptor);
 		grupo_receptor.addMensaje(mensaje);
-		mensajes.add(mensaje);
+		RepositorioMensajes.INSTANCE.mensajes.add(mensaje);
 		for(ContactoIndividual contacto: grupo_receptor.getMiembros()) {
 			
 			for(Usuario usuarioReceptor: RepositorioUsuarios.INSTANCE.usuarios) {
@@ -170,10 +168,10 @@ public class AppChat {
 			return RepositorioMensajes.INSTANCE.buscar_Texto(texto, usuarioActual.getMovil());
 		}
 		else {
-			
+			return new ArrayList<Mensaje>();
 		}
 		
-		return null;
+		
 	}
 
 	
