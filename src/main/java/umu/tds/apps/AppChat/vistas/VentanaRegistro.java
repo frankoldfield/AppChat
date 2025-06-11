@@ -141,6 +141,7 @@ public class VentanaRegistro {
         gbc.gridy = 4;
         gbc.gridheight = 2;
         gbc.anchor = GridBagConstraints.CENTER;
+        
         lblImagen = new JLabel(); 
         lblImagen.setPreferredSize(new Dimension(80, 80));
         lblImagen.setBorder(BorderFactory.createLineBorder(Color.BLACK));

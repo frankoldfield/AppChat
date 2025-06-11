@@ -10,7 +10,7 @@ import umu.tds.apps.AppChat.dominio.Mensaje;
 public class RepositorioMensajes {
 	
 	public List<Mensaje> mensajes = new ArrayList<Mensaje>();
-	public static RepositorioUsuarios INSTANCE = new RepositorioUsuarios();
+	public static RepositorioMensajes INSTANCE = new RepositorioMensajes();
 	
 	// 1) Mensajes que envía un usuario a otro, ORDENADOS por hora
 	public List<Mensaje> buscarMensajesPorEmisorReceptorOrdenados(

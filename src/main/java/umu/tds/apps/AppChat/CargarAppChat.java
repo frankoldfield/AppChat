@@ -34,9 +34,12 @@ public class CargarAppChat {
 		
 		appChat.enviarMensajeContacto(c2, "Hola, ¿cómo estás?", -1, TipoMensaje.ENVIADO);
 		appChat.enviarMensajeContacto(c2, "", 2, TipoMensaje.ENVIADO);
+		appChat.enviarMensajeContacto(c2, "hola", -1, TipoMensaje.ENVIADO);
 		
 		appChat.enviarMensajeContacto(c3, "Cuando cantas?", -1, TipoMensaje.ENVIADO);
 		appChat.enviarMensajeContacto(c2, "", 6, TipoMensaje.ENVIADO);
+		appChat.enviarMensajeContacto(c3, "holaaa", -1, TipoMensaje.ENVIADO);
+		appChat.enviarMensajeContacto(c3, "hola", -1, TipoMensaje.ENVIADO);
 		
 		appChat.login("22", "bb");
 		
