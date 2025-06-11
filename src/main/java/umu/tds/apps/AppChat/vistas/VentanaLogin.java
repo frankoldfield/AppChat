@@ -113,7 +113,19 @@ public class VentanaLogin {
 	    //TODO LLAMADA A CONTROLADOR: COMPROBACION DE USUARIO
 	    btnAceptar.addActionListener(e -> {
 	    	int returnCode = AppChat.INSTANCE.login(textUsuario.getText(), new String(textPassword.getPassword()));
-	    	// TODO switch...
+	    	switch(returnCode) {
+	    		case 0:
+	    			VentanaPrincipal ventana = new VentanaPrincipal();
+	    			ventana.mostrarVentana();
+	    			frmLogin.dispose();	  
+	    			break;
+	    		case -1:
+	    			JOptionPane.showMessageDialog(frmLogin, "Número de telefono no registrado.", "Error", JOptionPane.ERROR_MESSAGE);
+	                return;
+	    		case -2:
+	    			JOptionPane.showMessageDialog(frmLogin, "Contraseña incorrecta.", "Error", JOptionPane.ERROR_MESSAGE);
+	                return;
+	    	}
 	    });
 	    
 	    
