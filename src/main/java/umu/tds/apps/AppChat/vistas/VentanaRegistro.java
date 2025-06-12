@@ -1,9 +1,12 @@
 package umu.tds.apps.AppChat.vistas;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 public class VentanaRegistro {

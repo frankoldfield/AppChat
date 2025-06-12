@@ -16,7 +16,7 @@ public class VentanaBuscar{
     private JTextField txtNombreContacto;
     private JPanel panelResultados;
     private JFrame frmBuscar;
-    private JScrollPane scrollPanelResultados; // Nuevo: guarda el JScrollPane
+    private JScrollPane scrollPanelResultados; 
 
 
 
@@ -104,7 +104,6 @@ public class VentanaBuscar{
         String texto = txtTexto.getText().trim();
         String telefono = txtTelefono.getText().trim();
         String nombre = txtNombreContacto.getText().trim();
-        boolean existe = false;
 
         Usuario usuario = AppChat.getInstance().usuarioActual;
         String miNumero = usuario.getMovil();
@@ -130,19 +129,19 @@ public class VentanaBuscar{
                 panelResultados.add(lbl);
             }
         }	
-    	frmBuscar.revalidate(); // Actualiza el layout
-        frmBuscar.repaint(); // Redibuja
-        scrollPanelResultados.revalidate(); // Actualiza el layout
-        scrollPanelResultados.repaint(); // Redibuja
+    	frmBuscar.revalidate(); 
+        frmBuscar.repaint(); 
+        scrollPanelResultados.revalidate(); 
+        scrollPanelResultados.repaint(); 
         
     }
     
     private void limpiarPanelResultados() {
-        frmBuscar.remove(scrollPanelResultados); // Quitar el viejo
-        scrollPanelResultados = crearPanelResultados(); // Crear uno nuevo con datos actualizados
-        frmBuscar.add(scrollPanelResultados, BorderLayout.CENTER); // Agregar el nuevo
-        frmBuscar.revalidate(); // Actualiza el layout
-        frmBuscar.repaint(); // Redibuja
+        frmBuscar.remove(scrollPanelResultados); 
+        scrollPanelResultados = crearPanelResultados(); 
+        frmBuscar.add(scrollPanelResultados, BorderLayout.CENTER); 
+        frmBuscar.revalidate(); 
+        frmBuscar.repaint(); 
     }
 
 }

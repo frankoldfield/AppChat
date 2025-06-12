@@ -12,11 +12,15 @@ import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class VentanaPrincipal {
     private JFrame frame;
     private JPanel panelChats;
+    private JPanel chat;
     private JScrollPane scrollPanelIzquierdo;
+    private JPanel panelChatSeleccionado;
     int filtroContactos = 0;
 
     public VentanaPrincipal() {
@@ -42,6 +46,8 @@ public class VentanaPrincipal {
         frame.add(crearPanelDerecho(), BorderLayout.CENTER);
     }
 
+//PANEL SUPERIOR
+    
     private JPanel crearPanelSuperior() {
         JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelSuperior.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -79,15 +85,19 @@ public class VentanaPrincipal {
 
         return panelSuperior;
     }
+    
 
+
+//PANEL IZQUIERDO
+    
     private JScrollPane crearPanelIzquierdo() {
-    	if(panelChats != null) {
-    		
-    	}
+    	
         panelChats = new JPanel();
         panelChats.setLayout(new BoxLayout(panelChats, BoxLayout.Y_AXIS));
+        panelChats.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        panelChats.setPreferredSize(null);
 
-        String miNumero = AppChat.getInstance().usuarioActual.getMovil();
         List<Contacto> contactos;
         switch(filtroContactos) {
         case 0:
@@ -105,11 +115,10 @@ public class VentanaPrincipal {
         }
         
         for (Contacto contacto : contactos) {
-            String otroNumero = "";
 
             if (contacto instanceof ContactoIndividual) {
-                otroNumero = ((ContactoIndividual) contacto).getMovil();
-                List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", miNumero, otroNumero);
+                String otroNumero = ((ContactoIndividual) contacto).getMovil();
+                List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", otroNumero, "");
                 
                 String ultimo = "";           
                 if (!conversacion.isEmpty()) {
@@ -123,25 +132,43 @@ public class VentanaPrincipal {
                 }
             } else {
                 continue; //TODO GRUPOS
-            }
-
-            
-            
+            }  
         }
+
 
         JScrollPane scroll = new JScrollPane(panelChats);
         scroll.setPreferredSize(new Dimension(250, 0));
+        scroll.getVerticalScrollBar().setUnitIncrement(15);
         return scroll;
     }
 
     private JPanel crearElementoChat(String nombre, String ultimoMensaje, String movil) {
-        JPanel panel = new JPanel(new BorderLayout());
+    	JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+        panel.setBackground(Color.WHITE);
+
+        panel.setPreferredSize(new Dimension(200, 60));
+
+        //Añadimos un mouse listener para diferenciar el color del chat usado
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            	if (panelChatSeleccionado != null) {
+                    panelChatSeleccionado.setBackground(Color.WHITE);
+                }
+
+                //Color azul claro para el chat seleccionado
+                panel.setBackground(new Color(220, 240, 255));
+                panelChatSeleccionado = panel;	
+                mostrarConversacion(movil);
+            }
+        });
 
         JLabel icono = new JLabel("🧑");
         icono.setPreferredSize(new Dimension(40, 40));
         JPanel texto = new JPanel(new GridLayout(2, 1));
+        //Ponemos esto para que se pueda ver que chat esta siendo seleccionado
+        texto.setOpaque(false);
         
         
         panel.add(icono, BorderLayout.WEST);
@@ -153,7 +180,6 @@ public class VentanaPrincipal {
             btnAñadir.addActionListener(e -> {
             	mostrarDialogoNuevoContacto(movil);
             });
-            panelChats.add(btnAñadir);
             panel.add(btnAñadir, BorderLayout.EAST);
         } else {
         	texto.add(new JLabel(nombre));
@@ -161,34 +187,6 @@ public class VentanaPrincipal {
         texto.add(new JLabel(ultimoMensaje));
         
         return panel;
-    }
-
-    private JScrollPane crearPanelDerecho() {
-    	JPanel chat=new JPanel();
-    	JScrollPane scrollPane = new JScrollPane(chat);
-    	scrollPane.setBorder(BorderFactory.createEmptyBorder());
-    	chat.setLayout(new BoxLayout(chat,BoxLayout.Y_AXIS));
-    	chat.setSize(400,700);
-    	chat.setMinimumSize(new Dimension(400,700));
-    	chat.setMaximumSize(new Dimension(400,700));
-    	chat.setPreferredSize(new Dimension(400,700));
-    	BubbleText burbuja;
-    	burbuja=new BubbleText(chat,"Hola grupo!!", Color.GREEN, "J.Ramón", BubbleText.SENT);
-    	chat.add(burbuja);
-    	BubbleText burbuja2;
-    	burbuja2=new BubbleText(chat,
-    	"Hola, ¿Está seguro de que la burbuja usa varias lineas si es necesario?",
-    	Color.LIGHT_GRAY, "Alumno", BubbleText.RECEIVED);
-    	chat.add(burbuja2);
-    	BubbleText burbuja3;
-    	burbuja3=new BubbleText(chat,"No estoy seguro",  
-    	Color.GREEN, "J.Ramón", BubbleText.SENT);
-    	chat.add(burbuja3);
-    	BubbleText burbuja4=new BubbleText(chat, 0, Color.GREEN, "J.Ramón", BubbleText.SENT, 12);
-    	chat.add(burbuja4);
-    	JLabel x=new JLabel();
-    	x.setIcon(BubbleText.getEmoji(3));
-    	return scrollPane;
     }
     
     private void mostrarDialogoNuevoContacto(String movil) {
@@ -243,7 +241,7 @@ public class VentanaPrincipal {
 
         btnAceptar.addActionListener(e -> {
             AppChat.INSTANCE.agregarContacto(txtNombre.getText(), txtTelefono.getText());
-            refrescarPanelIzquierdo(); // ← Esto actualiza visualmente el panel izquierdo
+            refrescarPanelIzquierdo(); 
             dialog.dispose();
         });
 
@@ -260,11 +258,47 @@ public class VentanaPrincipal {
     }
     
     private void refrescarPanelIzquierdo() {
-        frame.remove(scrollPanelIzquierdo); // Quitar el viejo
-        scrollPanelIzquierdo = crearPanelIzquierdo(); // Crear uno nuevo con datos actualizados
-        frame.add(scrollPanelIzquierdo, BorderLayout.WEST); // Agregar el nuevo
-        frame.revalidate(); // Actualiza el layout
-        frame.repaint(); // Redibuja
+        frame.remove(scrollPanelIzquierdo); 
+        scrollPanelIzquierdo = crearPanelIzquierdo();
+        frame.add(scrollPanelIzquierdo, BorderLayout.WEST); 
+        frame.revalidate();
+        frame.repaint();
     }
 
+//PANEL DERECHO
+    
+    private JScrollPane crearPanelDerecho() {
+        chat = new JPanel();
+        chat.setLayout(new BoxLayout(chat, BoxLayout.Y_AXIS));
+        chat.setPreferredSize(new Dimension(400, 700));
+
+        JScrollPane scrollPane = new JScrollPane(chat);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getVerticalScrollBar().setUnitIncrement(10);
+        return scrollPane;
+    }
+    
+    private void mostrarConversacion(String movil) {
+        chat.removeAll();
+
+        String miNumero = AppChat.getInstance().usuarioActual.getMovil();
+        List<Mensaje> mensajes = AppChat.INSTANCE.buscarMensajes("", movil, "");
+
+        for (Mensaje mensaje : mensajes) {
+            boolean enviado = mensaje.getContacto_emisor().getMovil().equals(miNumero);
+            if(mensaje.getEmoji() == -1) {
+            	BubbleText burbuja = new BubbleText(chat, mensaje.getTexto(), enviado ? Color.GREEN : Color.LIGHT_GRAY,
+            			mensaje.getContacto_emisor().getNombre(), enviado ? BubbleText.SENT : BubbleText.RECEIVED);
+            	chat.add(burbuja);
+            }else{
+            	BubbleText burbuja = new BubbleText(chat, mensaje.getEmoji(), enviado ? Color.GREEN : Color.LIGHT_GRAY,
+            			mensaje.getContacto_emisor().getNombre(), enviado ? BubbleText.SENT : BubbleText.RECEIVED, 12);
+            	chat.add(burbuja);
+            }
+            
+        }
+
+        chat.revalidate();
+        chat.repaint();
+    }    
 }
