@@ -3,6 +3,8 @@ package umu.tds.apps.AppChat.vistas;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import umu.tds.apps.AppChat.controlador.AppChat;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -185,7 +187,6 @@ public class VentanaRegistro {
                 JOptionPane.showMessageDialog(frmRegistro, "Contraseñas desiguales", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
         	}
-        	
         	//TODO LLAMADA A CONTROLADOR: GUARDAR EN DB
         	VentanaLogin ventana = new VentanaLogin();
         	//Volvemos al login

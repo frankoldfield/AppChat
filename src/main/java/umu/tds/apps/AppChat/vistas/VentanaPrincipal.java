@@ -1,5 +1,6 @@
 package umu.tds.apps.AppChat.vistas;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,11 +10,16 @@ import umu.tds.apps.AppChat.controlador.AppChat;
 import umu.tds.apps.AppChat.dominio.Contacto;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Mensaje;
+import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class VentanaPrincipal {
     private JFrame frame;
@@ -22,7 +28,8 @@ public class VentanaPrincipal {
     private JScrollPane scrollPanelIzquierdo;
     private JPanel panelChatSeleccionado;
     int filtroContactos = 0;
-
+    private Contacto contactoChat;
+   
     public VentanaPrincipal() {
         initialize();
     }
@@ -58,10 +65,10 @@ public class VentanaPrincipal {
         JButton btnContactos = new JButton("Contactos");
         JButton btnPremium = new JButton("$ Premium");
         String nombre = AppChat.INSTANCE.usuarioActual.getNombre();
-        String ruta = AppChat.INSTANCE.usuarioActual.getImagen();
-        ImageIcon icon = new ImageIcon(ruta);
-        Image img = icon.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-        JLabel lblUsuario = new JLabel(nombre, new ImageIcon(img), JLabel.LEFT);
+        String imagen = AppChat.INSTANCE.usuarioActual.getImagen();
+        JLabel nombre1 = new JLabel(nombre);
+        JLabel icono = new JLabel(new ImageIcon(imagen));
+        icono.setPreferredSize(new Dimension(40, 40));
         
         btnContactos.addActionListener(e ->{ 
         	VentanaContactos ventana = new VentanaContactos();
@@ -81,7 +88,8 @@ public class VentanaPrincipal {
         panelSuperior.add(btnBuscar);
         panelSuperior.add(btnContactos);
         panelSuperior.add(btnPremium);
-        panelSuperior.add(lblUsuario);
+        panelSuperior.add(nombre1);
+        panelSuperior.add(icono);
 
         return panelSuperior;
     }
@@ -142,12 +150,14 @@ public class VentanaPrincipal {
         return scroll;
     }
 
-    private JPanel crearElementoChat(String nombre, String ultimoMensaje, String movil) {
+    @SuppressWarnings("deprecation")
+	private JPanel crearElementoChat(String nombre, String ultimoMensaje, String movil) {
     	JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
         panel.setBackground(Color.WHITE);
 
         panel.setPreferredSize(new Dimension(200, 60));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
 
         //Añadimos un mouse listener para diferenciar el color del chat usado
         panel.addMouseListener(new MouseAdapter() {
@@ -160,13 +170,32 @@ public class VentanaPrincipal {
                 //Color azul claro para el chat seleccionado
                 panel.setBackground(new Color(220, 240, 255));
                 panelChatSeleccionado = panel;	
-                mostrarConversacion(movil);
+                contactoChat = AppChat.getInstance().usuarioActual.getContactoIndividual(movil);
+                mostrarConversacion((ContactoIndividual) contactoChat);
             }
         });
-
-        JLabel icono = new JLabel("🧑");
+        String path =
+        		"https://widget-assets.geckochat.io/69d33e2bd0ca2799b2c6a3a3870537a9.png";
+        URL url = null;
+		try {
+			url = new URL(path);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        BufferedImage image = null;
+		try {
+			image = ImageIO.read(url);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+        JLabel icono = new JLabel(new ImageIcon(image));
         icono.setPreferredSize(new Dimension(40, 40));
+        
+        
         JPanel texto = new JPanel(new GridLayout(2, 1));
+        texto.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
         //Ponemos esto para que se pueda ver que chat esta siendo seleccionado
         texto.setOpaque(false);
         
@@ -267,22 +296,60 @@ public class VentanaPrincipal {
 
 //PANEL DERECHO
     
-    private JScrollPane crearPanelDerecho() {
-        chat = new JPanel();
-        chat.setLayout(new BoxLayout(chat, BoxLayout.Y_AXIS));
-        chat.setPreferredSize(new Dimension(400, 700));
+    private JPanel crearPanelDerecho() {
+        JPanel panelDerecho = new JPanel(new BorderLayout());
+        panelDerecho.setMaximumSize(new Dimension(400, 700));
 
-        JScrollPane scrollPane = new JScrollPane(chat);
+        chat = new JPanel();      
+        chat.setLayout(new BoxLayout(chat, BoxLayout.Y_AXIS));
+        chat.setMaximumSize(new Dimension(400, 700));  
+        JScrollPane scrollPane = new JScrollPane(chat);       
+
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getVerticalScrollBar().setUnitIncrement(10);
-        return scrollPane;
+
+        JPanel panelEnvio = new JPanel(new BorderLayout(5, 5));
+        
+        JTextField enviarMensaje = new JTextField();
+        JButton btnEnviar = new JButton("->");
+
+        panelEnvio.add(enviarMensaje, BorderLayout.CENTER);
+        panelEnvio.add(btnEnviar, BorderLayout.EAST);
+        panelEnvio.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        panelDerecho.add(scrollPane, BorderLayout.CENTER);
+        panelDerecho.add(panelEnvio, BorderLayout.SOUTH);
+       
+        btnEnviar.addActionListener(e -> {
+        	String texto = enviarMensaje.getText();
+        	if (!texto.isEmpty()) {
+        		AppChat.INSTANCE.enviarMensajeContacto((ContactoIndividual)contactoChat, texto, -1, TipoMensaje.ENVIADO);
+        		BubbleText burbuja = new BubbleText(chat, texto, Color.GREEN,
+            			AppChat.INSTANCE.usuarioActual.getNombre(), BubbleText.SENT);
+            	chat.add(burbuja);
+            	List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", "", contactoChat.getNombre());
+            	String ultimo = "";
+            	if (!conversacion.isEmpty()) {
+                	ultimo = conversacion.get(conversacion.size() - 1).getTexto();
+                }
+            	
+            	System.out.println(ultimo);
+            	
+            	//Ponemos el campo de texto limpio y refrescamos el panel izquierdo para que se vea en la previsualizacion el nuevo ultimo mensaje
+            	enviarMensaje.setText("");
+                refrescarPanelIzquierdo();
+        	}
+        });
+        
+      
+        return panelDerecho;
     }
     
-    private void mostrarConversacion(String movil) {
+    private void mostrarConversacion(ContactoIndividual c) {
         chat.removeAll();
 
         String miNumero = AppChat.getInstance().usuarioActual.getMovil();
-        List<Mensaje> mensajes = AppChat.INSTANCE.buscarMensajes("", movil, "");
+        List<Mensaje> mensajes = AppChat.INSTANCE.buscarMensajes("", c.getMovil(), "");
 
         for (Mensaje mensaje : mensajes) {
             boolean enviado = mensaje.getContacto_emisor().getMovil().equals(miNumero);
