@@ -19,16 +19,22 @@ public class CargarAppChat {
 		ventana.mostrarVentana();
 
 		appChat.registrarUsuario("jesus", "apellido", "aa", "11", "aa", LocalDate.of(1960, 10, 03),"/usuarios/fotoJGM.png", "Hola, soy jesus");
-		appChat.registrarUsuario("elena", "apellido","bb", "22", "bb", LocalDate.of(1995, 12, 28), "/src/main/resources/usuarios/712347.jpg", "hola, soy elena");
-		appChat.registrarUsuario("rosalia", "apellido","cc", "33", "cc", LocalDate.of(2000, 5, 15), "/usuarios/rosalia.jpg", "hola, soy rosalia");
-		appChat.registrarUsuario("diego", "apellido","dd", "44", "dd", LocalDate.of(1970, 5, 11), "/usuarios/foto-diego.png", "hola, soy diego");
-		appChat.registrarUsuario("anne", "apellido","ee", "55", "ee", LocalDate.of(1990, 3, 28), "/usuarios/annetaylor.jpg", "hola, soy anne");
-		appChat.registrarUsuario("anne", "apellido","ee", "56", "ee", LocalDate.of(1990, 3, 28), "/usuarios/annetaylor.jpg", "hola, soy anne");
-		appChat.registrarUsuario("anne", "apellido","ee", "57", "ee", LocalDate.of(1990, 3, 28), "/usuarios/annetaylor.jpg", "hola, soy anne");
-		appChat.registrarUsuario("anne", "apellido","ee", "58", "ee", LocalDate.of(1990, 3, 28), "/usuarios/annetaylor.jpg", "hola, soy anne");
-		appChat.registrarUsuario("anne", "apellido","ee", "59", "ee", LocalDate.of(1990, 3, 28), "/usuarios/annetaylor.jpg", "hola, soy anne");
-		appChat.registrarUsuario("anne", "apellido","ee", "50", "ee", LocalDate.of(1990, 3, 28), "/usuarios/annetaylor.jpg", "hola, soy anne");
-		appChat.registrarUsuario("anne", "apellido","ee", "51", "ee", LocalDate.of(1990, 3, 28), "/usuarios/annetaylor.jpg", "hola, soy anne");
+		appChat.registrarUsuario("elena", "apellido","bb", "22", "bb", LocalDate.of(1995, 12, 28), "/usuarios/fotoJGM.png", "hola, soy elena");
+		appChat.registrarUsuario("rosalia", "apellido","cc", "33", "cc", LocalDate.of(2000, 5, 15), "/usuarios/fotoJGM.png", "hola, soy rosalia");
+		appChat.registrarUsuario("diego", "apellido","dd", "44", "dd", LocalDate.of(1970, 5, 11), "/usuarios/abbetatkir.jpg", "hola, soy diego");
+		appChat.registrarUsuario("anne", "apellido","ee", "55", "ee", LocalDate.of(1990, 3, 28), "/usuarios/abbetatkir.jpg", "hola, soy anne");
+//		
+//		appChat.registrarUsuario("jesus", "apellido", "aa", "11", "aa", LocalDate.of(1960, 10, 03),"/usuarios/fotoJGM.png", "Hola, soy jesus");
+//		appChat.registrarUsuario("elena", "apellido","bb", "22", "bb", LocalDate.of(1995, 12, 28), "/usuarios/elena.png", "hola, soy elena");
+//		appChat.registrarUsuario("rosalia", "apellido","cc", "33", "cc", LocalDate.of(2000, 5, 15), "/usuarios/rosalia.jpg", "hola, soy rosalia");
+//		appChat.registrarUsuario("diego", "apellido","dd", "44", "dd", LocalDate.of(1970, 5, 11), "/usuarios/foto-diego.png", "hola, soy diego");
+//		appChat.registrarUsuario("anne", "apellido","ee", "55", "ee", LocalDate.of(1990, 3, 28), "/usuarios/annetaylor.jpg", "hola, soy anne");
+		appChat.registrarUsuario("anne", "apellido","ee", "56", "ee", LocalDate.of(1990, 3, 28), "/usuarios/abbetatkir.jpg", "hola, soy anne");
+		appChat.registrarUsuario("anne", "apellido","ee", "57", "ee", LocalDate.of(1990, 3, 28), "/usuarios/abbetatkir.jpg", "hola, soy anne");
+		appChat.registrarUsuario("anne", "apellido","ee", "58", "ee", LocalDate.of(1990, 3, 28), "/usuarios/abbetatkir.jpg", "hola, soy anne");
+		appChat.registrarUsuario("anne", "apellido","ee", "59", "ee", LocalDate.of(1990, 3, 28), "/usuarios/abbetatkir.jpg", "hola, soy anne");
+		appChat.registrarUsuario("anne", "apellido","ee", "50", "ee", LocalDate.of(1990, 3, 28), "/usuarios/abbetatkir.jpg", "hola, soy anne");
+		appChat.registrarUsuario("anne", "apellido","ee", "51", "ee", LocalDate.of(1990, 3, 28), "/usuarios/abbetatkir.jpg", "hola, soy anne");
 		
 		appChat.login("11", "aa");
 		
@@ -62,7 +68,7 @@ public class CargarAppChat {
 		
 		appChat.enviarMensajeContacto(c1, "Vienes este finde?", -1, TipoMensaje.ENVIADO);
 		appChat.enviarMensajeContacto(c1, "", 3, TipoMensaje.ENVIADO);
-		appChat.enviarMensajeContacto(c1, "hola", 3, TipoMensaje.ENVIADO);
+		appChat.enviarMensajeContacto(c1, "", 3, TipoMensaje.ENVIADO);
 	    appChat.enviarMensajeContacto(c4, "Juegas esta semana?", -1, TipoMensaje.ENVIADO);
 	    appChat.enviarMensajeContacto(c5, "adios", -1, TipoMensaje.ENVIADO);
 	    

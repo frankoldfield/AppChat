@@ -1,5 +1,7 @@
 package umu.tds.apps.AppChat.controlador;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -172,6 +174,26 @@ public class AppChat {
 		}
 		
 		
+	}
+
+	public String getImagenContacto(String movil) {
+		// TODO Auto-generated method stub
+		for(Usuario usuario: RepositorioUsuarios.INSTANCE.usuarios) {
+			if(usuario.getMovil().equals(movil)) {
+				
+				return usuario.getImagen();
+			}
+		}
+		return null;
+	}
+
+	public void cambiarImagen(String rutaAbsoluta) {
+		// TODO Auto-generated method stub
+		int indice = rutaAbsoluta.toLowerCase().lastIndexOf("usuarios" + File.separator);
+		String rutaRelativa = (indice != -1) ? rutaAbsoluta.substring(indice) : "";
+		rutaRelativa = '/'+rutaRelativa.replace('\\', '/');
+
+		// TODO RepositorioUsuarios.INSTANCE.modificarImagen...
 	}
 
 	

@@ -209,7 +209,6 @@ public class VentanaRegistro {
             if (imagenes != null && !imagenes.isEmpty()) {
                 File archivoImagen = imagenes.get(0);
                 String rutaAbsoluta = archivoImagen.getAbsolutePath();
-
                 //Cargar la imagen directamente desde la ruta absoluta
                 ImageIcon iconoImagen = new ImageIcon(rutaAbsoluta);
                 Image imagenEscalada = iconoImagen.getImage()

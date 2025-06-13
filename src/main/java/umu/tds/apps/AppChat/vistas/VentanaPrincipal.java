@@ -11,12 +11,14 @@ import umu.tds.apps.AppChat.dominio.Contacto;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
+import umu.tds.apps.AppChat.dominio.Usuario;
 import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,7 +31,9 @@ public class VentanaPrincipal {
     private JPanel panelChatSeleccionado;
     int filtroContactos = 0;
     private Contacto contactoChat;
-   
+    private JLabel iconoUsuario;
+    private JPanel panelDerecho;
+    
     public VentanaPrincipal() {
         initialize();
     }
@@ -50,7 +54,8 @@ public class VentanaPrincipal {
         frame.add(crearPanelSuperior(), BorderLayout.NORTH);
         scrollPanelIzquierdo = crearPanelIzquierdo();
         frame.add(scrollPanelIzquierdo, BorderLayout.WEST);
-        frame.add(crearPanelDerecho(), BorderLayout.CENTER);
+        panelDerecho = crearPanelDerecho();
+        frame.add(panelDerecho, BorderLayout.CENTER);
     }
 
 //PANEL SUPERIOR
@@ -65,10 +70,53 @@ public class VentanaPrincipal {
         JButton btnContactos = new JButton("Contactos");
         JButton btnPremium = new JButton("$ Premium");
         String nombre = AppChat.INSTANCE.usuarioActual.getNombre();
-        String imagen = AppChat.INSTANCE.usuarioActual.getImagen();
+        
         JLabel nombre1 = new JLabel(nombre);
-        JLabel icono = new JLabel(new ImageIcon(imagen));
-        icono.setPreferredSize(new Dimension(40, 40));
+        
+        
+        
+        
+        JLabel iconoUsuario = new JLabel();
+        iconoUsuario.setPreferredSize(new Dimension(60, 40));
+        iconoUsuario.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        
+        String path = AppChat.INSTANCE.usuarioActual.getImagen();
+        
+        ImageIcon iconoImagen = new ImageIcon(getClass().getResource(path));
+        Image imagenEscalada = iconoImagen.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        iconoUsuario.setIcon(new ImageIcon(imagenEscalada));
+        iconoUsuario.setText("");
+        
+        iconoUsuario.addMouseListener(new MouseAdapter() {
+        	@Override
+            public void mouseClicked(MouseEvent e) {
+        		//Codigo de la clase dada en el AV
+                PanelArrastraImagen panelArrastre = new PanelArrastraImagen(frame);
+                List<File> imagenes = panelArrastre.showDialog();
+
+                if (imagenes != null && !imagenes.isEmpty()) {
+                    File archivoImagen = imagenes.get(0);
+                    String rutaAbsoluta = archivoImagen.getAbsolutePath();
+                    //Cargar la imagen directamente desde la ruta absoluta
+                    ImageIcon iconoImagen = new ImageIcon(rutaAbsoluta);
+                    Image imagenEscalada = iconoImagen.getImage()
+                            .getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+
+                    iconoUsuario.setIcon(new ImageIcon(imagenEscalada));
+                    iconoUsuario.setText("");
+                    iconoUsuario.revalidate(); // Actualiza la jerarquía del componente
+                    iconoUsuario.repaint();    // Fuerza repintado
+                    AppChat.INSTANCE.cambiarImagen(rutaAbsoluta);
+                }
+        	}
+        });
+        
+        
+        
+        
+        
+        
+        
         
         btnContactos.addActionListener(e ->{ 
         	VentanaContactos ventana = new VentanaContactos();
@@ -89,7 +137,7 @@ public class VentanaPrincipal {
         panelSuperior.add(btnContactos);
         panelSuperior.add(btnPremium);
         panelSuperior.add(nombre1);
-        panelSuperior.add(icono);
+        panelSuperior.add(iconoUsuario);
 
         return panelSuperior;
     }
@@ -130,7 +178,14 @@ public class VentanaPrincipal {
                 
                 String ultimo = "";           
                 if (!conversacion.isEmpty()) {
-                	ultimo = conversacion.get(conversacion.size() - 1).getTexto();
+            		for(Mensaje mensaje: conversacion.reversed()) {
+            			System.out.println("lol "+mensaje.getTexto());
+            			if(!mensaje.getTexto().isEmpty()) {
+            				ultimo = mensaje.getTexto();
+            				break;
+            			}
+            		}
+//                	ultimo = conversacion.get(conversacion.size() - 1).getTexto();
                 }
                 if(!contacto.getNombre().isEmpty()) {
                 	panelChats.add(crearElementoChat(contacto.getNombre(), ultimo, ((ContactoIndividual) contacto).getMovil()));
@@ -174,24 +229,20 @@ public class VentanaPrincipal {
                 mostrarConversacion((ContactoIndividual) contactoChat);
             }
         });
-        String path =
-        		"https://widget-assets.geckochat.io/69d33e2bd0ca2799b2c6a3a3870537a9.png";
-        URL url = null;
-		try {
-			url = new URL(path);
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        BufferedImage image = null;
-		try {
-			image = ImageIO.read(url);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-        JLabel icono = new JLabel(new ImageIcon(image));
-        icono.setPreferredSize(new Dimension(40, 40));
+        
+        
+        JLabel icono = new JLabel();
+        icono.setPreferredSize(new Dimension(60, 40));
+        icono.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        
+        
+        String path = AppChat.INSTANCE.getImagenContacto(movil);
+        
+        ImageIcon iconoImagen = new ImageIcon(getClass().getResource(path));
+        Image imagenEscalada = iconoImagen.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        icono.setIcon(new ImageIcon(imagenEscalada));
+        icono.setText("");
+        
         
         
         JPanel texto = new JPanel(new GridLayout(2, 1));
@@ -270,7 +321,8 @@ public class VentanaPrincipal {
 
         btnAceptar.addActionListener(e -> {
             AppChat.INSTANCE.agregarContacto(txtNombre.getText(), txtTelefono.getText());
-            refrescarPanelIzquierdo(); 
+            refrescarPanelIzquierdo();
+            refrescarPanelDerecho();
             dialog.dispose();
         });
 
@@ -293,11 +345,19 @@ public class VentanaPrincipal {
         frame.revalidate();
         frame.repaint();
     }
+    
+    private void refrescarPanelDerecho() {
+        frame.remove(panelDerecho); 
+        panelDerecho = crearPanelDerecho();
+        frame.add(panelDerecho, BorderLayout.CENTER); 
+        frame.revalidate();
+        frame.repaint();
+    }
 
 //PANEL DERECHO
     
     private JPanel crearPanelDerecho() {
-        JPanel panelDerecho = new JPanel(new BorderLayout());
+        panelDerecho = new JPanel(new BorderLayout());
         panelDerecho.setMaximumSize(new Dimension(400, 700));
 
         chat = new JPanel();      
@@ -330,10 +390,14 @@ public class VentanaPrincipal {
             	List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", "", contactoChat.getNombre());
             	String ultimo = "";
             	if (!conversacion.isEmpty()) {
-                	ultimo = conversacion.get(conversacion.size() - 1).getTexto();
+            		for(Mensaje mensaje: conversacion.reversed()) {
+            			if(!mensaje.getTexto().isEmpty()) {
+            				ultimo = mensaje.getTexto();
+            				break;
+            			}
+            		}
                 }
             	
-            	System.out.println(ultimo);
             	
             	//Ponemos el campo de texto limpio y refrescamos el panel izquierdo para que se vea en la previsualizacion el nuevo ultimo mensaje
             	enviarMensaje.setText("");
@@ -347,22 +411,39 @@ public class VentanaPrincipal {
     
     private void mostrarConversacion(ContactoIndividual c) {
         chat.removeAll();
-
-        String miNumero = AppChat.getInstance().usuarioActual.getMovil();
+        Usuario usuarioActual = AppChat.getInstance().usuarioActual;
+        String miNumero = usuarioActual.getMovil();
         List<Mensaje> mensajes = AppChat.INSTANCE.buscarMensajes("", c.getMovil(), "");
-
+        BubbleText burbuja;
+        String otraPersonaHeader = c.getNombre();
+        if(otraPersonaHeader.isEmpty()) {
+        	otraPersonaHeader = c.getMovil();
+        }
         for (Mensaje mensaje : mensajes) {
             boolean enviado = mensaje.getContacto_emisor().getMovil().equals(miNumero);
             if(mensaje.getEmoji() == -1) {
-            	BubbleText burbuja = new BubbleText(chat, mensaje.getTexto(), enviado ? Color.GREEN : Color.LIGHT_GRAY,
-            			mensaje.getContacto_emisor().getNombre(), enviado ? BubbleText.SENT : BubbleText.RECEIVED);
-            	chat.add(burbuja);
+            	if(enviado) {
+            		burbuja = new BubbleText(chat, mensaje.getTexto(), Color.GREEN,
+                			mensaje.getContacto_emisor().getNombre(), BubbleText.SENT );
+            	}
+            	else {
+            		burbuja = new BubbleText(chat, mensaje.getTexto(),Color.LIGHT_GRAY,
+            				otraPersonaHeader, BubbleText.RECEIVED);
+            	}
+            	
             }else{
-            	BubbleText burbuja = new BubbleText(chat, mensaje.getEmoji(), enviado ? Color.GREEN : Color.LIGHT_GRAY,
-            			mensaje.getContacto_emisor().getNombre(), enviado ? BubbleText.SENT : BubbleText.RECEIVED, 12);
-            	chat.add(burbuja);
+            	
+				if(enviado) {
+					burbuja = new BubbleText(chat, mensaje.getEmoji(), Color.GREEN ,
+	            			mensaje.getContacto_emisor().getNombre(), BubbleText.SENT, 12);    		
+            	}
+            	else {
+            		burbuja = new BubbleText(chat, mensaje.getEmoji(),Color.LIGHT_GRAY,
+            				otraPersonaHeader, BubbleText.RECEIVED, 12);
+            	}
+            	
             }
-            
+            chat.add(burbuja);
         }
 
         chat.revalidate();

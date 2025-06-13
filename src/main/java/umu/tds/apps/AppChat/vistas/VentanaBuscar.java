@@ -122,9 +122,23 @@ public class VentanaBuscar{
             panelResultados.add(new JLabel("No se encontraron mensajes."));
         } else {
             for (Mensaje m : resultados) {
+            	String textoMensaje = m.getTexto();
+            	String emisor;
+            	if(m.getEmoji()!=-1) {
+            		textoMensaje = "(Emoji)";
+            	}
+            	if(m.getContacto_emisor().getMovil().equals(miNumero)) {
+            		emisor = usuario.getNombre();
+            	}
+            	else {
+            		emisor = usuario.getContactoIndividual(m.getContacto_emisor().getMovil()).getNombre();
+            		if(emisor.isEmpty()) {
+            			emisor = m.getContacto_emisor().getMovil();
+            		}
+            	}
+            	
             	System.out.println(m);
-                String emisor = m.getContacto_emisor().getMovil().equals(miNumero) ? "Yo" : "Él/Ella";
-                JLabel lbl = new JLabel(emisor + ": " + m.getTexto());
+                JLabel lbl = new JLabel(emisor + ": " + textoMensaje);
                 lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
                 panelResultados.add(lbl);
             }
