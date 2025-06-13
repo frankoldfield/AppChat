@@ -24,6 +24,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+
+import umu.tds.apps.AppChat.utils.StyleUtils;
+
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.Box;
@@ -47,12 +50,12 @@ public class PanelArrastraImagen extends JDialog {
 	public PanelArrastraImagen(JFrame owner) {
 		super(owner, "Agregar fotos", true);
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		getContentPane().setBackground(Color.WHITE);
+		getContentPane().setBackground(StyleUtils.BACKGROUND_DARK);
 		setBounds(100, 100, 450, 300);
 		getContentPane().setLayout(new BorderLayout());
 		
 		contentPane = new JPanel();
-		contentPane.setBackground(Color.WHITE);
+		contentPane.setBackground(StyleUtils.BACKGROUND_DARK);
 		getContentPane().add(contentPane, BorderLayout.CENTER);
 		
 		JEditorPane editorPane = new JEditorPane();

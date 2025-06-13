@@ -13,6 +13,7 @@ import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
 import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
+import umu.tds.apps.AppChat.utils.StyleUtils;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -78,7 +79,7 @@ public class VentanaPrincipal {
         
         JLabel iconoUsuario = new JLabel();
         iconoUsuario.setPreferredSize(new Dimension(60, 40));
-        iconoUsuario.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        iconoUsuario.setBorder(BorderFactory.createLineBorder(StyleUtils.ACCENT_COLOR));
         
         String path = AppChat.INSTANCE.usuarioActual.getImagen();
         
@@ -92,6 +93,7 @@ public class VentanaPrincipal {
             public void mouseClicked(MouseEvent e) {
         		//Codigo de la clase dada en el AV
                 PanelArrastraImagen panelArrastre = new PanelArrastraImagen(frame);
+                panelArrastre.setForeground(StyleUtils.BACKGROUND_DARK);
                 List<File> imagenes = panelArrastre.showDialog();
 
                 if (imagenes != null && !imagenes.isEmpty()) {
@@ -153,6 +155,7 @@ public class VentanaPrincipal {
         panelChats.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         panelChats.setPreferredSize(null);
+        panelChats.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         List<Contacto> contactos;
         switch(filtroContactos) {
@@ -170,10 +173,36 @@ public class VentanaPrincipal {
         	break;
         }
         
+//        for (Contacto contacto : contactos) {
+//
+//            if (contacto instanceof ContactoIndividual) {
+//                String otroNumero = ((ContactoIndividual) contacto).getMovil();
+//                List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", otroNumero, "");
+//                
+//                String ultimo = "";           
+//                if (!conversacion.isEmpty()) {
+//            		for(Mensaje mensaje: conversacion.reversed()) {
+//            			System.out.println("lol "+mensaje.getTexto());
+//            			if(!mensaje.getTexto().isEmpty()) {
+//            				ultimo = mensaje.getTexto();
+//            				break;
+//            			}
+//            		}
+////                	ultimo = conversacion.get(conversacion.size() - 1).getTexto();
+//                }
+//                if(!contacto.getNombre().isEmpty()) {
+//                	panelChats.add(crearElementoChat(contacto.getNombre(), ultimo, ((ContactoIndividual) contacto).getMovil()));
+//                }
+//                else {
+//                	panelChats.add(crearElementoChat("", ultimo, ((ContactoIndividual) contacto).getMovil()));
+//                }
+//            } else {
+//                continue; //TODO GRUPOS
+//            }  
+//        }
         for (Contacto contacto : contactos) {
-
             if (contacto instanceof ContactoIndividual) {
-                String otroNumero = ((ContactoIndividual) contacto).getMovil();
+            	String otroNumero = ((ContactoIndividual) contacto).getMovil();
                 List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", otroNumero, "");
                 
                 String ultimo = "";           
@@ -187,12 +216,18 @@ public class VentanaPrincipal {
             		}
 //                	ultimo = conversacion.get(conversacion.size() - 1).getTexto();
                 }
+
+                JPanel elemento;
                 if(!contacto.getNombre().isEmpty()) {
-                	panelChats.add(crearElementoChat(contacto.getNombre(), ultimo, ((ContactoIndividual) contacto).getMovil()));
+                    elemento = crearElementoChat(contacto.getNombre(), ultimo, ((ContactoIndividual) contacto).getMovil());
+                } else {
+                    elemento = crearElementoChat("", ultimo, ((ContactoIndividual) contacto).getMovil());
                 }
-                else {
-                	panelChats.add(crearElementoChat("", ultimo, ((ContactoIndividual) contacto).getMovil()));
-                }
+                
+                elemento.setBorder(StyleUtils.createPanelBorder());
+                
+                panelChats.add(elemento);
+                panelChats.add(Box.createRigidArea(new Dimension(0, 10)));
             } else {
                 continue; //TODO GRUPOS
             }  
@@ -209,7 +244,7 @@ public class VentanaPrincipal {
 	private JPanel crearElementoChat(String nombre, String ultimoMensaje, String movil) {
     	JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
-        panel.setBackground(Color.WHITE);
+        panel.setBackground(StyleUtils.BACKGROUND_DARK);
 
         panel.setPreferredSize(new Dimension(200, 60));
         panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
@@ -219,11 +254,12 @@ public class VentanaPrincipal {
             @Override
             public void mouseClicked(MouseEvent e) {
             	if (panelChatSeleccionado != null) {
-                    panelChatSeleccionado.setBackground(Color.WHITE);
+                    panelChatSeleccionado.setBackground(StyleUtils.BACKGROUND_DARK);
                 }
 
                 //Color azul claro para el chat seleccionado
                 panel.setBackground(new Color(220, 240, 255));
+                panel.setBackground(StyleUtils.BACKGROUND_DARKER);
                 panelChatSeleccionado = panel;	
                 contactoChat = AppChat.getInstance().usuarioActual.getContactoIndividual(movil);
                 mostrarConversacion((ContactoIndividual) contactoChat);
@@ -358,12 +394,17 @@ public class VentanaPrincipal {
     
     private JPanel crearPanelDerecho() {
         panelDerecho = new JPanel(new BorderLayout());
-        panelDerecho.setMaximumSize(new Dimension(400, 700));
+        //panelDerecho.setMaximumSize(new Dimension(400, 700));
+        //panelDerecho.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 100)); // top, left, bottom, right
 
         chat = new JPanel();      
         chat.setLayout(new BoxLayout(chat, BoxLayout.Y_AXIS));
-        chat.setMaximumSize(new Dimension(400, 700));  
-        JScrollPane scrollPane = new JScrollPane(chat);       
+        
+        //chat.setMaximumSize(new Dimension(400, 700));  
+        
+        JScrollPane scrollPane = new JScrollPane(chat);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+ 
 
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getVerticalScrollBar().setUnitIncrement(10);
@@ -384,7 +425,7 @@ public class VentanaPrincipal {
         	String texto = enviarMensaje.getText();
         	if (!texto.isEmpty()) {
         		AppChat.INSTANCE.enviarMensajeContacto((ContactoIndividual)contactoChat, texto, -1, TipoMensaje.ENVIADO);
-        		BubbleText burbuja = new BubbleText(chat, texto, Color.GREEN,
+        		BubbleText burbuja = new BubbleText(chat, texto, StyleUtils.BACKGROUND_DARKER,
             			AppChat.INSTANCE.usuarioActual.getNombre(), BubbleText.SENT);
             	chat.add(burbuja);
             	List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", "", contactoChat.getNombre());
@@ -404,7 +445,7 @@ public class VentanaPrincipal {
                 refrescarPanelIzquierdo();
         	}
         });
-        
+	        
       
         return panelDerecho;
     }
@@ -423,29 +464,29 @@ public class VentanaPrincipal {
             boolean enviado = mensaje.getContacto_emisor().getMovil().equals(miNumero);
             if(mensaje.getEmoji() == -1) {
             	if(enviado) {
-            		burbuja = new BubbleText(chat, mensaje.getTexto(), Color.GREEN,
+            		burbuja = new BubbleText(chat, mensaje.getTexto(), StyleUtils.BACKGROUND_DARKER,
                 			mensaje.getContacto_emisor().getNombre(), BubbleText.SENT );
             	}
             	else {
-            		burbuja = new BubbleText(chat, mensaje.getTexto(),Color.LIGHT_GRAY,
+            		burbuja = new BubbleText(chat, mensaje.getTexto(),StyleUtils.ACCENT_COLOR,
             				otraPersonaHeader, BubbleText.RECEIVED);
             	}
             	
             }else{
             	
 				if(enviado) {
-					burbuja = new BubbleText(chat, mensaje.getEmoji(), Color.GREEN ,
+					burbuja = new BubbleText(chat, mensaje.getEmoji(), StyleUtils.BACKGROUND_DARKER ,
 	            			mensaje.getContacto_emisor().getNombre(), BubbleText.SENT, 12);    		
             	}
             	else {
-            		burbuja = new BubbleText(chat, mensaje.getEmoji(),Color.LIGHT_GRAY,
+            		burbuja = new BubbleText(chat, mensaje.getEmoji(),StyleUtils.ACCENT_COLOR,
             				otraPersonaHeader, BubbleText.RECEIVED, 12);
             	}
             	
             }
             chat.add(burbuja);
         }
-
+        
         chat.revalidate();
         chat.repaint();
     }    
