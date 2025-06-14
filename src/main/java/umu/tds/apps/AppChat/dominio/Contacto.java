@@ -1,6 +1,7 @@
 package umu.tds.apps.AppChat.dominio;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Contacto {
 
@@ -15,6 +16,10 @@ public class Contacto {
 	public int addMensaje(Mensaje mensaje) {
 		mensajes.add(mensaje);
 		return 0;
+	}
+	
+	public List<Mensaje> getMensajes() {
+		return mensajes;
 	}
 	
 	public String getNombre() {

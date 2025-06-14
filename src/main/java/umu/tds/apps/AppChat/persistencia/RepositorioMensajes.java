@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
+import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
+import umu.tds.apps.AppChat.dominio.TipoMensaje;
 
 public class RepositorioMensajes {
 	
@@ -29,12 +31,16 @@ public class RepositorioMensajes {
 
 	// 2) Todos los mensajes entre dos usuarios, ORDENADOS por hora
 	public List<Mensaje> buscar_Numero(
-	        String numeroA,
-	        String numeroB) {
+	        String numeroUsuario,
+	        String numeroExterno) {
 
 	    return mensajes.stream()
-	        .filter(m -> (m.getContacto_emisor().getMovil().equals(numeroA) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroB))
-	                  || (m.getContacto_emisor().getMovil().equals(numeroB) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroA)))
+	        .filter(m -> (m.getContacto_emisor().getMovil().equals(numeroUsuario) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroExterno))
+	                  || (m.getContacto_emisor().getMovil().equals(numeroExterno) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
+	                  || (m.getTipo().equals(TipoMensaje.RECIBIDO) && m.getContacto_emisor().getMovil().equals(numeroExterno) && (m.getContacto_receptor() instanceof Grupo) 
+	                		    && ((Grupo) m.getContacto_receptor()).getContactos()
+	                		       .stream()
+	                		       .anyMatch(c -> c.getMovil().equals(numeroUsuario))))
 	        .sorted(Comparator.comparing(Mensaje::getHora))
 	        .collect(Collectors.toList());
 	}
@@ -57,12 +63,16 @@ public class RepositorioMensajes {
 		public List<Mensaje> buscar_Texto_y_Numero(
 		        String texto,
 				String numeroUsuario,
-		        String numeroContacto) {
+		        String numeroExterno) {
 
 		    return mensajes.stream()
 		        .filter(m -> (m.getTexto().contains(texto))
-		        		  && ((m.getContacto_emisor().getMovil().equals(numeroUsuario) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroContacto))
-		                  || (m.getContacto_emisor().getMovil().equals(numeroContacto) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))))
+		        		  && ((m.getContacto_emisor().getMovil().equals(numeroUsuario) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroExterno))
+		                  || (m.getContacto_emisor().getMovil().equals(numeroExterno) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
+		                  || (m.getTipo().equals(TipoMensaje.RECIBIDO) && m.getContacto_emisor().equals(numeroExterno) && (m.getContacto_receptor() instanceof Grupo) 
+		                		    && ((Grupo) m.getContacto_receptor()).getContactos()
+		                		       .stream()
+		                		       .anyMatch(c -> c.getMovil().equals(numeroUsuario)))))
 		        .sorted(Comparator.comparing(Mensaje::getHora))
 		        .collect(Collectors.toList());
 		}
@@ -70,12 +80,16 @@ public class RepositorioMensajes {
 	// 5) Todos los mensajes entre salientes o entrantes del usuario, que contengan el texto dado
 		public List<Mensaje> buscar_Texto(
 		        String texto,
-				String numero) {
+				String numeroUsuario) {
 
 		    return mensajes.stream()
 		        .filter(m -> (m.getTexto().contains(texto))
-		        		  && ((m.getContacto_emisor().getMovil().equals(numero))
-		                  || ( ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numero))))
+		        		  && ((m.getContacto_emisor().getMovil().equals(numeroUsuario))
+		                  || ( ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
+		                  || (m.getTipo().equals(TipoMensaje.RECIBIDO)  && (m.getContacto_receptor() instanceof Grupo) 
+		                		    && ((Grupo) m.getContacto_receptor()).getContactos()
+		                		       .stream()
+		                		       .anyMatch(c -> c.getMovil().equals(numeroUsuario)))))
 		        .sorted(Comparator.comparing(Mensaje::getHora))
 		        .collect(Collectors.toList());
 		}
@@ -89,7 +103,11 @@ public class RepositorioMensajes {
 		    return mensajes.stream()
 		        .filter(m -> (m.getTexto().contains(texto))
 		        		  && ((m.getContacto_emisor().getMovil().equals(numeroUsuario) && m.getContacto_receptor().getNombre().equals(nombreContacto))
-		                  || (m.getContacto_emisor().getNombre().equals(nombreContacto) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))))
+		                  || (m.getContacto_emisor().getNombre().equals(nombreContacto) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
+		                  || (m.getTipo().equals(TipoMensaje.RECIBIDO) && m.getContacto_emisor().getNombre().equals(nombreContacto) && (m.getContacto_receptor() instanceof Grupo) 
+		                		    && ((Grupo) m.getContacto_receptor()).getContactos()
+		                		       .stream()
+		                		       .anyMatch(c -> c.getMovil().equals(numeroUsuario)))))
 		        .sorted(Comparator.comparing(Mensaje::getHora))
 		        .collect(Collectors.toList());
 		}
@@ -101,7 +119,11 @@ public class RepositorioMensajes {
 
 		    return mensajes.stream()
 		        .filter(m -> (m.getContacto_emisor().getMovil().equals(numeroUsuario) && m.getContacto_receptor().getNombre().equals(nombreContacto))
-		                  || (m.getContacto_emisor().getNombre().equals(nombreContacto) && ((ContactoIndividual) m.getContacto_receptor()).equals(numeroUsuario)))
+		                  || (m.getContacto_emisor().getNombre().equals(nombreContacto) && ((ContactoIndividual) m.getContacto_receptor()).equals(numeroUsuario)
+                		  || (m.getTipo().equals(TipoMensaje.RECIBIDO) && m.getContacto_emisor().getNombre().equals(nombreContacto) && (m.getContacto_receptor() instanceof Grupo) 
+		                		    && ((Grupo) m.getContacto_receptor()).getContactos()
+		                		       .stream()
+		                		       .anyMatch(c -> c.getMovil().equals(numeroUsuario)))))
 		        .sorted(Comparator.comparing(Mensaje::getHora))
 		        .collect(Collectors.toList());
 		}
@@ -110,7 +132,11 @@ public class RepositorioMensajes {
 			public List<Mensaje> buscar_Todos(String numeroUsuario) {
 
 			    return mensajes.stream()
-			        .filter(m -> (m.getContacto_emisor().getMovil().equals(numeroUsuario) || ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario)))
+			        .filter(m -> m.getContacto_emisor().getMovil().equals(numeroUsuario) || ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario)
+			        		|| (m.getTipo().equals(TipoMensaje.RECIBIDO)  && (m.getContacto_receptor() instanceof Grupo) 
+		                		    && ((Grupo) m.getContacto_receptor()).getContactos()
+		                		       .stream()
+		                		       .anyMatch(c -> c.getMovil().equals(numeroUsuario))))
 			        .sorted(Comparator.comparing(Mensaje::getHora))
 			        .collect(Collectors.toList());
 			}

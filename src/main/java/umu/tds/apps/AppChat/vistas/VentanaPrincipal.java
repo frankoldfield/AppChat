@@ -69,7 +69,7 @@ public class VentanaPrincipal {
         JComboBox<String> comboBusqueda = new JComboBox<>(new String[]{"Contactos o teléfonos", "Contactos", "Teléfonos"});
         JButton btnAceptar = new JButton("Filtrar");
         JButton btnBuscar = new JButton("🔍");
-        JButton btnContactos = new JButton("Contactos");
+        JButton btnGrupos = new JButton("Grupos");
         JButton btnPremium = new JButton("$ Premium");
         String nombre = AppChat.INSTANCE.usuarioActual.getNombre();
         
@@ -121,8 +121,9 @@ public class VentanaPrincipal {
         
         
         
-        btnContactos.addActionListener(e ->{ 
-        	entrarGrupos();
+
+        btnGrupos.addActionListener(e ->{ 
+        	VentanaGrupos ventana = new VentanaGrupos();
         });
         btnBuscar.addActionListener(e->{
         	VentanaBuscar ventana = new VentanaBuscar();
@@ -137,7 +138,7 @@ public class VentanaPrincipal {
         panelSuperior.add(comboBusqueda);
         panelSuperior.add(btnAceptar);
         panelSuperior.add(btnBuscar);
-        panelSuperior.add(btnContactos);
+        panelSuperior.add(btnGrupos);
         panelSuperior.add(btnPremium);
         panelSuperior.add(nombre1);
         panelSuperior.add(iconoUsuario);
@@ -253,33 +254,7 @@ public class VentanaPrincipal {
         	break;
         }
         
-//        for (Contacto contacto : contactos) {
-//
-//            if (contacto instanceof ContactoIndividual) {
-//                String otroNumero = ((ContactoIndividual) contacto).getMovil();
-//                List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", otroNumero, "");
-//                
-//                String ultimo = "";           
-//                if (!conversacion.isEmpty()) {
-//            		for(Mensaje mensaje: conversacion.reversed()) {
-//            			System.out.println("lol "+mensaje.getTexto());
-//            			if(!mensaje.getTexto().isEmpty()) {
-//            				ultimo = mensaje.getTexto();
-//            				break;
-//            			}
-//            		}
-////                	ultimo = conversacion.get(conversacion.size() - 1).getTexto();
-//                }
-//                if(!contacto.getNombre().isEmpty()) {
-//                	panelChats.add(crearElementoChat(contacto.getNombre(), ultimo, ((ContactoIndividual) contacto).getMovil()));
-//                }
-//                else {
-//                	panelChats.add(crearElementoChat("", ultimo, ((ContactoIndividual) contacto).getMovil()));
-//                }
-//            } else {
-//                continue; //TODO GRUPOS
-//            }  
-//        }
+        
         for (Contacto contacto : contactos) {
             if (contacto instanceof ContactoIndividual) {
             	String otroNumero = ((ContactoIndividual) contacto).getMovil();
@@ -569,5 +544,5 @@ public class VentanaPrincipal {
         
         chat.revalidate();
         chat.repaint();
-    }    
+    }
 }

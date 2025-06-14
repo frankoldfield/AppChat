@@ -2,6 +2,7 @@ package umu.tds.apps.AppChat.dominio;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Usuario {
 
@@ -85,10 +86,20 @@ public class Usuario {
 		return contactoNuevo;
 	}
 	
-	public int addGrupo(String nombre, ArrayList<ContactoIndividual> ContactosGrupo) {
-		Contactos.add(new Grupo(nombre, ContactosGrupo));
-		return 0;
+	public Grupo addOrUpdateGrupo(String nombreGrupo, List<ContactoIndividual> contactosGrupo) {
+		for(Contacto contacto: Contactos) {
+			if (contacto instanceof Grupo && contacto.getNombre().equals(nombreGrupo)) {
+				((Grupo) contacto).setContactos(contactosGrupo);
+				return (Grupo) contacto;
+			}
+		}
+		
+		Grupo grupoNuevo = new Grupo(nombreGrupo, contactosGrupo);
+		Contactos.add(new Grupo(nombre, contactosGrupo));
+		
+		return grupoNuevo;
 	}
+	
 	
 	public int registrarMensaje(Mensaje mensaje) { //USAR LAMBDAS
 		boolean registrado = false;

@@ -5,9 +5,11 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import umu.tds.apps.AppChat.dominio.Contacto;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
@@ -15,11 +17,11 @@ import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
 import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
 import umu.tds.apps.AppChat.persistencia.RepositorioUsuarios;
+import umu.tds.apps.AppChat.servicios.ExportPDF;
 
 public class AppChat {
 
 	public Usuario usuarioActual;
-	public RepositorioUsuarios repositorio;
 	public static AppChat INSTANCE = null;
 
 	//Patrón singleton
@@ -30,81 +32,52 @@ public class AppChat {
 	}
 	
 	public void enviarMensajeContacto(ContactoIndividual ContactoDestino, String texto, int emoji, TipoMensaje tipo_mensaje) {
-		// TODO Auto-generated method stub
-		//Llama a usuario_emisor.registrarMensaje(usuario_receptor)
-		//Llama a usuario_receptor.registrarMensaje(usuario_emisor)
+		//TODO PERSISTENCIA
 		
 		Mensaje mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), ContactoDestino);
 		ContactoDestino.addMensaje(mensaje);
-		mensaje.setTipo(TipoMensaje.RECIBIDO);
-		for(Usuario usuarioReceptor: RepositorioUsuarios.INSTANCE.usuarios) {
-			if(usuarioReceptor.getMovil().equals(ContactoDestino.getMovil())) {
-				usuarioReceptor.registrarMensaje(mensaje);
-			}
-		}
 		RepositorioMensajes.INSTANCE.mensajes.add(mensaje);
+		mensaje.setTipo(TipoMensaje.RECIBIDO);
+		
+		getUsuario(ContactoDestino.getMovil()).registrarMensaje(mensaje);
+		
 	}
 	
-	public void enviarMensajeGrupo(Grupo grupo_receptor, String texto, int emoji, TipoMensaje tipo_mensaje) {
-		// TODO Auto-generated method stub
-		//Llama a usuario_emisor.registrarMensaje(grupo_receptor)
-		//for usuario_receptor in grupo_receptor:
-		//	Llama a usuario_receptor.registrarMensaje(usuario_emisor)
+	public void enviarMensajeGrupo(Grupo grupo_receptor, String texto, int emoji, TipoMensaje tipo_mensaje) { 
+		//TODO PERSISTENCIA
+		
 		Mensaje mensaje;
 		mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), grupo_receptor);
 		grupo_receptor.addMensaje(mensaje);
 		RepositorioMensajes.INSTANCE.mensajes.add(mensaje);
-		for(ContactoIndividual contacto: grupo_receptor.getMiembros()) {
-			
-			for(Usuario usuarioReceptor: RepositorioUsuarios.INSTANCE.usuarios) {
-				if(usuarioReceptor.getMovil().equals(contacto.getMovil())) {
-					mensaje.setTipo(TipoMensaje.RECIBIDO);
-					usuarioReceptor.registrarMensaje(mensaje);
-				}
-			}	
+		mensaje.setTipo(TipoMensaje.RECIBIDO);
+		for(ContactoIndividual contacto: grupo_receptor.getContactos()) {
+			getUsuario(contacto.getMovil()).registrarMensaje(mensaje);
 		}
 	}
 	
 	public Usuario getUsuario(String numero_telefono) { //Desde aquí se llama a getUsuario del repositorio
 		
-		return repositorio.buscarUsuarioPorMovil(numero_telefono);
+		return RepositorioUsuarios.INSTANCE.buscarUsuarioPorMovil(numero_telefono);
 	}
 	
 	public ContactoIndividual agregarContacto(String nombre, String movil) { //Desde aquí se le dice al usuario que registre un nuevo contacto
-		//usuarioActual.registrarContacto(numeroTelefono, username)
+		//TODO PERSISTENCIA
 		return usuarioActual.addContacto(nombre, movil);
 	}
 	
-	public ContactoIndividual agregarContacto_Empty(int numeroTelefono) { //Desde aquí se le dice al usuario que registre un nuevo contacto
-		//usuarioActual.registrarContacto(numeroTelefono)
-		return null;
-	}
-	
-	public Grupo registrarGrupo(String[] contactos_grupo) { //Desde aquí se le dice al usuario que registre un nuevo grupo
-		//usuarioActual.registrarContacto(nuevo_contacto)
-		return null;
-	}
-	
-	public Grupo addContactoAGrupo(Grupo grupo, ContactoIndividual contacto_nuevo) {
+	public Grupo CrearOActualizarGrupo(String nombreGrupo, List<ContactoIndividual> contactosGrupo) {
+		//TODO PERSISTENCIA
 		
-		return null;
-	}
-	
-	public int getPremium() {
-		//usuarioActual.getPremium();
-		return 0;
-	}
-
-	
-	public int removePremium() {
-		//usuarioActual.removePremium();
-		//saveUsuarioActual
-		return 0;
+		Grupo grupoNuevo = usuarioActual.addOrUpdateGrupo(nombreGrupo, contactosGrupo);
+		
+		return grupoNuevo;
 	}
 
 	//Called from: VentanaRegistro, CargarAppChat
 	public int registrarUsuario(String nombre, String apellidos, String password, String telefono, String confirma_password, LocalDate fecha, String ruta_imagen, String saludo) {
-		// TODO Auto-generated method stub
+		//TODO PERSISTENCIA
+		
 		int returnCode = 0;
 		//Comprobar que no esté ya registrado el número de teléfono
 		for(Usuario usuarioRegistrado: RepositorioUsuarios.INSTANCE.usuarios) {
@@ -116,7 +89,6 @@ public class AppChat {
 		if(fecha.isBefore(LocalDate.of(1930, 1, 1))) {
 			returnCode = -2;
 		}
-		// TODO Pillar imagen
 		
 		if(returnCode==0) {
 			Usuario usuarioNuevo = new Usuario(nombre, apellidos, password, telefono, fecha, ruta_imagen, saludo);
@@ -128,9 +100,8 @@ public class AppChat {
 
 	//Called from: VentanaLogin, CargarAppChat
 	public int login(String telefono, String password) {
+		//TODO PERSISTENCIA
 		
-		// TODO Comprobar log-in correcto y guardar usuario actual
-		//Buscar en repositorio
 		int returnCode = -1;
 		for(Usuario usuarioRegistrado: RepositorioUsuarios.INSTANCE.usuarios) {
 			if(usuarioRegistrado.getMovil().equals(telefono)) {
@@ -178,39 +149,60 @@ public class AppChat {
 	}
 	
 	public List<ContactoIndividual> getListaContactos() {
-        List<ContactoIndividual> listaContactos = usuarioActual.getContactos().stream()
-                .filter(c -> c instanceof ContactoIndividual)
-                .map(c -> (ContactoIndividual) c)
-                .collect(Collectors.toList());
-        return listaContactos;
-    }
-
-    public List<Grupo> getListaGrupos() {
-        List<Grupo> listaGrupos = usuarioActual.getContactos().stream()
-                .filter(c -> c instanceof Grupo)
-                .map(c -> (Grupo) c)
-                .collect(Collectors.toList());
-        return listaGrupos;
-    }
+		List<ContactoIndividual> listaContactos = usuarioActual.getContactos().stream()
+			    .filter(c -> c instanceof ContactoIndividual)
+			    .map(c -> (ContactoIndividual) c)
+			    .collect(Collectors.toList());
+		return listaContactos;
+	}
+	
+	public List<Grupo> getListaGrupos() {
+		List<Grupo> listaGrupos = usuarioActual.getContactos().stream()
+			    .filter(c -> c instanceof Grupo)
+			    .map(c -> (Grupo) c)
+			    .collect(Collectors.toList());
+		return listaGrupos;
+	}
 
 	public String getImagenContacto(String movil) {
-		// TODO Auto-generated method stub
-		for(Usuario usuario: RepositorioUsuarios.INSTANCE.usuarios) {
-			if(usuario.getMovil().equals(movil)) {
-				
-				return usuario.getImagen();
-			}
-		}
-		return null;
+		return getUsuario(movil).getImagen();
 	}
 
 	public void cambiarImagen(String rutaAbsoluta) {
-		// TODO Auto-generated method stub
+		// TODO PERSISTENCIA
 		int indice = rutaAbsoluta.toLowerCase().lastIndexOf("usuarios" + File.separator);
 		String rutaRelativa = (indice != -1) ? rutaAbsoluta.substring(indice) : "";
 		rutaRelativa = '/'+rutaRelativa.replace('\\', '/');
 
-		// TODO RepositorioUsuarios.INSTANCE.modificarImagen...
+	}
+	
+	public int getPremium() {
+		//TODO PERSISTENCIA
+		
+		usuarioActual.setPremium(true);
+		return 0;
+	}
+
+	
+	public int removePremium() {
+		//TODO PERSISTENCIA
+		
+		usuarioActual.setPremium(false);
+		return 0;
+	}
+	
+	public boolean isPremium() {
+		return usuarioActual.isPremium();
+	}
+	
+	public List<Mensaje> getConversacion(ContactoIndividual contacto) {
+		return contacto.getMensajes().stream().sorted(Comparator.comparing(Mensaje::getHora))
+        .collect(Collectors.toList());
+	}
+	
+	public void exportPDF(ContactoIndividual contacto) {
+		
+		ExportPDF.INSTANCE.exportarAPDF(getConversacion(contacto));
 	}
 
 	
