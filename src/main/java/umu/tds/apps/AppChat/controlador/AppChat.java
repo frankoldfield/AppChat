@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Grupo;
@@ -175,6 +176,22 @@ public class AppChat {
 		
 		
 	}
+	
+	public List<ContactoIndividual> getListaContactos() {
+        List<ContactoIndividual> listaContactos = usuarioActual.getContactos().stream()
+                .filter(c -> c instanceof ContactoIndividual)
+                .map(c -> (ContactoIndividual) c)
+                .collect(Collectors.toList());
+        return listaContactos;
+    }
+
+    public List<Grupo> getListaGrupos() {
+        List<Grupo> listaGrupos = usuarioActual.getContactos().stream()
+                .filter(c -> c instanceof Grupo)
+                .map(c -> (Grupo) c)
+                .collect(Collectors.toList());
+        return listaGrupos;
+    }
 
 	public String getImagenContacto(String movil) {
 		// TODO Auto-generated method stub

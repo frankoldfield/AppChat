@@ -9,6 +9,7 @@ import tds.BubbleText;
 import umu.tds.apps.AppChat.controlador.AppChat;
 import umu.tds.apps.AppChat.dominio.Contacto;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
+import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
@@ -121,7 +122,7 @@ public class VentanaPrincipal {
         
         
         btnContactos.addActionListener(e ->{ 
-        	VentanaContactos ventana = new VentanaContactos();
+        	entrarGrupos();
         });
         btnBuscar.addActionListener(e->{
         	VentanaBuscar ventana = new VentanaBuscar();
@@ -144,6 +145,85 @@ public class VentanaPrincipal {
         return panelSuperior;
     }
     
+    private void entrarGrupos() {
+    	JDialog dialog = new JDialog(frame, "Crear/Modificar grupo", true);
+        dialog.setSize(500, 250);
+        dialog.setLocationRelativeTo(frame);
+        dialog.setLayout(new BorderLayout(10, 10));
+
+        JPanel panelCentral = new JPanel(new BorderLayout(10, 10));
+        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+
+        JList<String> lista = new JList<>(new String[]{
+	        "Irene master", "Diego Sevilla", "Javier Candel", "Jose Hoyos"
+	    });
+	    lista.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+	    JScrollPane scroll = new JScrollPane(lista);
+	    scroll.setPreferredSize(new Dimension(200, 0)); // Aumentamos el ancho
+	    scroll.setBorder(BorderFactory.createTitledBorder("Grupos"));
+
+	    // 👇 Lo envolvemos en un panel con margen
+	    JPanel contenedor = new JPanel(new BorderLayout());
+	    contenedor.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5)); // margen izquierdo
+	    contenedor.add(scroll, BorderLayout.CENTER);
+
+        // Añadimos el JScrollPane al panelCentral en BorderLayout.WEST
+        panelCentral.add(scroll, BorderLayout.WEST);
+
+        // Añadir scrollPane al panelCentral en WEST
+        panelCentral.add(scroll, BorderLayout.WEST);
+
+        // Panel derecho: TextField + "+" más abajo
+        JPanel panelDerecho = new JPanel();
+        panelDerecho.setLayout(new BoxLayout(panelDerecho, BoxLayout.Y_AXIS));
+        panelDerecho.add(Box.createVerticalStrut(30)); // ↓ Desplaza elementos hacia abajo
+
+        JTextField textField = new JTextField();
+        textField.setPreferredSize(new Dimension(250, 30));
+        textField.setMaximumSize(new Dimension(250, 30));
+
+        JButton btnAdd = new JButton("+");
+        btnAdd.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        panelDerecho.add(textField);
+        panelDerecho.add(Box.createVerticalStrut(10));
+        panelDerecho.add(btnAdd);
+
+        panelCentral.add(panelDerecho, BorderLayout.CENTER);
+
+        dialog.add(panelCentral, BorderLayout.CENTER);
+
+        // --- Panel inferior: botones centrados
+        JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        JButton btnModificar = new JButton("Modificar");
+        JButton btnCancelar = new JButton("Cancelar");
+
+        btnCancelar.addActionListener(e -> dialog.dispose());
+        btnModificar.addActionListener(e -> {
+            VentanaGrupos ventana = new VentanaGrupos();
+            ventana.mostrarVentana();
+        });
+        btnAdd.addActionListener(e ->{
+        	List<Grupo> grupos = AppChat.INSTANCE.getListaGrupos();
+        	boolean nombreCogido = false;
+        	for (Grupo grupo : grupos) {
+				if (grupo.getNombre().equals(textField.getText())) {
+					nombreCogido = true;
+				}
+			}
+        	if(nombreCogido) {
+        		JOptionPane.showMessageDialog(dialog, "Nombre de grupo usado", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        	}
+        });
+
+        panelInferior.add(btnModificar);
+        panelInferior.add(btnCancelar);
+
+        dialog.add(panelInferior, BorderLayout.SOUTH);   
+        dialog.setVisible(true);
+    }
 
 
 //PANEL IZQUIERDO
