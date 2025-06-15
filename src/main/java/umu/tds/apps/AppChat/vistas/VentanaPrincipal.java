@@ -6,7 +6,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import tds.BubbleText;
@@ -74,11 +76,35 @@ public class VentanaPrincipal {
         JButton btnAceptar = new JButton("Filtrar");
         JButton btnBuscar = new JButton("🔍");
         JButton btnGrupos = new JButton("Grupos");
+        
+        JPanel contenedorPremium = new JPanel(new CardLayout());
         JButton btnPremium = new JButton("$ Premium");
+        
+        JComboBox<String> comboPremium = new JComboBox<>(new String[]{"Exportar a PDF", "Cancelar Premium"});
+
+        contenedorPremium.add(btnPremium, "BOTON");
+        contenedorPremium.add(comboPremium, "COMBO");
+
+        CardLayout layout = (CardLayout) contenedorPremium.getLayout();
+
+        btnPremium.addActionListener(e -> {
+        	mostrarVentajasPremium(contenedorPremium);           
+        });
+
+        comboPremium.addActionListener(e -> {
+        	String seleccion = (String) comboPremium.getSelectedItem();
+            if ("Cancelar Premium".equals(seleccion)) {
+                layout.show(contenedorPremium, "BOTON");
+            }
+        });
         String nombre = AppChat.INSTANCE.usuarioActual.getNombre();
         
         JLabel nombre1 = new JLabel(nombre);
         
+        
+        
+
+
         
         
         
@@ -111,8 +137,8 @@ public class VentanaPrincipal {
 
                     iconoUsuario.setIcon(new ImageIcon(imagenEscalada));
                     iconoUsuario.setText("");
-                    iconoUsuario.revalidate(); // Actualiza la jerarquía del componente
-                    iconoUsuario.repaint();    // Fuerza repintado
+                    iconoUsuario.revalidate(); 
+                    iconoUsuario.repaint();    
                     AppChat.INSTANCE.cambiarImagen(rutaAbsoluta);
                 }
         	}
@@ -143,11 +169,108 @@ public class VentanaPrincipal {
         panelSuperior.add(btnAceptar);
         panelSuperior.add(btnBuscar);
         panelSuperior.add(btnGrupos);
-        panelSuperior.add(btnPremium);
+        panelSuperior.add(contenedorPremium);
         panelSuperior.add(nombre1);
         panelSuperior.add(iconoUsuario);
+        
 
         return panelSuperior;
+    }
+    
+    private void mostrarVentajasPremium(JPanel contenedorPremium) {
+    	CardLayout layout = (CardLayout) contenedorPremium.getLayout();
+        JDialog dialogo = new JDialog(frame, "Ventajas Premium", true);
+        dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialogo.setSize(500, 300);
+        dialogo.setLocationRelativeTo(frame); 
+
+        JPanel contenido = new JPanel();
+        contenido.setLayout(new BorderLayout(10, 10));
+        contenido.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        List<JPanel> panelesSeleccionados = new ArrayList<>();
+
+        Dimension tamañoPanel = new Dimension(220, 70);
+
+        JPanel panelVentajas = new JPanel();
+        panelVentajas.setLayout(new BoxLayout(panelVentajas, BoxLayout.Y_AXIS));
+        
+        JButton btnAceptar = new JButton("Aceptar");
+        btnAceptar.setEnabled(false);
+        
+        boolean mostrarPrimero = true;
+        boolean mostrarSegundo = true;
+//        boolean mostrarPrimero = AppChat.INSTANCE.usuarioActual.numMensajes();
+//        boolean mostrarSegundo = AppChat.INSTANCE.usuarioActual.getFecha().isBefore(LocalDate.of(2024, 1, 10));
+        
+        if (mostrarPrimero) {
+        	JPanel panel1 = new JPanel();
+        	panel1.setPreferredSize(tamañoPanel);
+            panel1.setBorder(BorderFactory.createTitledBorder("Descuento por mensajes"));
+            panel1.add(new JLabel("Recibe un 30% de descuento por enviar más de 10 mensajes en tu cuenta"));
+            panel1.addMouseListener(new MouseAdapter() {
+                boolean seleccionado = false;
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    seleccionado = !seleccionado;
+                    panel1.setBackground(seleccionado ? StyleUtils.BACKGROUND_DARKER : null);
+
+                    if (seleccionado) {
+                    	panelesSeleccionados.add(panel1);
+                    }
+                    else {
+                    	panelesSeleccionados.remove(panel1);
+                    }
+
+                    btnAceptar.setEnabled(!panelesSeleccionados.isEmpty());
+                }
+            });
+            panelVentajas.add(panel1);
+        }
+        if (mostrarSegundo) {
+            JPanel panel2 = new JPanel();
+            panel2.setPreferredSize(tamañoPanel);
+            panel2.setBorder(BorderFactory.createTitledBorder("Descuento por fecha"));
+            panel2.add(new JLabel("Recibe un 20% de descuento por ser usuario desde el 10/01/2024"));
+            panel2.addMouseListener(new MouseAdapter() {
+                boolean seleccionado = false;
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    seleccionado = !seleccionado;
+                    panel2.setBackground(seleccionado ? StyleUtils.BACKGROUND_DARKER : null);
+
+                    if (seleccionado) {
+                    	panelesSeleccionados.add(panel2);
+                    }
+                    else {
+                    	panelesSeleccionados.remove(panel2);
+                    }
+
+                    btnAceptar.setEnabled(!panelesSeleccionados.isEmpty());
+                }
+            });
+            panelVentajas.add(panel2);
+        }
+
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnCancelar = new JButton("Cancelar");
+
+        btnAceptar.addActionListener(e -> {
+        	layout.show(contenedorPremium, "COMBO");
+            dialogo.dispose();
+        });
+
+        btnCancelar.addActionListener(e -> dialogo.dispose());
+
+        panelBotones.add(btnAceptar);
+        panelBotones.add(btnCancelar);
+
+        contenido.add(panelVentajas, BorderLayout.CENTER);
+        contenido.add(panelBotones, BorderLayout.SOUTH);
+        dialogo.setContentPane(contenido);
+        dialogo.setVisible(true);
     }
     
     private void entrarGrupos() {
@@ -170,24 +293,24 @@ public class VentanaPrincipal {
 	    listaGrupos.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 	    JScrollPane scroll = new JScrollPane(listaGrupos);
-	    scroll.setPreferredSize(new Dimension(200, 0)); // Aumentamos el ancho
+	    scroll.setPreferredSize(new Dimension(200, 0)); 
 	    scroll.setBorder(BorderFactory.createTitledBorder("Grupos"));
 
-	    // Lo envolvemos en un panel con margen
+	    
 	    JPanel contenedor = new JPanel(new BorderLayout());
-	    contenedor.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5)); // margen izquierdo
+	    contenedor.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5)); 
 	    contenedor.add(scroll, BorderLayout.CENTER);
 
-        // Añadimos el JScrollPane al panelCentral en BorderLayout.WEST
+        
         panelCentral.add(scroll, BorderLayout.WEST);
 
-        // Añadir scrollPane al panelCentral en WEST
+        
         panelCentral.add(scroll, BorderLayout.WEST);
 
-        // Panel derecho: TextField + "+" más abajo
+        
         JPanel panelDerecho = new JPanel();
         panelDerecho.setLayout(new BoxLayout(panelDerecho, BoxLayout.Y_AXIS));
-        panelDerecho.add(Box.createVerticalStrut(30)); // ↓ Desplaza elementos hacia abajo
+        panelDerecho.add(Box.createVerticalStrut(30)); 
 
         JTextField textField = new JTextField();
         textField.setPreferredSize(new Dimension(250, 30));
@@ -204,7 +327,7 @@ public class VentanaPrincipal {
 
         dialog.add(panelCentral, BorderLayout.CENTER);
 
-        // --- Panel inferior: botones centrados
+        
         JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         JButton btnModificar = new JButton("Modificar");
         JButton btnCancelar = new JButton("Cancelar");
