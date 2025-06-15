@@ -86,6 +86,11 @@ public class VentanaPrincipal {
         contenedorPremium.add(comboPremium, "COMBO");
 
         CardLayout layout = (CardLayout) contenedorPremium.getLayout();
+        if (AppChat.INSTANCE.usuarioActual.isPremium()) {
+            layout.show(contenedorPremium, "COMBO");
+        } else {
+            layout.show(contenedorPremium, "BOTON");
+        }
 
         btnPremium.addActionListener(e -> {
         	mostrarVentajasPremium(contenedorPremium);           
@@ -94,6 +99,7 @@ public class VentanaPrincipal {
         comboPremium.addActionListener(e -> {
         	String seleccion = (String) comboPremium.getSelectedItem();
             if ("Cancelar Premium".equals(seleccion)) {
+            	AppChat.INSTANCE.usuarioActual.setPremium(false);
                 layout.show(contenedorPremium, "BOTON");
             }
         });
@@ -181,7 +187,7 @@ public class VentanaPrincipal {
     	CardLayout layout = (CardLayout) contenedorPremium.getLayout();
         JDialog dialogo = new JDialog(frame, "Ventajas Premium", true);
         dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        dialogo.setSize(500, 300);
+        dialogo.setSize(500, 400);
         dialogo.setLocationRelativeTo(frame); 
 
         JPanel contenido = new JPanel();
@@ -200,59 +206,24 @@ public class VentanaPrincipal {
         
         boolean mostrarPrimero = true;
         boolean mostrarSegundo = true;
-//        boolean mostrarPrimero = AppChat.INSTANCE.usuarioActual.numMensajes();
-//        boolean mostrarSegundo = AppChat.INSTANCE.usuarioActual.getFecha().isBefore(LocalDate.of(2024, 1, 10));
+        //boolean mostrarPrimero = AppChat.INSTANCE.usuarioActual.numMensajes();
+        //boolean mostrarSegundo = AppChat.INSTANCE.usuarioActual.getFechaRegistro().isBefore(LocalDate.of(2024, 1, 10));
         
+        
+        JPanel panel3 = crearPanel("Precio original", "Obtén Premium por el precio original", tamañoPanel, panelesSeleccionados, btnAceptar);
+        panelVentajas.add(panel3);
+
         if (mostrarPrimero) {
-        	JPanel panel1 = new JPanel();
-        	panel1.setPreferredSize(tamañoPanel);
-            panel1.setBorder(BorderFactory.createTitledBorder("Descuento por mensajes"));
-            panel1.add(new JLabel("Recibe un 30% de descuento por enviar más de 10 mensajes en tu cuenta"));
-            panel1.addMouseListener(new MouseAdapter() {
-                boolean seleccionado = false;
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    seleccionado = !seleccionado;
-                    panel1.setBackground(seleccionado ? StyleUtils.BACKGROUND_DARKER : null);
-
-                    if (seleccionado) {
-                    	panelesSeleccionados.add(panel1);
-                    }
-                    else {
-                    	panelesSeleccionados.remove(panel1);
-                    }
-
-                    btnAceptar.setEnabled(!panelesSeleccionados.isEmpty());
-                }
-            });
+            JPanel panel1 = crearPanel("Descuento por mensajes", "Recibe un 30% de descuento por enviar más de 10 mensajes en tu cuenta", tamañoPanel, panelesSeleccionados, btnAceptar);
             panelVentajas.add(panel1);
         }
+
         if (mostrarSegundo) {
-            JPanel panel2 = new JPanel();
-            panel2.setPreferredSize(tamañoPanel);
-            panel2.setBorder(BorderFactory.createTitledBorder("Descuento por fecha"));
-            panel2.add(new JLabel("Recibe un 20% de descuento por ser usuario desde el 10/01/2024"));
-            panel2.addMouseListener(new MouseAdapter() {
-                boolean seleccionado = false;
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    seleccionado = !seleccionado;
-                    panel2.setBackground(seleccionado ? StyleUtils.BACKGROUND_DARKER : null);
-
-                    if (seleccionado) {
-                    	panelesSeleccionados.add(panel2);
-                    }
-                    else {
-                    	panelesSeleccionados.remove(panel2);
-                    }
-
-                    btnAceptar.setEnabled(!panelesSeleccionados.isEmpty());
-                }
-            });
+            JPanel panel2 = crearPanel("Descuento por fecha", "Recibe un 20% de descuento por ser usuario desde el 10/01/2024", tamañoPanel, panelesSeleccionados, btnAceptar);
             panelVentajas.add(panel2);
         }
+        
+
 
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton btnCancelar = new JButton("Cancelar");
@@ -260,6 +231,7 @@ public class VentanaPrincipal {
         btnAceptar.addActionListener(e -> {
         	layout.show(contenedorPremium, "COMBO");
             dialogo.dispose();
+            AppChat.INSTANCE.usuarioActual.setPremium(true);
         });
 
         btnCancelar.addActionListener(e -> dialogo.dispose());
@@ -273,6 +245,32 @@ public class VentanaPrincipal {
         dialogo.setVisible(true);
     }
     
+    private JPanel crearPanel(String titulo, String texto, Dimension tamañoPanel, List<JPanel> paneles, JButton btnAceptar) {
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(tamañoPanel);
+        panel.setBorder(BorderFactory.createTitledBorder(titulo));
+        panel.add(new JLabel(texto));
+
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                for (JPanel p : paneles) {
+                    p.setBackground(null);
+                    p.putClientProperty("seleccionado", false);
+                }
+
+                panel.setBackground(StyleUtils.BACKGROUND_DARKER);
+                panel.putClientProperty("seleccionado", true);
+
+                btnAceptar.setEnabled(true);
+            }
+        });
+
+        panel.putClientProperty("seleccionado", false);
+        paneles.add(panel);
+        return panel;
+    }
+
     private void entrarGrupos() {
     	JDialog dialog = new JDialog(frame, "Crear/Modificar grupo", true);
         dialog.setSize(500, 250);

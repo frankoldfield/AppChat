@@ -68,6 +68,7 @@ public class VentanaLogin {
 	    textUsuario = new JTextField(15);
 	    gbc.gridx = 1;
 	    gbc.gridy = 1;
+	    gbc.weightx = 1.0;
 	    gbc.anchor = GridBagConstraints.CENTER;
 	    panelLogin.add(textUsuario, gbc);
 
@@ -83,6 +84,7 @@ public class VentanaLogin {
 	    textPassword = new JPasswordField(15);
 	    gbc.gridx = 1;
 	    gbc.gridy = 2;
+	    gbc.weightx = 1.0;
 	    gbc.anchor = GridBagConstraints.CENTER;
 	    panelLogin.add(textPassword, gbc);
 
