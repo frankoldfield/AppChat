@@ -1,8 +1,10 @@
 package umu.tds.apps.AppChat.vistas;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -13,17 +15,20 @@ import umu.tds.apps.AppChat.dominio.Grupo;
 
 public class VentanaGrupos {
 	
+	private VentanaPrincipal ventanaPrincipal;
 	private JFrame frmGrupos;
 	private JPanel scrollPanelIzquierdo;
     private JPanel scrollPanelDerecho;
     private String nombreGrupo;
+    
     
     DefaultListModel<String> modeloContactos;
     DefaultListModel<String> modeloContactosEnGrupo;
     private JList<String> listaContactos;
     private JList<String> listaContactosInGrupo;
 	
-    public VentanaGrupos(String nombreGrupo) {
+    public VentanaGrupos(VentanaPrincipal ventanaPrincipal, String nombreGrupo) {
+    	this.ventanaPrincipal = ventanaPrincipal;
     	this.nombreGrupo = nombreGrupo;
         initialize();
         
@@ -42,11 +47,11 @@ public class VentanaGrupos {
 
 		frmGrupos.add(crearPanelCentral(), BorderLayout.CENTER);
 
-		scrollPanelIzquierdo = crearPanelIzquierdo();
-		frmGrupos.add(scrollPanelIzquierdo, BorderLayout.WEST);
-
 		scrollPanelDerecho = crearPanelDerecho();
 		frmGrupos.add(scrollPanelDerecho, BorderLayout.EAST);
+		
+		scrollPanelIzquierdo = crearPanelIzquierdo();
+		frmGrupos.add(scrollPanelIzquierdo, BorderLayout.WEST);
 
 		frmGrupos.add(crearPanelInferior(), BorderLayout.SOUTH);
 	}
@@ -96,7 +101,7 @@ public class VentanaGrupos {
 		
 		List<ContactoIndividual> contactos = AppChat.INSTANCE.getListaContactos();
         List<String> nombres = contactos.stream()
-        		  .filter(c -> !c.getNombre().isEmpty())
+        		  .filter(c -> !c.getNombre().isEmpty() && !modeloContactosEnGrupo.contains(c.getNombre()))
 				  .map(c -> c.getNombre())
 				  .collect(Collectors.toList());
         
@@ -156,7 +161,18 @@ public class VentanaGrupos {
 		btnCancelar.addActionListener(e -> frmGrupos.dispose());
 		btnAceptar.addActionListener(e -> {
 			// TODO: Enviar cambios al backend
-			JOptionPane.showMessageDialog(frmGrupos, "Cambios guardados");
+			List<ContactoIndividual> contactosEnGrupo = AppChat.INSTANCE.getListaContactos().stream()
+				    .filter(c -> (c instanceof ContactoIndividual) && IntStream.range(0, modeloContactosEnGrupo.getSize())
+				        .mapToObj(modeloContactosEnGrupo::getElementAt)
+				        .anyMatch(nombre -> nombre.equals(c.getNombre())))
+				    .collect(Collectors.toList());
+
+			AppChat.INSTANCE.CrearOActualizarGrupo(nombreGrupo, contactosEnGrupo);
+			
+			JOptionPane.showMessageDialog(frmGrupos, "Grupo creado o modificado");
+			frmGrupos.dispose();
+			ventanaPrincipal.refrescarPanelIzquierdo();
+			
 		});
 
 		panel.add(btnAceptar);

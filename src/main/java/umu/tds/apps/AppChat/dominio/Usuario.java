@@ -1,6 +1,7 @@
 package umu.tds.apps.AppChat.dominio;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,21 +12,25 @@ public class Usuario {
 	private String nombre;
 	private String apellidos;
 	private String password;
+	private LocalDate fechaNacimiento;
 	private String imagen;
 	private String saludo;
+	private LocalDateTime fechaCreacion;
 	private boolean isPremium;
 	private Contacto contactoActual;
 	private ContactoIndividual contactoPropio;
 	private ArrayList<Contacto> Contactos;
 	
-	public Usuario(String nombre, String apellidos, String password, String movil, LocalDate fecha, String imagen, String saludo) {
+	public Usuario(String nombre, String apellidos, String password, String movil, LocalDate fechaNacimiento, String imagen, String saludo) {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.password = password;
 		this.movil = movil;
 		this.nombre = nombre;
+		this.fechaNacimiento = fechaNacimiento;
 		this.imagen = imagen;
 		this.saludo = saludo;
+		this.fechaCreacion = LocalDateTime.now();
 		this.isPremium = false;
 		this.contactoPropio = new ContactoIndividual(nombre, movil);
 		Contactos = new ArrayList<Contacto>();
@@ -137,6 +142,10 @@ public class Usuario {
 
 	public ContactoIndividual getContactoPropio() {
 		return contactoPropio;
+	}
+
+	public LocalDateTime getFechaCreacion() {
+		return fechaCreacion;
 	}
 	
 }

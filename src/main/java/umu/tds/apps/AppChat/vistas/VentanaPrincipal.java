@@ -30,6 +30,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class VentanaPrincipal {
     private JFrame frame;
@@ -99,7 +101,7 @@ public class VentanaPrincipal {
         comboPremium.addActionListener(e -> {
         	String seleccion = (String) comboPremium.getSelectedItem();
             if ("Cancelar Premium".equals(seleccion)) {
-            	AppChat.INSTANCE.usuarioActual.setPremium(false);
+            	AppChat.INSTANCE.removePremium();
                 layout.show(contenedorPremium, "BOTON");
             }
         });
@@ -204,10 +206,11 @@ public class VentanaPrincipal {
         JButton btnAceptar = new JButton("Aceptar");
         btnAceptar.setEnabled(false);
         
-        boolean mostrarPrimero = true;
-        boolean mostrarSegundo = true;
-        //boolean mostrarPrimero = AppChat.INSTANCE.usuarioActual.numMensajes();
-        //boolean mostrarSegundo = AppChat.INSTANCE.usuarioActual.getFechaRegistro().isBefore(LocalDate.of(2024, 1, 10));
+//        boolean mostrarPrimero = true;
+//        boolean mostrarSegundo = true;
+        boolean mostrarPrimero = (AppChat.INSTANCE.numMensajes()>2); // TODO Ajustar intervalo de descuento por mensajes
+        boolean mostrarSegundo = AppChat.INSTANCE.getFechaRegistro().isBefore(LocalDateTime.of(2024, 1, 10, 0, 0, 0)); // TODO Ajustar intervalo de descuento por fecha
+
         
         
         JPanel panel3 = crearPanel("Precio original", "Obtén Premium por el precio original", tamañoPanel, panelesSeleccionados, btnAceptar);
@@ -231,7 +234,7 @@ public class VentanaPrincipal {
         btnAceptar.addActionListener(e -> {
         	layout.show(contenedorPremium, "COMBO");
             dialogo.dispose();
-            AppChat.INSTANCE.usuarioActual.setPremium(true);
+            AppChat.INSTANCE.buyPremium();
         });
 
         btnCancelar.addActionListener(e -> dialogo.dispose());
@@ -346,7 +349,7 @@ public class VentanaPrincipal {
         btnModificar.addActionListener(e -> {
         	//TODO COGER GRUPO PARA PASÁRSELO A VENTANAGRUPOS
         	
-            VentanaGrupos ventana = new VentanaGrupos(listaGrupos.getSelectedValue());
+            VentanaGrupos ventana = new VentanaGrupos(this, listaGrupos.getSelectedValue());
             dialog.dispose();
             ventana.mostrarVentana();
         });
@@ -363,7 +366,7 @@ public class VentanaPrincipal {
                 return;
         	}
         	else {
-        		VentanaGrupos ventana = new VentanaGrupos(textField.getText());
+        		VentanaGrupos ventana = new VentanaGrupos(this, textField.getText());
         		dialog.dispose();
                 ventana.mostrarVentana();
         	}
@@ -408,7 +411,7 @@ public class VentanaPrincipal {
         for (Contacto contacto : contactos) {
             if (contacto instanceof ContactoIndividual) {
             	String otroNumero = ((ContactoIndividual) contacto).getMovil();
-                List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", otroNumero, "");
+                List<Mensaje> conversacion = contacto.getMensajes();
                 
                 String ultimo = "";           
                 if (!conversacion.isEmpty()) {
@@ -418,7 +421,6 @@ public class VentanaPrincipal {
             				break;
             			}
             		}
-//                	ultimo = conversacion.get(conversacion.size() - 1).getTexto();
                 }
 
                 JPanel elemento;
@@ -433,7 +435,27 @@ public class VentanaPrincipal {
                 panelChats.add(elemento);
                 panelChats.add(Box.createRigidArea(new Dimension(0, 10)));
             } else {
-                continue; //TODO GRUPOS
+            	String nombreGrupo = contacto.getNombre();
+                List<Mensaje> conversacion = contacto.getMensajes();
+                
+                String ultimo = "";           
+                if (!conversacion.isEmpty()) {
+            		for(Mensaje mensaje: conversacion.reversed()) {
+            			if(!mensaje.getTexto().isEmpty()) {
+            				ultimo = mensaje.getTexto();
+            				break;
+            			}
+            		}
+//                	ultimo = conversacion.get(conversacion.size() - 1).getTexto();
+                }
+
+                JPanel elemento = crearElementoChat(contacto.getNombre(), ultimo, "");
+                
+                elemento.setBorder(StyleUtils.createPanelBorder());
+                
+                panelChats.add(elemento);
+                panelChats.add(Box.createRigidArea(new Dimension(0, 10)));
+            	
             }  
         }
 
@@ -464,9 +486,15 @@ public class VentanaPrincipal {
                 //Color azul claro para el chat seleccionado
                 panel.setBackground(new Color(220, 240, 255));
                 panel.setBackground(StyleUtils.BACKGROUND_DARKER);
-                panelChatSeleccionado = panel;	
-                contactoChat = AppChat.getInstance().usuarioActual.getContactoIndividual(movil);
-                mostrarConversacion((ContactoIndividual) contactoChat);
+                panelChatSeleccionado = panel;
+                if(movil.isEmpty()) {
+                	contactoChat = AppChat.getInstance().usuarioActual.getGrupo(nombre);
+                }
+                else {
+                	contactoChat = AppChat.getInstance().usuarioActual.getContactoIndividual(movil);
+                }
+                
+                mostrarConversacion(contactoChat);
             }
         });
         
@@ -578,7 +606,7 @@ public class VentanaPrincipal {
         dialog.setVisible(true);
     }
     
-    private void refrescarPanelIzquierdo() {
+    public void refrescarPanelIzquierdo() {
         frame.remove(scrollPanelIzquierdo); 
         scrollPanelIzquierdo = crearPanelIzquierdo();
         frame.add(scrollPanelIzquierdo, BorderLayout.WEST); 
@@ -586,7 +614,7 @@ public class VentanaPrincipal {
         frame.repaint();
     }
     
-    private void refrescarPanelDerecho() {
+    public void refrescarPanelDerecho() {
         frame.remove(panelDerecho); 
         panelDerecho = crearPanelDerecho();
         frame.add(panelDerecho, BorderLayout.CENTER); 
@@ -628,11 +656,17 @@ public class VentanaPrincipal {
         btnEnviar.addActionListener(e -> {
         	String texto = enviarMensaje.getText();
         	if (!texto.isEmpty()) {
-        		AppChat.INSTANCE.enviarMensajeContacto((ContactoIndividual)contactoChat, texto, -1, TipoMensaje.ENVIADO);
+        		if(contactoChat instanceof ContactoIndividual) {
+        			AppChat.INSTANCE.enviarMensajeContacto((ContactoIndividual)contactoChat, texto, -1, TipoMensaje.ENVIADO);
+        		}
+        		else {
+        			AppChat.INSTANCE.enviarMensajeGrupo((Grupo)contactoChat, texto, -1, TipoMensaje.ENVIADO);
+        		}
+        		
         		BubbleText burbuja = new BubbleText(chat, texto, StyleUtils.BACKGROUND_DARKER,
             			AppChat.INSTANCE.usuarioActual.getNombre(), BubbleText.SENT);
             	chat.add(burbuja);
-            	List<Mensaje> conversacion = AppChat.INSTANCE.buscarMensajes("", "", contactoChat.getNombre());
+            	List<Mensaje> conversacion = contactoChat.getMensajes();
             	String ultimo = "";
             	if (!conversacion.isEmpty()) {
             		for(Mensaje mensaje: conversacion.reversed()) {
@@ -654,15 +688,15 @@ public class VentanaPrincipal {
         return panelDerecho;
     }
     
-    private void mostrarConversacion(ContactoIndividual c) {
+    private void mostrarConversacion(Contacto contacto) {
         chat.removeAll();
         Usuario usuarioActual = AppChat.getInstance().usuarioActual;
         String miNumero = usuarioActual.getMovil();
-        List<Mensaje> mensajes = AppChat.INSTANCE.buscarMensajes("", c.getMovil(), "");
+        List<Mensaje> mensajes = contacto.getMensajes();
         BubbleText burbuja;
-        String otraPersonaHeader = c.getNombre();
-        if(otraPersonaHeader.isEmpty()) {
-        	otraPersonaHeader = c.getMovil();
+        String otraPersonaHeader = contacto.getNombre();
+        if(contacto instanceof ContactoIndividual && otraPersonaHeader.isEmpty()) {
+        	otraPersonaHeader = ((ContactoIndividual) contacto).getMovil();
         }
         for (Mensaje mensaje : mensajes) {
             boolean enviado = mensaje.getContacto_emisor().getMovil().equals(miNumero);

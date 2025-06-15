@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import umu.tds.apps.AppChat.controlador.AppChat;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
+import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.persistencia.RepositorioUsuarios;
 import umu.tds.apps.AppChat.vistas.*;
@@ -65,6 +66,7 @@ public class CargarAppChat {
 		appChat.registrarUsuario("anne", "apellido","ee", "51", "ee", LocalDate.of(1990, 3, 28), "/usuarios/abbetatkir.jpg", "hola, soy anne");
 		
 		appChat.login("11", "aa");
+		appChat.buyPremium();
 		
 		ContactoIndividual c2 = appChat.agregarContacto("elena", "22");
 		ContactoIndividual c3 = appChat.agregarContacto("rosalia", "33");
@@ -77,11 +79,16 @@ public class CargarAppChat {
 		appChat.enviarMensajeContacto(c2, "", 6, TipoMensaje.ENVIADO);
 		appChat.enviarMensajeContacto(c3, "holaaa", -1, TipoMensaje.ENVIADO);
 		appChat.enviarMensajeContacto(c3, "hola", -1, TipoMensaje.ENVIADO);
+		ArrayList<ContactoIndividual> listaContactoGrupo = new ArrayList<ContactoIndividual>();
+		listaContactoGrupo.add(c2);
+		Grupo grupoLol = appChat.CrearOActualizarGrupo("grupoLOL", listaContactoGrupo);
+		
+		appChat.enviarMensajeGrupo(grupoLol, "Bon dia", -1, TipoMensaje.ENVIADO);
 		
 		appChat.login("22", "bb");
-		ArrayList<ContactoIndividual> listaContactoGrupo = new ArrayList<ContactoIndividual>();
-		listaContactoGrupo.add(c3);
-		appChat.CrearOActualizarGrupo("grupoLOL", listaContactoGrupo);
+		
+		c3 = appChat.agregarContacto("rosalia", "33");
+		
 		
 		//ContactoIndividual c1 =appChat.agregarContacto("jesus", "11");
 		ContactoIndividual c1 = RepositorioUsuarios.INSTANCE.buscarUsuarioPorMovil("22").getContactoIndividual("11");

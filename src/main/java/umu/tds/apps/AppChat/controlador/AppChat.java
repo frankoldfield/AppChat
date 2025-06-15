@@ -167,7 +167,13 @@ public class AppChat {
 	}
 
 	public String getImagenContacto(String movil) {
-		return getUsuario(movil).getImagen();
+		Usuario usuarioRecuperado = getUsuario(movil);
+		if(usuarioRecuperado!=null) {
+			return getUsuario(movil).getImagen();
+		}
+		else {
+			return "/usuarios/abbetatkir.jpg";
+		}
 	}
 
 	public void cambiarImagen(String rutaAbsoluta) {
@@ -178,7 +184,7 @@ public class AppChat {
 
 	}
 	
-	public int getPremium() {
+	public int buyPremium() {
 		//TODO PERSISTENCIA
 		
 		usuarioActual.setPremium(true);
@@ -200,6 +206,14 @@ public class AppChat {
 	public List<Mensaje> getConversacion(ContactoIndividual contacto) {
 		return contacto.getMensajes().stream().sorted(Comparator.comparing(Mensaje::getHora))
         .collect(Collectors.toList());
+	}
+	
+	public int numMensajes() {
+		return RepositorioMensajes.INSTANCE.buscar_Todos(usuarioActual.getMovil()).size();
+	}
+	
+	public LocalDateTime getFechaRegistro() {
+		return usuarioActual.getFechaCreacion();
 	}
 	
 	public void exportPDF(ContactoIndividual contacto) {
