@@ -7,14 +7,18 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import umu.tds.apps.AppChat.dominio.Grupo;
+
 public class VentanaGrupos {
 	
 	private JFrame frmGrupos;
 	private JPanel scrollPanelIzquierdo;
     private JPanel scrollPanelDerecho;
+    private String nombreGrupo;
 	
-    public VentanaGrupos() {
+    public VentanaGrupos(String nombreGrupo) {
         initialize();
+        this.nombreGrupo = nombreGrupo;
     }
 
     public void mostrarVentana() {
@@ -25,7 +29,6 @@ public class VentanaGrupos {
 
 	private void initialize() {
 		frmGrupos = new JFrame("AppChat");
-		frmGrupos.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmGrupos.setSize(750, 400);
 		frmGrupos.setLayout(new BorderLayout());
 

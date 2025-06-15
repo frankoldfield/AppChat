@@ -11,8 +11,10 @@ import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
 
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDarkerIJTheme;
+import com.sun.tools.javac.util.List;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -77,6 +79,9 @@ public class CargarAppChat {
 		appChat.enviarMensajeContacto(c3, "hola", -1, TipoMensaje.ENVIADO);
 		
 		appChat.login("22", "bb");
+		ArrayList<ContactoIndividual> listaContactoGrupo = new ArrayList<ContactoIndividual>();
+		listaContactoGrupo.add(c3);
+		appChat.CrearOActualizarGrupo("grupo", listaContactoGrupo);
 		
 		//ContactoIndividual c1 =appChat.agregarContacto("jesus", "11");
 		ContactoIndividual c1 = RepositorioUsuarios.INSTANCE.buscarUsuarioPorMovil("22").getContactoIndividual("11");

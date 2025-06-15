@@ -2,6 +2,10 @@ package umu.tds.apps.AppChat.vistas;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -121,9 +125,9 @@ public class VentanaPrincipal {
         
         
         
-
         btnGrupos.addActionListener(e ->{ 
-        	VentanaGrupos ventana = new VentanaGrupos();
+        	entrarGrupos();
+
         });
         btnBuscar.addActionListener(e->{
         	VentanaBuscar ventana = new VentanaBuscar();
@@ -155,16 +159,21 @@ public class VentanaPrincipal {
         JPanel panelCentral = new JPanel(new BorderLayout(10, 10));
         panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
 
-        JList<String> lista = new JList<>(new String[]{
-	        "Irene master", "Diego Sevilla", "Javier Candel", "Jose Hoyos"
-	    });
-	    lista.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        List<Grupo> grupos = AppChat.INSTANCE.getListaGrupos();
+        List<String> nombres = grupos.stream()
+				  .map(g -> g.getNombre())
+				  .collect(Collectors.toList());
+        String[] arrayNombres = nombres.toArray(String[]::new);
+        JList<String> listaGrupos = new JList<>(arrayNombres);
+        
+        
+	    listaGrupos.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-	    JScrollPane scroll = new JScrollPane(lista);
+	    JScrollPane scroll = new JScrollPane(listaGrupos);
 	    scroll.setPreferredSize(new Dimension(200, 0)); // Aumentamos el ancho
 	    scroll.setBorder(BorderFactory.createTitledBorder("Grupos"));
 
-	    // 👇 Lo envolvemos en un panel con margen
+	    // Lo envolvemos en un panel con margen
 	    JPanel contenedor = new JPanel(new BorderLayout());
 	    contenedor.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5)); // margen izquierdo
 	    contenedor.add(scroll, BorderLayout.CENTER);
@@ -200,13 +209,28 @@ public class VentanaPrincipal {
         JButton btnModificar = new JButton("Modificar");
         JButton btnCancelar = new JButton("Cancelar");
 
+//        String grupoSeleccionado;
+//        
+//        listaGrupos.addListSelectionListener(new ListSelectionListener() {
+//
+//            @Override
+//            public void valueChanged(ListSelectionEvent arg0) {
+//                if (!arg0.getValueIsAdjusting()) {
+//                	grupoSeleccionado = listaGrupos.getSelectedValue().toString();
+//                }
+//            }
+//        });
+//        
         btnCancelar.addActionListener(e -> dialog.dispose());
         btnModificar.addActionListener(e -> {
-            VentanaGrupos ventana = new VentanaGrupos();
+        	//TODO COGER GRUPO PARA PASÁRSELO A VENTANAGRUPOS
+        	
+            VentanaGrupos ventana = new VentanaGrupos(listaGrupos.getSelectedValue());
+            dialog.dispose();
             ventana.mostrarVentana();
         });
         btnAdd.addActionListener(e ->{
-        	List<Grupo> grupos = AppChat.INSTANCE.getListaGrupos();
+//        	List<Grupo> grupos = AppChat.INSTANCE.getListaGrupos();
         	boolean nombreCogido = false;
         	for (Grupo grupo : grupos) {
 				if (grupo.getNombre().equals(textField.getText())) {
@@ -216,6 +240,11 @@ public class VentanaPrincipal {
         	if(nombreCogido) {
         		JOptionPane.showMessageDialog(dialog, "Nombre de grupo usado", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
+        	}
+        	else {
+        		VentanaGrupos ventana = new VentanaGrupos(textField.getText());
+        		dialog.dispose();
+                ventana.mostrarVentana();
         	}
         });
 
