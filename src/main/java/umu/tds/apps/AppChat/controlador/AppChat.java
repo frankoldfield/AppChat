@@ -94,7 +94,7 @@ public class AppChat {
 			Usuario usuarioNuevo = new Usuario(nombre, apellidos, password, telefono, fecha, ruta_imagen, saludo);
 			RepositorioUsuarios.INSTANCE.usuarios.add(usuarioNuevo);
 		}
-		System.out.println("Código de registro: "+ returnCode);
+		
 		return returnCode;
 	}
 
@@ -112,11 +112,9 @@ public class AppChat {
 				else {
 					returnCode = -2;
 				}
-				System.out.println("Código de login: "+ returnCode);
 				return returnCode;
 			}
 		}
-		System.out.println("Código de login: "+ returnCode);
 		return returnCode;
 	}
 	
@@ -162,6 +160,10 @@ public class AppChat {
 			    .map(c -> (Grupo) c)
 			    .collect(Collectors.toList());
 		return listaGrupos;
+	}
+	
+	public Grupo getGrupo(String nombreGrupo) {
+		return usuarioActual.getGrupo(nombreGrupo);
 	}
 
 	public String getImagenContacto(String movil) {

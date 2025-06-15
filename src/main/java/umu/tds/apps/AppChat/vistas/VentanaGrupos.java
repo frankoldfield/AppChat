@@ -1,12 +1,14 @@
 package umu.tds.apps.AppChat.vistas;
 
 import java.awt.BorderLayout;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import umu.tds.apps.AppChat.controlador.AppChat;
+import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Grupo;
 
 public class VentanaGrupos {
@@ -15,10 +17,16 @@ public class VentanaGrupos {
 	private JPanel scrollPanelIzquierdo;
     private JPanel scrollPanelDerecho;
     private String nombreGrupo;
+    
+    DefaultListModel<String> modeloContactos;
+    DefaultListModel<String> modeloContactosEnGrupo;
+    private JList<String> listaContactos;
+    private JList<String> listaContactosInGrupo;
 	
     public VentanaGrupos(String nombreGrupo) {
+    	this.nombreGrupo = nombreGrupo;
         initialize();
-        this.nombreGrupo = nombreGrupo;
+        
     }
 
     public void mostrarVentana() {
@@ -57,6 +65,24 @@ public class VentanaGrupos {
 
 		btnDcha.setAlignmentX(Component.CENTER_ALIGNMENT);
 		btnIzq.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
+		btnDcha.addActionListener(e -> {
+		    int[] indices = listaContactos.getSelectedIndices();
+		    for (int i = indices.length - 1; i >= 0; i--) { // de atrás hacia adelante para evitar problemas al eliminar
+		        String contacto = modeloContactos.getElementAt(indices[i]);
+		        modeloContactosEnGrupo.addElement(contacto);
+		        modeloContactos.removeElementAt(indices[i]);
+		    }
+		});
+		
+		btnIzq.addActionListener(e -> {
+		    int[] indices = listaContactosInGrupo.getSelectedIndices();
+		    for (int i = indices.length - 1; i >= 0; i--) {
+		        String contacto = modeloContactosEnGrupo.getElementAt(indices[i]);
+		        modeloContactos.addElement(contacto);
+		        modeloContactosEnGrupo.removeElementAt(indices[i]);
+		    }
+		});
 
 		panel.add(btnDcha);
 		panel.add(Box.createVerticalStrut(10)); // Separación
@@ -66,12 +92,21 @@ public class VentanaGrupos {
 	}
 
 	private JPanel crearPanelIzquierdo() {
-	    JList<String> lista = new JList<>(new String[]{
-	        "Irene master", "Diego Sevilla", "Javier Candel", "Jose Hoyos"
-	    });
-	    lista.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		modeloContactos = new DefaultListModel<String>();
+		
+		List<ContactoIndividual> contactos = AppChat.INSTANCE.getListaContactos();
+        List<String> nombres = contactos.stream()
+        		  .filter(c -> !c.getNombre().isEmpty())
+				  .map(c -> c.getNombre())
+				  .collect(Collectors.toList());
+        
+        nombres.forEach(modeloContactos::addElement);
+        
+        listaContactos = new JList<>(modeloContactos);
+        
+        listaContactos.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-	    JScrollPane scroll = new JScrollPane(lista);
+	    JScrollPane scroll = new JScrollPane(listaContactos);
 	    scroll.setPreferredSize(new Dimension(300, 0)); // Aumentamos el ancho
 	    scroll.setBorder(BorderFactory.createTitledBorder("Contactos"));
 
@@ -84,12 +119,23 @@ public class VentanaGrupos {
 	}
 
 	private JPanel crearPanelDerecho() {
-	    JList<String> lista = new JList<>(new String[]{
-	        "Jose Hoyos", "Javier Bermudez", "Carlos Candel"
-	    });
-	    lista.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		modeloContactosEnGrupo = new DefaultListModel<String>();
+		
+		Grupo grupo;
+		grupo = AppChat.INSTANCE.getGrupo(nombreGrupo);
+        if(grupo != null) {
+        	List<String> nombres = grupo.getContactos().stream()
+  				  .map(c -> c.getNombre())
+  				  .collect(Collectors.toList());
+        	
+          nombres.forEach(modeloContactosEnGrupo::addElement);
+        }
+        
+        listaContactosInGrupo = new JList<>(modeloContactosEnGrupo);
+        
+	    listaContactosInGrupo.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-	    JScrollPane scroll = new JScrollPane(lista);
+	    JScrollPane scroll = new JScrollPane(listaContactosInGrupo);
 	    scroll.setPreferredSize(new Dimension(300, 0)); // Aumentamos el ancho
 	    scroll.setBorder(BorderFactory.createTitledBorder("Contactos añadidos"));
 

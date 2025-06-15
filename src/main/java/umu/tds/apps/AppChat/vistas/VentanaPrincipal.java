@@ -415,7 +415,6 @@ public class VentanaPrincipal {
                 String ultimo = "";           
                 if (!conversacion.isEmpty()) {
             		for(Mensaje mensaje: conversacion.reversed()) {
-            			System.out.println("lol "+mensaje.getTexto());
             			if(!mensaje.getTexto().isEmpty()) {
             				ultimo = mensaje.getTexto();
             				break;

@@ -58,6 +58,17 @@ public class Usuario {
 		Contactos.add(contactoVacio);
 		return contactoVacio;
 	}
+	
+	public Grupo getGrupo(String nombreGrupo) {
+		for(Contacto contacto: Contactos) {
+			if(contacto instanceof Grupo) {
+				if(((Grupo) contacto).getNombre().equals(nombreGrupo)) {
+					return (Grupo)contacto;
+				}
+			}
+		}
+		return null;
+	}
 
 	
 	
@@ -95,7 +106,7 @@ public class Usuario {
 		}
 		
 		Grupo grupoNuevo = new Grupo(nombreGrupo, contactosGrupo);
-		Contactos.add(new Grupo(nombre, contactosGrupo));
+		Contactos.add(grupoNuevo);
 		
 		return grupoNuevo;
 	}

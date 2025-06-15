@@ -81,7 +81,7 @@ public class CargarAppChat {
 		appChat.login("22", "bb");
 		ArrayList<ContactoIndividual> listaContactoGrupo = new ArrayList<ContactoIndividual>();
 		listaContactoGrupo.add(c3);
-		appChat.CrearOActualizarGrupo("grupo", listaContactoGrupo);
+		appChat.CrearOActualizarGrupo("grupoLOL", listaContactoGrupo);
 		
 		//ContactoIndividual c1 =appChat.agregarContacto("jesus", "11");
 		ContactoIndividual c1 = RepositorioUsuarios.INSTANCE.buscarUsuarioPorMovil("22").getContactoIndividual("11");
