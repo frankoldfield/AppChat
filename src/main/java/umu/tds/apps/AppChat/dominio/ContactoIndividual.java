@@ -27,4 +27,12 @@ public class ContactoIndividual extends Contacto {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+    public String toString() {
+		if(nombre.isEmpty()) {
+			return movil;
+		}
+        return nombre;
+    }
 }

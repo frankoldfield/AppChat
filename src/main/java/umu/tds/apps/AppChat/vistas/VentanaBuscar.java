@@ -6,6 +6,9 @@ import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
 import umu.tds.apps.AppChat.utils.StyleUtils;
 
 import javax.swing.*;
+
+import tds.BubbleText;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.List;
@@ -127,7 +130,7 @@ public class VentanaBuscar{
             	String emisor;
             	String receptor;
             	if(m.getEmoji()!=-1) {
-            		textoMensaje = "(Emoji)";
+            		textoMensaje = "Emoji";
             	}
             	if(m.getContacto_emisor().getMovil().equals(miNumero)) {
             		emisor = usuario.getNombre();
@@ -149,12 +152,8 @@ public class VentanaBuscar{
             		}
             		receptor = usuario.getNombre();
             	}
-            	
-                JLabel lbl = new JLabel(emisor + ": " + textoMensaje);
-                lbl.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-                //panelResultados.add(lbl);
                 
-                panelResultados.add(crearPanelMensaje(emisor, receptor, textoMensaje));
+                panelResultados.add(crearPanelMensaje(emisor, receptor, textoMensaje, m.getEmoji()));
             }
         }	
     	frmBuscar.revalidate(); 
@@ -164,7 +163,7 @@ public class VentanaBuscar{
         
     }
 
-    private JPanel crearPanelMensaje(String emisor, String receptor, String mensaje) {
+    private JPanel crearPanelMensaje(String emisor, String receptor, String mensaje, int Emoji) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2)); // Borde del panel principal del mensaje
         
@@ -176,10 +175,16 @@ public class VentanaBuscar{
         cabecera.add(labelReceptor, BorderLayout.EAST);
 
      // Área del mensaje con scroll opcional
-        JTextArea areaMensaje = new JTextArea(mensaje);
-        areaMensaje.setLineWrap(true);
-        areaMensaje.setWrapStyleWord(true);
-        areaMensaje.setEditable(false);
+        JLabel areaMensaje;
+        if(Emoji!=-1) {
+        	areaMensaje = new JLabel(BubbleText.getEmoji(Emoji));
+        }
+        else {
+        	areaMensaje = new JLabel(mensaje);
+        }
+//        areaMensaje.setLineWrap(true);
+//        areaMensaje.setWrapStyleWord(true);
+//        areaMensaje.setEditable(false);
         areaMensaje.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Márgenes internos del texto
         areaMensaje.setBackground(StyleUtils.BACKGROUND_DARKER);
         

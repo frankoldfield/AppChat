@@ -122,6 +122,7 @@ public class Usuario {
 		for(Contacto contacto: Contactos) {
 			if(contacto instanceof ContactoIndividual) {
 				if(((ContactoIndividual) contacto).getMovil().equals(mensaje.getContacto_emisor().getMovil())) {
+					mensaje.setContacto_emisor((ContactoIndividual) contacto);
 					contacto.addMensaje(mensaje);
 					registrado = true;
 				}
@@ -129,6 +130,7 @@ public class Usuario {
 		}
 		if(!registrado) {
 			ContactoIndividual contactoVacio = new ContactoIndividual(mensaje.getContacto_emisor().getMovil());
+			mensaje.setContacto_emisor(contactoVacio);
 			contactoVacio.addMensaje(mensaje);
 			Contactos.add(contactoVacio);
 		}
@@ -146,6 +148,17 @@ public class Usuario {
 
 	public LocalDateTime getFechaCreacion() {
 		return fechaCreacion;
+	}
+
+	public ContactoIndividual getContactoIndividualConNombre(String nombreContacto) {
+		for(Contacto contacto: Contactos) {
+			if(contacto instanceof ContactoIndividual) {
+				if(((ContactoIndividual) contacto).getNombre().equals(nombreContacto)) {
+					return (ContactoIndividual)contacto;
+				}
+			}
+		}
+		return null;
 	}
 	
 }

@@ -2,12 +2,15 @@ package umu.tds.apps.AppChat.controlador;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.itextpdf.text.DocumentException;
 
 import umu.tds.apps.AppChat.dominio.Contacto;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
@@ -37,9 +40,10 @@ public class AppChat {
 		Mensaje mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), ContactoDestino);
 		ContactoDestino.addMensaje(mensaje);
 		RepositorioMensajes.INSTANCE.mensajes.add(mensaje);
-		mensaje.setTipo(TipoMensaje.RECIBIDO);
 		
-		getUsuario(ContactoDestino.getMovil()).registrarMensaje(mensaje);
+		Mensaje mensajeReceptor = new Mensaje(texto, LocalDateTime.now(), emoji, TipoMensaje.RECIBIDO, usuarioActual.getContactoPropio(), ContactoDestino);
+		
+		getUsuario(ContactoDestino.getMovil()).registrarMensaje(mensajeReceptor);
 		
 	}
 	
@@ -50,9 +54,11 @@ public class AppChat {
 		mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), grupo_receptor);
 		grupo_receptor.addMensaje(mensaje);
 		RepositorioMensajes.INSTANCE.mensajes.add(mensaje);
-		mensaje.setTipo(TipoMensaje.RECIBIDO);
+		
+		
 		for(ContactoIndividual contacto: grupo_receptor.getContactos()) {
-			getUsuario(contacto.getMovil()).registrarMensaje(mensaje);
+			Mensaje mensajeReceptor = new Mensaje(texto, LocalDateTime.now(), emoji, TipoMensaje.RECIBIDO, usuarioActual.getContactoPropio(), contacto);
+			getUsuario(contacto.getMovil()).registrarMensaje(mensajeReceptor);
 		}
 	}
 	
@@ -203,7 +209,7 @@ public class AppChat {
 		return usuarioActual.isPremium();
 	}
 	
-	public List<Mensaje> getConversacion(ContactoIndividual contacto) {
+	public List<Mensaje> getConversacion(Contacto contacto) {
 		return contacto.getMensajes().stream().sorted(Comparator.comparing(Mensaje::getHora))
         .collect(Collectors.toList());
 	}
@@ -216,9 +222,16 @@ public class AppChat {
 		return usuarioActual.getFechaCreacion();
 	}
 	
-	public void exportPDF(ContactoIndividual contacto) {
+	public void exportPDF(Contacto contacto) {
+		if(contacto!=null) {
+			try {
+				ExportPDF.INSTANCE.exportarAPDF(getConversacion(contacto), usuarioActual.getNombre());
+			} catch (FileNotFoundException | DocumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		
-		ExportPDF.INSTANCE.exportarAPDF(getConversacion(contacto));
 	}
 
 	

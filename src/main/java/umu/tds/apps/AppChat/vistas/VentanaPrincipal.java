@@ -104,6 +104,9 @@ public class VentanaPrincipal {
             	AppChat.INSTANCE.removePremium();
                 layout.show(contenedorPremium, "BOTON");
             }
+            if ("Exportar a PDF".equals(seleccion)) {
+            	AppChat.INSTANCE.exportPDF(contactoChat);
+            }
         });
         String nombre = AppChat.INSTANCE.usuarioActual.getNombre();
         
@@ -275,109 +278,91 @@ public class VentanaPrincipal {
     }
 
     private void entrarGrupos() {
-    	JDialog dialog = new JDialog(frame, "Crear/Modificar grupo", true);
-        dialog.setSize(500, 250);
+        JDialog dialog = new JDialog(frame, "Crear/Modificar grupo", true);
+        dialog.setSize(500, 400);
         dialog.setLocationRelativeTo(frame);
-        dialog.setLayout(new BorderLayout(10, 10));
 
-        JPanel panelCentral = new JPanel(new BorderLayout(10, 10));
-        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20));
+        JPanel panelCentral = new JPanel();
+        panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
+        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20)); // margen uniforme
 
         List<Grupo> grupos = AppChat.INSTANCE.getListaGrupos();
         List<String> nombres = grupos.stream()
-				  .map(g -> g.getNombre())
-				  .collect(Collectors.toList());
-        String[] arrayNombres = nombres.toArray(String[]::new);
+            .map(Grupo::getNombre)
+            .collect(Collectors.toList());
+        String[] arrayNombres = nombres.toArray(new String[0]);
+
         JList<String> listaGrupos = new JList<>(arrayNombres);
-        
-        
-	    listaGrupos.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        listaGrupos.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-	    JScrollPane scroll = new JScrollPane(listaGrupos);
-	    scroll.setPreferredSize(new Dimension(200, 0)); 
-	    scroll.setBorder(BorderFactory.createTitledBorder("Grupos"));
+        JScrollPane scroll = new JScrollPane(listaGrupos);
+        scroll.setPreferredSize(new Dimension(450, 150));
+        scroll.setBorder(BorderFactory.createTitledBorder("Grupos"));
+        scroll.setAlignmentX(Component.LEFT_ALIGNMENT); // alineación izquierda
 
-	    
-	    JPanel contenedor = new JPanel(new BorderLayout());
-	    contenedor.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5)); 
-	    contenedor.add(scroll, BorderLayout.CENTER);
+        JLabel labelNuevoGrupo = new JLabel("Crear grupo nuevo");
+        labelNuevoGrupo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        
-        panelCentral.add(scroll, BorderLayout.WEST);
-
-        
-        panelCentral.add(scroll, BorderLayout.WEST);
-
-        
-        JPanel panelDerecho = new JPanel();
-        panelDerecho.setLayout(new BoxLayout(panelDerecho, BoxLayout.Y_AXIS));
-        panelDerecho.add(Box.createVerticalStrut(30)); 
+        JPanel panelCrearGrupo = new JPanel();
+        panelCrearGrupo.setLayout(new BoxLayout(panelCrearGrupo, BoxLayout.X_AXIS));
+        panelCrearGrupo.setAlignmentX(Component.LEFT_ALIGNMENT); // alineación izquierda
+        panelCrearGrupo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
         JTextField textField = new JTextField();
-        textField.setPreferredSize(new Dimension(250, 30));
-        textField.setMaximumSize(new Dimension(250, 30));
+        textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
         JButton btnAdd = new JButton("+");
-        btnAdd.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnAdd.setPreferredSize(new Dimension(50, 30));
 
-        panelDerecho.add(textField);
-        panelDerecho.add(Box.createVerticalStrut(10));
-        panelDerecho.add(btnAdd);
+        panelCrearGrupo.add(textField);
+        panelCrearGrupo.add(Box.createHorizontalStrut(10));
+        panelCrearGrupo.add(btnAdd);
 
-        panelCentral.add(panelDerecho, BorderLayout.CENTER);
+        panelCentral.add(scroll);
+        panelCentral.add(Box.createVerticalStrut(10));
+        panelCentral.add(labelNuevoGrupo);
+        panelCentral.add(Box.createVerticalStrut(5));
+        panelCentral.add(panelCrearGrupo);
 
         dialog.add(panelCentral, BorderLayout.CENTER);
 
-        
         JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         JButton btnModificar = new JButton("Modificar");
         JButton btnCancelar = new JButton("Cancelar");
 
-//        String grupoSeleccionado;
-//        
-//        listaGrupos.addListSelectionListener(new ListSelectionListener() {
-//
-//            @Override
-//            public void valueChanged(ListSelectionEvent arg0) {
-//                if (!arg0.getValueIsAdjusting()) {
-//                	grupoSeleccionado = listaGrupos.getSelectedValue().toString();
-//                }
-//            }
-//        });
-//        
         btnCancelar.addActionListener(e -> dialog.dispose());
+
         btnModificar.addActionListener(e -> {
-        	//TODO COGER GRUPO PARA PASÁRSELO A VENTANAGRUPOS
-        	
             VentanaGrupos ventana = new VentanaGrupos(this, listaGrupos.getSelectedValue());
             dialog.dispose();
             ventana.mostrarVentana();
         });
-        btnAdd.addActionListener(e ->{
-//        	List<Grupo> grupos = AppChat.INSTANCE.getListaGrupos();
-        	boolean nombreCogido = false;
-        	for (Grupo grupo : grupos) {
-				if (grupo.getNombre().equals(textField.getText())) {
-					nombreCogido = true;
-				}
-			}
-        	if(nombreCogido) {
-        		JOptionPane.showMessageDialog(dialog, "Nombre de grupo usado", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-        	}
-        	else {
-        		VentanaGrupos ventana = new VentanaGrupos(this, textField.getText());
-        		dialog.dispose();
+
+        btnAdd.addActionListener(e -> {
+            boolean nombreCogido = false;
+            for (Grupo grupo : grupos) {
+                if (grupo.getNombre().equals(textField.getText())) {
+                    nombreCogido = true;
+                    break;
+                }
+            }
+            if (nombreCogido) {
+                JOptionPane.showMessageDialog(dialog, "Nombre de grupo usado", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                VentanaGrupos ventana = new VentanaGrupos(this, textField.getText());
+                dialog.dispose();
                 ventana.mostrarVentana();
-        	}
+            }
         });
 
         panelInferior.add(btnModificar);
         panelInferior.add(btnCancelar);
 
-        dialog.add(panelInferior, BorderLayout.SOUTH);   
+        dialog.add(panelInferior, BorderLayout.SOUTH);
         dialog.setVisible(true);
     }
+
+
 
 
 //PANEL IZQUIERDO
@@ -640,20 +625,84 @@ public class VentanaPrincipal {
 
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getVerticalScrollBar().setUnitIncrement(10);
-
-        JPanel panelEnvio = new JPanel(new BorderLayout(5, 5));
         
+        
+        JPanel panelEnvio = new JPanel(new BorderLayout(5, 5));
+
         JTextField enviarMensaje = new JTextField();
         JButton btnEnviar = new JButton("->");
 
+        // Botón de emojis
+        JButton btnEmojiToggle = new JButton("😊"); // El botón para mostrar emojis
+        JPopupMenu menuEmojis = new JPopupMenu();
+        JPanel emojiPanel = new JPanel(new GridLayout(6, 4, 5, 5)); // 6 filas x 4 columnas
+
+        for (int i = 0; i < BubbleText.MAXICONO; i++) {
+            final int emojiIndex = i;
+            ImageIcon iconoIter = BubbleText.getEmoji(emojiIndex);
+
+            JButton btnEmoji = new JButton(iconoIter);
+            btnEmoji.setPreferredSize(new Dimension(40, 40)); // tamaño opcional
+            btnEmoji.setFocusPainted(false);
+            btnEmoji.setBorderPainted(false);
+            btnEmoji.setContentAreaFilled(false);
+
+            btnEmoji.addActionListener(e -> {
+            	if(contactoChat==null) {
+            		return;
+            	}
+                // Enviar emoji
+                if (contactoChat instanceof ContactoIndividual) {
+                    AppChat.INSTANCE.enviarMensajeContacto((ContactoIndividual) contactoChat, "", emojiIndex, TipoMensaje.ENVIADO);
+                } else {
+                    AppChat.INSTANCE.enviarMensajeGrupo((Grupo) contactoChat, "", emojiIndex, TipoMensaje.ENVIADO);
+                }
+
+                BubbleText burbuja = new BubbleText(chat, emojiIndex, StyleUtils.BACKGROUND_DARKER,
+                        AppChat.INSTANCE.usuarioActual.getNombre(), BubbleText.SENT, 12);
+                chat.add(burbuja);
+                chat.revalidate();
+                chat.repaint();
+
+                menuEmojis.setVisible(false);
+                refrescarPanelIzquierdo();
+            });
+
+            emojiPanel.add(btnEmoji);
+        }
+
+        // OBLIGATORIO: establecer tamaño preferido del panel
+        emojiPanel.setPreferredSize(new Dimension(4 * 45, 6 * 45)); // 4 columnas × 45px, 6 filas × 45px
+        menuEmojis.add(emojiPanel);
+
+        // MOSTRAR HACIA ARRIBA
+        btnEmojiToggle.addActionListener(e -> {
+            // Asegúrate de que el menú esté empaquetado correctamente
+            menuEmojis.pack();
+            Dimension menuSize = menuEmojis.getPreferredSize();
+
+            // Mostrarlo sobre el botón
+            menuEmojis.show(btnEmojiToggle, 0, -menuSize.height);
+        });
+
+
+        // Añadir a la interfaz
+        panelEnvio.add(btnEmojiToggle, BorderLayout.WEST);
         panelEnvio.add(enviarMensaje, BorderLayout.CENTER);
         panelEnvio.add(btnEnviar, BorderLayout.EAST);
         panelEnvio.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        
+        
+        
+        
 
         panelDerecho.add(scrollPane, BorderLayout.CENTER);
         panelDerecho.add(panelEnvio, BorderLayout.SOUTH);
        
         btnEnviar.addActionListener(e -> {
+        	if(contactoChat==null) {
+        		return;
+        	}
         	String texto = enviarMensaje.getText();
         	if (!texto.isEmpty()) {
         		if(contactoChat instanceof ContactoIndividual) {

@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import umu.tds.apps.AppChat.controlador.AppChat;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
@@ -69,7 +70,7 @@ public class RepositorioMensajes {
 		        .filter(m -> (m.getTexto().contains(texto))
 		        		  && (( m.getContacto_receptor() instanceof ContactoIndividual && m.getContacto_emisor().getMovil().equals(numeroUsuario) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroExterno))
 		                  || (m.getContacto_receptor() instanceof ContactoIndividual && m.getContacto_emisor().getMovil().equals(numeroExterno) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
-		                  || (m.getContacto_receptor() instanceof ContactoIndividual && m.getTipo().equals(TipoMensaje.RECIBIDO) && m.getContacto_emisor().equals(numeroExterno)) 
+		                  || (m.getContacto_receptor() instanceof ContactoIndividual && m.getTipo().equals(TipoMensaje.RECIBIDO) && m.getContacto_emisor().getMovil().equals(numeroExterno)) 
 		                		    && ((Grupo) m.getContacto_receptor()).getContactos()
 		                		       .stream()
 		                		       .anyMatch(c -> c.getMovil().equals(numeroUsuario))))
@@ -103,7 +104,7 @@ public class RepositorioMensajes {
 		    return mensajes.stream()
 		        .filter(m -> (m.getTexto().contains(texto))
 		        		  && ((m.getContacto_emisor().getMovil().equals(numeroUsuario) && m.getContacto_receptor().getNombre().equals(nombreContacto))
-		                  || (m.getContacto_receptor() instanceof ContactoIndividual && m.getContacto_emisor().getNombre().equals(nombreContacto) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
+		                  || (m.getContacto_receptor() instanceof ContactoIndividual &&m.getContacto_emisor().getMovil().equals(AppChat.INSTANCE.usuarioActual.getContactoIndividualConNombre(nombreContacto).getMovil()) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
 		                  || (m.getTipo().equals(TipoMensaje.RECIBIDO) && m.getContacto_emisor().getNombre().equals(nombreContacto) && (m.getContacto_receptor() instanceof Grupo) 
 		                		    && ((Grupo) m.getContacto_receptor()).getContactos()
 		                		       .stream()
@@ -119,7 +120,7 @@ public class RepositorioMensajes {
 
 		    return mensajes.stream()
 		        .filter(m -> (m.getContacto_emisor().getMovil().equals(numeroUsuario) && m.getContacto_receptor().getNombre().equals(nombreContacto))
-		                  || (m.getContacto_receptor() instanceof ContactoIndividual && m.getContacto_emisor().getNombre().equals(nombreContacto) && ((ContactoIndividual) m.getContacto_receptor()).equals(numeroUsuario)
+		                  || (m.getContacto_receptor() instanceof ContactoIndividual && m.getContacto_emisor().getMovil().equals(AppChat.INSTANCE.usuarioActual.getContactoIndividualConNombre(nombreContacto).getMovil()) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario)
                 		  || (m.getTipo().equals(TipoMensaje.RECIBIDO) && m.getContacto_emisor().getNombre().equals(nombreContacto) && (m.getContacto_receptor() instanceof Grupo) 
 		                		    && ((Grupo) m.getContacto_receptor()).getContactos()
 		                		       .stream()

@@ -22,10 +22,10 @@ public class VentanaGrupos {
     private String nombreGrupo;
     
     
-    DefaultListModel<String> modeloContactos;
-    DefaultListModel<String> modeloContactosEnGrupo;
-    private JList<String> listaContactos;
-    private JList<String> listaContactosInGrupo;
+    DefaultListModel<ContactoIndividual> modeloContactos;
+    DefaultListModel<ContactoIndividual> modeloContactosEnGrupo;
+    private JList<ContactoIndividual> listaContactos;
+    private JList<ContactoIndividual> listaContactosInGrupo;
 	
     public VentanaGrupos(VentanaPrincipal ventanaPrincipal, String nombreGrupo) {
     	this.ventanaPrincipal = ventanaPrincipal;
@@ -74,7 +74,7 @@ public class VentanaGrupos {
 		btnDcha.addActionListener(e -> {
 		    int[] indices = listaContactos.getSelectedIndices();
 		    for (int i = indices.length - 1; i >= 0; i--) { // de atrás hacia adelante para evitar problemas al eliminar
-		        String contacto = modeloContactos.getElementAt(indices[i]);
+		    	ContactoIndividual contacto = modeloContactos.getElementAt(indices[i]);
 		        modeloContactosEnGrupo.addElement(contacto);
 		        modeloContactos.removeElementAt(indices[i]);
 		    }
@@ -83,7 +83,7 @@ public class VentanaGrupos {
 		btnIzq.addActionListener(e -> {
 		    int[] indices = listaContactosInGrupo.getSelectedIndices();
 		    for (int i = indices.length - 1; i >= 0; i--) {
-		        String contacto = modeloContactosEnGrupo.getElementAt(indices[i]);
+		    	ContactoIndividual contacto = modeloContactosEnGrupo.getElementAt(indices[i]);
 		        modeloContactos.addElement(contacto);
 		        modeloContactosEnGrupo.removeElementAt(indices[i]);
 		    }
@@ -97,12 +97,11 @@ public class VentanaGrupos {
 	}
 
 	private JPanel crearPanelIzquierdo() {
-		modeloContactos = new DefaultListModel<String>();
+		modeloContactos = new DefaultListModel<ContactoIndividual>();
 		
 		List<ContactoIndividual> contactos = AppChat.INSTANCE.getListaContactos();
-        List<String> nombres = contactos.stream()
-        		  .filter(c -> !c.getNombre().isEmpty() && !modeloContactosEnGrupo.contains(c.getNombre()))
-				  .map(c -> c.getNombre())
+        List<ContactoIndividual> nombres = contactos.stream()
+        		  .filter(c -> !modeloContactosEnGrupo.contains(c.getNombre()))
 				  .collect(Collectors.toList());
         
         nombres.forEach(modeloContactos::addElement);
@@ -124,13 +123,12 @@ public class VentanaGrupos {
 	}
 
 	private JPanel crearPanelDerecho() {
-		modeloContactosEnGrupo = new DefaultListModel<String>();
+		modeloContactosEnGrupo = new DefaultListModel<ContactoIndividual>();
 		
 		Grupo grupo;
 		grupo = AppChat.INSTANCE.getGrupo(nombreGrupo);
         if(grupo != null) {
-        	List<String> nombres = grupo.getContactos().stream()
-  				  .map(c -> c.getNombre())
+        	List<ContactoIndividual> nombres = grupo.getContactos().stream()
   				  .collect(Collectors.toList());
         	
           nombres.forEach(modeloContactosEnGrupo::addElement);
@@ -144,7 +142,7 @@ public class VentanaGrupos {
 	    scroll.setPreferredSize(new Dimension(300, 0)); // Aumentamos el ancho
 	    scroll.setBorder(BorderFactory.createTitledBorder("Contactos añadidos"));
 
-	    // 👇 Lo envolvemos en un panel con margen
+	    // Lo envolvemos en un panel con margen
 	    JPanel contenedor = new JPanel(new BorderLayout());
 	    contenedor.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 10)); // margen derecho
 	    contenedor.add(scroll, BorderLayout.CENTER);
@@ -164,7 +162,7 @@ public class VentanaGrupos {
 			List<ContactoIndividual> contactosEnGrupo = AppChat.INSTANCE.getListaContactos().stream()
 				    .filter(c -> (c instanceof ContactoIndividual) && IntStream.range(0, modeloContactosEnGrupo.getSize())
 				        .mapToObj(modeloContactosEnGrupo::getElementAt)
-				        .anyMatch(nombre -> nombre.equals(c.getNombre())))
+				        .anyMatch(contacto -> contacto.getMovil().equals(c.getMovil())))
 				    .collect(Collectors.toList());
 
 			AppChat.INSTANCE.CrearOActualizarGrupo(nombreGrupo, contactosEnGrupo);
