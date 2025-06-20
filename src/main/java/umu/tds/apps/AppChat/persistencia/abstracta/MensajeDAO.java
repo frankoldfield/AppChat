@@ -8,7 +8,7 @@ public interface MensajeDAO {
 
 	
 	void create(Mensaje mensaje);
-	boolean delete(Mensaje mensaje);
+	void delete(Mensaje mensaje);
 	void update(Mensaje mensaje);
 	Mensaje get(int id);
 	List<Mensaje> getAll();

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public class Mensaje {
 	
-	private String id;
+	private int id;
 	private String texto;
 	private LocalDateTime hora;
 	private int emoji;
@@ -13,6 +13,7 @@ public class Mensaje {
 	private Contacto contacto_receptor;
 	
 	public Mensaje(String texto, LocalDateTime hora, int emoji, TipoMensaje tipo, ContactoIndividual contacto_emisor, Contacto contacto_receptor) {
+		this.id = 0;
 		this.texto = texto;
 		this.hora = hora;
 		this.emoji = emoji;
@@ -67,6 +68,14 @@ public class Mensaje {
 
 	public void setContacto_receptor(ContactoIndividual contacto_receptor) {
 		this.contacto_receptor = contacto_receptor;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 
 }

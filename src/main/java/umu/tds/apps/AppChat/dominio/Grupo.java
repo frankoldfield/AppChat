@@ -5,7 +5,6 @@ import java.util.List;
 
 public class Grupo extends Contacto{
 
-	private String id;
 	private List<ContactoIndividual> contactos;
 	
 	public Grupo(String nombre) {
