@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Usuario {
 
-	private String id;
+	private int id;
 	private String movil;
 	private String nombre;
 	private String apellidos;
@@ -17,7 +17,6 @@ public class Usuario {
 	private String saludo;
 	private LocalDateTime fechaCreacion;
 	private boolean isPremium;
-	private Contacto contactoActual;
 	private ContactoIndividual contactoPropio;
 	private ArrayList<Contacto> Contactos;
 	
@@ -76,8 +75,6 @@ public class Usuario {
 	}
 
 	
-	
-	public Contacto getContactoActual() {return contactoActual;}
 
 	public ArrayList<Contacto> getContactos() {return Contactos;}
 	
@@ -160,5 +157,27 @@ public class Usuario {
 		}
 		return null;
 	}
+
+	public String getApellidos() {
+		return apellidos;
+	}
+
+	public LocalDate getFechaNacimiento() {
+		return fechaNacimiento;
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public void setFechaCreacion(LocalDateTime fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;		
+	}
+
+	
 	
 }

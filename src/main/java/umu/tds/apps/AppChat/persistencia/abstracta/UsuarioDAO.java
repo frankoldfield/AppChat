@@ -7,10 +7,9 @@ import umu.tds.apps.AppChat.dominio.Usuario;
 public interface UsuarioDAO {
 
 	void create(Usuario usuario);
-	boolean delete(Usuario usuario);
+	void delete(Usuario usuario);
 	void update(Usuario usuario);
 	Usuario get(int id);
 	List<Usuario> getAll();
-	void setPremium(Usuario usuario, boolean premium);
 	
 }
