@@ -3,12 +3,18 @@ package umu.tds.apps.AppChat.persistencia.imp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import beans.Entidad;
 import beans.Propiedad;
 import tds.driver.FactoriaServicioPersistencia;
 import tds.driver.ServicioPersistencia;
+import umu.tds.apps.AppChat.dominio.Contacto;
+import umu.tds.apps.AppChat.dominio.ContactoIndividual;
+import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
+import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.persistencia.abstracta.MensajeDAO;
 
 public class TDSMensajeDAO implements MensajeDAO{
@@ -109,30 +115,33 @@ public class TDSMensajeDAO implements MensajeDAO{
 		String contacto_receptor = servPersistencia.recuperarPropiedadEntidad(eMensaje, CONTACTO_RECEPTOR);
 		
 		Entidad eContacto_emisor = servPersistencia.recuperarEntidad(Integer.parseInt(contacto_emisor));
-		
+		ContactoIndividual ObjContacto_emisor = daoContactoIndividual.get(eContacto_emisor.getId());
 		
 		Entidad eContacto_receptor = servPersistencia.recuperarEntidad(Integer.parseInt(contacto_receptor));
 		
-		if(eContacto_receptor.getPropiedades().get(0).getValor()=="contacto_individual") {
-			
+		Contacto ObjContacto_receptor;
+		
+		if(eContacto_receptor.getNombre()== "contacto_individual") {
+			ObjContacto_receptor = (Contacto) daoContactoIndividual.get(eContacto_receptor.getId());
 		}
 		else {
-			
+			ObjContacto_receptor = (Contacto) daoGrupo.get(eContacto_receptor.getId());
 		}
 		
 		
-		Mensaje mensaje= new Mensaje(texto, LocalDateTime.parse(hora), tipo, , );
-		cancion.setId(id);
-		return cancion;
+		Mensaje mensaje= new Mensaje(texto, LocalDateTime.parse(hora), Integer.parseInt(emoji), Enum.valueOf(TipoMensaje.class, tipo), ObjContacto_emisor, ObjContacto_receptor);
+		mensaje.setId(id);
+		return mensaje;
 	}
+	
 
 	@Override
 	public List<Mensaje> getAll() {
-		List<Entidad> eCanciones = servPersistencia.recuperarEntidades(CANCION);
-		List<Cancion> canciones = new LinkedList<Cancion>();
-		for (Entidad eCancion : eCanciones) {
-			canciones.add(get(eCancion.getId()));
+		List<Entidad> eMensajes = servPersistencia.recuperarEntidades(MENSAJE);
+		List<Mensaje> mensajes = new LinkedList<Mensaje>();
+		for (Entidad eMensaje : eMensajes) {
+			mensajes.add(get(eMensaje.getId()));
 		}
-		return canciones;
+		return mensajes;
 	}
 }
