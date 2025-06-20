@@ -89,11 +89,11 @@ public class CargarAppChat {
 		appChat.enviarMensajeContacto(c2, "", 6, TipoMensaje.ENVIADO);
 		appChat.enviarMensajeContacto(c3, "holaaa", -1, TipoMensaje.ENVIADO);
 		appChat.enviarMensajeContacto(c3, "hola", -1, TipoMensaje.ENVIADO);
-		ArrayList<ContactoIndividual> listaContactoGrupo = new ArrayList<ContactoIndividual>();
-		listaContactoGrupo.add(c2);
-		Grupo grupoLol = appChat.CrearOActualizarGrupo("grupoLOL", listaContactoGrupo);
-		
-		appChat.enviarMensajeGrupo(grupoLol, "Bon dia", -1, TipoMensaje.ENVIADO);
+//		ArrayList<ContactoIndividual> listaContactoGrupo = new ArrayList<ContactoIndividual>();
+//		listaContactoGrupo.add(c2);
+//		Grupo grupoLol = appChat.CrearOActualizarGrupo("grupoLOL", listaContactoGrupo);
+//		
+//		appChat.enviarMensajeGrupo(grupoLol, "Bon dia", -1, TipoMensaje.ENVIADO);
 		
 		appChat.login("22", "bb");
 		

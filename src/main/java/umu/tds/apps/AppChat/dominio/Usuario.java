@@ -178,6 +178,11 @@ public class Usuario {
 		this.fechaCreacion = fechaCreacion;		
 	}
 
+	public void setContactoPropio(ContactoIndividual contactoPropio) {
+		this.contactoPropio = contactoPropio;
+		
+	}
+
 	
 	
 }

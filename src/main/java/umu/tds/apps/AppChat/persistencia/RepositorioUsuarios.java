@@ -36,7 +36,7 @@ public class RepositorioUsuarios {
 	}
 	
 	public Usuario buscarUsuarioPorMovil(String numero_telefono) {
-		for(Usuario usuario: usuarioDAO.getAll()) {
+		for(Usuario usuario: usuarios) {
 			if(usuario.getMovil().equals(numero_telefono)) {
 				return usuario;
 			}

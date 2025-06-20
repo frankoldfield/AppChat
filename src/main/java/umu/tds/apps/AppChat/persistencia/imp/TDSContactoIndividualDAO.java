@@ -36,7 +36,7 @@ public class TDSContactoIndividualDAO implements ContactoIndividualDAO{
 	}
 
 	@Override
-	public void create(ContactoIndividual contacto) {
+	public ContactoIndividual create(ContactoIndividual contacto) {
 		Entidad eContacto = null;
 		boolean existe = true;
 		eContacto = servPersistencia.recuperarEntidad(contacto.getId());
@@ -45,7 +45,7 @@ public class TDSContactoIndividualDAO implements ContactoIndividualDAO{
 		}
 		// si ya existe no se crea de nuevo
 		if (existe) {
-			return;
+			return contacto;
 		}
 		
 		eContacto = new Entidad();
@@ -57,6 +57,7 @@ public class TDSContactoIndividualDAO implements ContactoIndividualDAO{
 
         eContacto = servPersistencia.registrarEntidad(eContacto);
         contacto.setId(eContacto.getId());
+        return contacto;
 	}
 
     @Override

@@ -96,7 +96,9 @@ public class AppChat {
 	
 	public ContactoIndividual agregarContacto(String nombre, String movil) { //Desde aquí se le dice al usuario que registre un nuevo contacto
 		//TODO PERSISTENCIA
-		return usuarioActual.addContacto(nombre, movil);
+		ContactoIndividual nuevoContacto = usuarioActual.addContacto(nombre, movil);
+		contactoIndividualDAO.create(nuevoContacto);
+		return nuevoContacto;
 	}
 	
 	public Grupo CrearOActualizarGrupo(String nombreGrupo, List<ContactoIndividual> contactosGrupo) {
@@ -133,6 +135,9 @@ public class AppChat {
 		
 		if(returnCode==0) {
 			Usuario usuarioNuevo = new Usuario(nombre, apellidos, password, telefono, fecha, ruta_imagen, saludo);
+			
+			ContactoIndividual contactoConId = contactoIndividualDAO.create(usuarioNuevo.getContactoPropio());
+			usuarioNuevo.setContactoPropio(contactoConId);
 			repoUsuarios.usuarios.add(usuarioNuevo);
 		}
 		
