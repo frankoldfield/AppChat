@@ -60,7 +60,7 @@ public class AppChat {
 		
 		Mensaje mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), ContactoDestino);
 		ContactoDestino.addMensaje(mensaje);
-		repoMensajes.mensajes.add(mensaje);
+		repoMensajes.add(mensaje);
 		
 		Mensaje mensajeReceptor = new Mensaje(texto, LocalDateTime.now(), emoji, TipoMensaje.RECIBIDO, usuarioActual.getContactoPropio(), ContactoDestino);
 		Usuario usuarioReceptor = getUsuario(ContactoDestino.getMovil());
@@ -77,7 +77,7 @@ public class AppChat {
 		Mensaje mensaje;
 		mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), grupo_receptor);
 		grupo_receptor.addMensaje(mensaje);
-		repoMensajes.mensajes.add(mensaje);
+		repoMensajes.add(mensaje);
 		
 		
 		for(ContactoIndividual contacto: grupo_receptor.getContactos()) {

@@ -15,7 +15,7 @@ import umu.tds.apps.AppChat.persistencia.imp.TDSMensajeDAO;
 
 public class RepositorioMensajes {
 	
-	public List<Mensaje> mensajes = new ArrayList<Mensaje>();
+//	public List<Mensaje> mensajes = new ArrayList<Mensaje>();
 	public static RepositorioMensajes unicaInstancia = new RepositorioMensajes();
 	public TDSMensajeDAO mensajeDAO;
 	
@@ -31,11 +31,11 @@ public class RepositorioMensajes {
 		mensajeDAO = factoriaDAO.getMensajeDAO();
 	}
 	
-	public void addMensaje(Mensaje mensaje) {
+	public void add(Mensaje mensaje) {
 		mensajeDAO.create(mensaje);
 	}
 
-	public Mensaje getMensaje(int id) {
+	public Mensaje get(int id) {
 		return mensajeDAO.get(id);
 	}
 	
@@ -44,7 +44,7 @@ public class RepositorioMensajes {
 	        String numero_Emisor,
 	        String numero_Receptor) {
 
-	    return mensajes.stream()
+	    return mensajeDAO.getAll().stream()
 	        .filter(m -> m.getContacto_emisor().getMovil().equals(numero_Emisor)
 	                  && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numero_Receptor))
 	        .sorted(Comparator.comparing(Mensaje::getHora)) // ascendente. Usa .reversed() si quieres descendente
@@ -58,7 +58,7 @@ public class RepositorioMensajes {
 	        String numeroUsuario,
 	        String numeroExterno) {
 
-	    return mensajes.stream()
+	    return mensajeDAO.getAll().stream()
 	        .filter(m -> (m.getContacto_receptor() instanceof ContactoIndividual && m.getContacto_emisor().getMovil().equals(numeroUsuario) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroExterno))
 	                  || (m.getContacto_receptor() instanceof ContactoIndividual && m.getContacto_emisor().getMovil().equals(numeroExterno) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
 	                  || (m.getContacto_receptor() instanceof Grupo && m.getTipo().equals(TipoMensaje.RECIBIDO) && m.getContacto_emisor().getMovil().equals(numeroExterno)) 
@@ -76,7 +76,7 @@ public class RepositorioMensajes {
 	        String numero_Receptor,
 	        String numero_Emisor) {
 
-	    return mensajes.stream()
+	    return mensajeDAO.getAll().stream()
 	        .filter(m -> m.getContacto_emisor().getMovil().equals(numero_Emisor)
 	                  && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numero_Receptor))
 	        .sorted(Comparator.comparing(Mensaje::getHora))
@@ -89,7 +89,7 @@ public class RepositorioMensajes {
 				String numeroUsuario,
 		        String numeroExterno) {
 
-		    return mensajes.stream()
+		    return mensajeDAO.getAll().stream()
 		        .filter(m -> (m.getTexto().contains(texto))
 		        		  && (( m.getContacto_receptor() instanceof ContactoIndividual && m.getContacto_emisor().getMovil().equals(numeroUsuario) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroExterno))
 		                  || (m.getContacto_receptor() instanceof ContactoIndividual && m.getContacto_emisor().getMovil().equals(numeroExterno) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
@@ -106,7 +106,7 @@ public class RepositorioMensajes {
 		        String texto,
 				String numeroUsuario) {
 
-		    return mensajes.stream()
+		    return mensajeDAO.getAll().stream()
 		        .filter(m -> (m.getTexto().contains(texto))
 		        		  && ((m.getContacto_emisor().getMovil().equals(numeroUsuario))
 		                  || ( m.getContacto_receptor() instanceof ContactoIndividual && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
@@ -124,7 +124,7 @@ public class RepositorioMensajes {
 				String numeroUsuario,
 		        String nombreContacto) {
 
-		    return mensajes.stream()
+		    return mensajeDAO.getAll().stream()
 		        .filter(m -> (m.getTexto().contains(texto))
 		        		  && ((m.getContacto_emisor().getMovil().equals(numeroUsuario) && m.getContacto_receptor().getNombre().equals(nombreContacto))
 		                  || (m.getContacto_receptor() instanceof ContactoIndividual &&m.getContacto_emisor().getMovil().equals(AppChat.INSTANCE.usuarioActual.getContactoIndividualConNombre(nombreContacto).getMovil()) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
@@ -141,7 +141,7 @@ public class RepositorioMensajes {
 		        String numeroUsuario,
 		        String nombreContacto) {
 
-		    return mensajes.stream()
+		    return mensajeDAO.getAll().stream()
 		        .filter(m -> (m.getContacto_emisor().getMovil().equals(numeroUsuario) && m.getContacto_receptor().getNombre().equals(nombreContacto))
 		                  || (m.getContacto_receptor() instanceof ContactoIndividual && m.getContacto_emisor().getMovil().equals(AppChat.INSTANCE.usuarioActual.getContactoIndividualConNombre(nombreContacto).getMovil()) && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario)
                 		  || (m.getTipo().equals(TipoMensaje.RECIBIDO) && m.getContacto_emisor().getNombre().equals(nombreContacto) && (m.getContacto_receptor() instanceof Grupo) 
@@ -155,7 +155,7 @@ public class RepositorioMensajes {
 	// 7) Mensajes que ha RECIBIDO un usuario de otro, ORDENADOS por hora
 			public List<Mensaje> buscar_Todos(String numeroUsuario) {
 
-			    return mensajes.stream()
+			    return mensajeDAO.getAll().stream()
 			        .filter(m -> m.getContacto_emisor().getMovil().equals(numeroUsuario) || ( m.getContacto_receptor() instanceof ContactoIndividual &&((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario))
 			        		|| (m.getTipo().equals(TipoMensaje.RECIBIDO)  && (m.getContacto_receptor() instanceof Grupo) 
 		                		    && ((Grupo) m.getContacto_receptor()).getContactos()

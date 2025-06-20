@@ -11,6 +11,7 @@ import umu.tds.apps.AppChat.persistencia.imp.TDSUsuarioDAO;
 
 public class RepositorioUsuarios {
 	
+	public List<Usuario> usuarios = new ArrayList<Usuario>();
 	public static RepositorioUsuarios unicaInstancia = new RepositorioUsuarios();
 	public TDSUsuarioDAO usuarioDAO;
 	
