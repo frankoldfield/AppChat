@@ -32,7 +32,7 @@ public class TDSMensajeDAO implements MensajeDAO{
 	/*
 	 * Patron singleton
 	 */
-	public static TDSMensajeDAO getUnicaInstancia() {
+	public static TDSMensajeDAO getInstance() {
 		if (unicaInstancia == null) {
 			return new TDSMensajeDAO();
 		} else
@@ -103,8 +103,8 @@ public class TDSMensajeDAO implements MensajeDAO{
 
 	@Override
 	public Mensaje get(int id) {
-		TDSContactoIndividualDAO daoContactoIndividual = TDSContactoIndividualDAO.getUnicaInstancia();
-		TDSGrupoDAO daoGrupo = TDSGrupoDAO.getUnicaInstancia();
+		TDSContactoIndividualDAO daoContactoIndividual = TDSContactoIndividualDAO.getInstance();
+		TDSGrupoDAO daoGrupo = TDSGrupoDAO.getInstance();
 		
 		Entidad eMensaje = servPersistencia.recuperarEntidad(id);
 		String texto = servPersistencia.recuperarPropiedadEntidad(eMensaje, TEXTO);

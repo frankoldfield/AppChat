@@ -20,12 +20,21 @@ import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
 import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
 import umu.tds.apps.AppChat.persistencia.RepositorioUsuarios;
+import umu.tds.apps.AppChat.persistencia.imp.TDSContactoIndividualDAO;
+import umu.tds.apps.AppChat.persistencia.imp.TDSFactoriaDAO;
+import umu.tds.apps.AppChat.persistencia.imp.TDSGrupoDAO;
+import umu.tds.apps.AppChat.persistencia.imp.TDSMensajeDAO;
+import umu.tds.apps.AppChat.persistencia.imp.TDSUsuarioDAO;
 import umu.tds.apps.AppChat.servicios.ExportPDF;
 
 public class AppChat {
 
 	public Usuario usuarioActual;
 	public static AppChat INSTANCE = null;
+	public RepositorioMensajes repoMensajes;
+	public RepositorioUsuarios repoUsuarios;
+	public TDSGrupoDAO grupoDAO;
+	public TDSContactoIndividualDAO contactoIndividualDAO;
 
 	//Patrón singleton
 	public static AppChat getInstance() {
@@ -34,16 +43,31 @@ public class AppChat {
 		return INSTANCE;
 	}
 	
+	public AppChat() {
+		TDSFactoriaDAO factoriaDAO = TDSFactoriaDAO.getInstance();
+        contactoIndividualDAO = factoriaDAO.getContactoIndividualDAO();
+        grupoDAO = factoriaDAO.getGrupoDAO();
+        
+        repoMensajes= RepositorioMensajes.getInstance();
+        repoUsuarios= RepositorioUsuarios.getInstance();
+        
+        
+        
+	}
+	
 	public void enviarMensajeContacto(ContactoIndividual ContactoDestino, String texto, int emoji, TipoMensaje tipo_mensaje) {
 		//TODO PERSISTENCIA
 		
 		Mensaje mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), ContactoDestino);
 		ContactoDestino.addMensaje(mensaje);
-		RepositorioMensajes.INSTANCE.mensajes.add(mensaje);
+		repoMensajes.mensajes.add(mensaje);
 		
 		Mensaje mensajeReceptor = new Mensaje(texto, LocalDateTime.now(), emoji, TipoMensaje.RECIBIDO, usuarioActual.getContactoPropio(), ContactoDestino);
+		Usuario usuarioReceptor = getUsuario(ContactoDestino.getMovil());
+		if(usuarioReceptor!=null) {
+			usuarioReceptor.registrarMensaje(mensajeReceptor);
+		}
 		
-		getUsuario(ContactoDestino.getMovil()).registrarMensaje(mensajeReceptor);
 		
 	}
 	
@@ -53,18 +77,21 @@ public class AppChat {
 		Mensaje mensaje;
 		mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), grupo_receptor);
 		grupo_receptor.addMensaje(mensaje);
-		RepositorioMensajes.INSTANCE.mensajes.add(mensaje);
+		repoMensajes.mensajes.add(mensaje);
 		
 		
 		for(ContactoIndividual contacto: grupo_receptor.getContactos()) {
 			Mensaje mensajeReceptor = new Mensaje(texto, LocalDateTime.now(), emoji, TipoMensaje.RECIBIDO, usuarioActual.getContactoPropio(), contacto);
-			getUsuario(contacto.getMovil()).registrarMensaje(mensajeReceptor);
+			Usuario usuarioReceptor = getUsuario(contacto.getMovil());
+			if(usuarioReceptor!=null) {
+				usuarioReceptor.registrarMensaje(mensajeReceptor);
+			}
 		}
 	}
 	
 	public Usuario getUsuario(String numero_telefono) { //Desde aquí se llama a getUsuario del repositorio
 		
-		return RepositorioUsuarios.INSTANCE.buscarUsuarioPorMovil(numero_telefono);
+		return repoUsuarios.buscarUsuarioPorMovil(numero_telefono);
 	}
 	
 	public ContactoIndividual agregarContacto(String nombre, String movil) { //Desde aquí se le dice al usuario que registre un nuevo contacto
@@ -86,7 +113,7 @@ public class AppChat {
 		
 		int returnCode = 0;
 		//Comprobar que no esté ya registrado el número de teléfono
-		for(Usuario usuarioRegistrado: RepositorioUsuarios.INSTANCE.usuarios) {
+		for(Usuario usuarioRegistrado: repoUsuarios.usuarios) {
 			if(usuarioRegistrado.getMovil().equals(telefono)) {
 				returnCode = -1;
 			}
@@ -106,7 +133,7 @@ public class AppChat {
 		
 		if(returnCode==0) {
 			Usuario usuarioNuevo = new Usuario(nombre, apellidos, password, telefono, fecha, ruta_imagen, saludo);
-			RepositorioUsuarios.INSTANCE.usuarios.add(usuarioNuevo);
+			repoUsuarios.usuarios.add(usuarioNuevo);
 		}
 		
 		return returnCode;
@@ -117,7 +144,7 @@ public class AppChat {
 		//TODO PERSISTENCIA
 		
 		int returnCode = -1;
-		for(Usuario usuarioRegistrado: RepositorioUsuarios.INSTANCE.usuarios) {
+		for(Usuario usuarioRegistrado: repoUsuarios.usuarios) {
 			if(usuarioRegistrado.getMovil().equals(telefono)) {
 				if(usuarioRegistrado.getPassword().equals(password)) {
 					usuarioActual = usuarioRegistrado;
@@ -134,24 +161,24 @@ public class AppChat {
 	
 	public List<Mensaje> buscarMensajes(String texto, String numero, String nombre_contacto) {
 		if(texto.isEmpty() && numero.isEmpty() && !nombre_contacto.isEmpty()) {
-			return RepositorioMensajes.INSTANCE.buscar_Contacto(usuarioActual.getMovil(), nombre_contacto);
+			return repoMensajes.buscar_Contacto(usuarioActual.getMovil(), nombre_contacto);
 		}
 		else if (texto.isEmpty() && !numero.isEmpty() && nombre_contacto.isEmpty()) {
-			return RepositorioMensajes.INSTANCE.buscar_Numero(usuarioActual.getMovil(), numero);
+			return repoMensajes.buscar_Numero(usuarioActual.getMovil(), numero);
 		}
 		else if (!texto.isEmpty() && numero.isEmpty() && !nombre_contacto.isEmpty()) {
-			return RepositorioMensajes.INSTANCE.buscar_Texto_y_Contacto(texto, usuarioActual.getMovil(), nombre_contacto);
+			return repoMensajes.buscar_Texto_y_Contacto(texto, usuarioActual.getMovil(), nombre_contacto);
 		}
 		
 		else if (!texto.isEmpty() && !numero.isEmpty() && nombre_contacto.isEmpty()) {
-			return RepositorioMensajes.INSTANCE.buscar_Texto_y_Numero(texto, usuarioActual.getMovil(), numero);
+			return repoMensajes.buscar_Texto_y_Numero(texto, usuarioActual.getMovil(), numero);
 		}
 		
 		else if (texto.isEmpty() && numero.isEmpty() && nombre_contacto.isEmpty()) {
-			return RepositorioMensajes.INSTANCE.buscar_Todos(usuarioActual.getMovil());
+			return repoMensajes.buscar_Todos(usuarioActual.getMovil());
 		}
 		else if (!texto.isEmpty() && numero.isEmpty() && nombre_contacto.isEmpty()) {
-			return RepositorioMensajes.INSTANCE.buscar_Texto(texto, usuarioActual.getMovil());
+			return repoMensajes.buscar_Texto(texto, usuarioActual.getMovil());
 		}
 		else {
 			return new ArrayList<Mensaje>();
@@ -223,7 +250,7 @@ public class AppChat {
 	}
 	
 	public int numMensajes() {
-		return RepositorioMensajes.INSTANCE.buscar_Todos(usuarioActual.getMovil()).size();
+		return repoMensajes.buscar_Todos(usuarioActual.getMovil()).size();
 	}
 	
 	public LocalDateTime getFechaRegistro() {
@@ -240,6 +267,25 @@ public class AppChat {
 			}
 		}
 		
+	}
+
+	public boolean existeUsuario(String movil) {
+		Usuario usuarioReceptor = getUsuario(movil);
+		if(usuarioReceptor==null) {
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean contactoYaGuardado(String movil) {
+		for(Contacto contacto: usuarioActual.getContactos()) {
+			if(contacto instanceof ContactoIndividual) {
+				if(movil.equals(((ContactoIndividual) contacto).getMovil())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	

@@ -244,41 +244,22 @@ public class VentanaPrincipal {
         JTextField textField = new JTextField();
         textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
-        JButton btnAdd = new JButton("+");
-        btnAdd.setPreferredSize(new Dimension(50, 30));
         panelCentral.add(scroll);
         panelCentral.add(Box.createVerticalStrut(10));
 
         dialog.add(panelCentral, BorderLayout.CENTER);
 
         JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        JButton btnAddContacto = new JButton("Añadir contacto");
+        JButton btnAddContacto = new JButton("Nuevo contacto");
         JButton btnCancelar = new JButton("Cancelar");
 
         btnCancelar.addActionListener(e -> dialog.dispose());
 
         btnAddContacto.addActionListener(e -> {
-            VentanaGrupos ventana = new VentanaGrupos(this, listaContactos.getSelectedValue());
-            dialog.dispose();
-            ventana.mostrarVentana();
+        	mostrarDialogoNuevoContacto();
+        	dialog.dispose();
         });
 
-        btnAdd.addActionListener(e -> {
-            boolean nombreCogido = false;
-            for (ContactoIndividual contacto : contactos) {
-                if (contacto.getNombre().equals(textField.getText())) {
-                    nombreCogido = true;
-                    break;
-                }
-            }
-            if (nombreCogido) {
-                JOptionPane.showMessageDialog(dialog, "Nombre de grupo usado", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                VentanaGrupos ventana = new VentanaGrupos(this, textField.getText());
-                dialog.dispose();
-                ventana.mostrarVentana();
-            }
-        });
 
         panelInferior.add(btnAddContacto);
         panelInferior.add(btnCancelar);
@@ -609,7 +590,7 @@ public class VentanaPrincipal {
         	texto.add(new JLabel(movil));
         	JButton btnAñadir = new JButton("+");
             btnAñadir.addActionListener(e -> {
-            	mostrarDialogoNuevoContacto(movil);
+            	mostrarDialogoRegistraContacto(movil);
             });
             panel.add(btnAñadir, BorderLayout.EAST);
         } else {
@@ -620,7 +601,7 @@ public class VentanaPrincipal {
         return panel;
     }
     
-    private void mostrarDialogoNuevoContacto(String movil) {
+    private void mostrarDialogoRegistraContacto(String movil) {
         JDialog dialog = new JDialog(frame, "Nuevo Contacto", true);
         dialog.setSize(500, 200);
         dialog.setLayout(new GridLayout(3, 1, 10, 10)); 
@@ -688,6 +669,90 @@ public class VentanaPrincipal {
 
         dialog.setVisible(true);
     }
+    
+    private void mostrarDialogoNuevoContacto() {
+        JDialog dialog = new JDialog(frame, "Nuevo Contacto", true);
+        dialog.setSize(500, 200);
+        dialog.setLayout(new GridLayout(3, 1, 10, 10)); 
+        dialog.setLocationRelativeTo(frame);
+
+        JPanel panelCampos = new JPanel(new GridBagLayout());
+        panelCampos.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.anchor = GridBagConstraints.WEST;
+
+        JLabel lblNombre = new JLabel("Nombre:");
+        JTextField txtNombre = new JTextField(20); 
+
+        JLabel lblTelefono = new JLabel("Teléfono:");
+        JTextField txtTelefono = new JTextField(20);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panelCampos.add(lblNombre, gbc);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0; 
+        panelCampos.add(txtNombre, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0;
+        panelCampos.add(lblTelefono, gbc);
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        panelCampos.add(txtTelefono, gbc);
+
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        panelBotones.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+
+        JButton btnAceptar = new JButton("Aceptar");
+        JButton btnCancelar = new JButton("Cancelar");
+
+        Dimension botonDim = new Dimension(120, 25);
+        btnAceptar.setPreferredSize(botonDim);
+        btnCancelar.setPreferredSize(botonDim);
+
+        btnAceptar.addActionListener(e -> {
+        	if(txtNombre.getText().isEmpty() || txtTelefono.getText().isEmpty()) {
+        		JOptionPane.showMessageDialog(dialog, "Rellena todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        	}
+        	if(AppChat.INSTANCE.existeUsuario(txtTelefono.getText()) && !AppChat.INSTANCE.contactoYaGuardado(txtTelefono.getText())) {
+        		AppChat.INSTANCE.agregarContacto(txtNombre.getText(), txtTelefono.getText());
+                refrescarPanelIzquierdo();
+                refrescarPanelDerecho();
+                dialog.dispose();
+        	}
+        	else if(!AppChat.INSTANCE.existeUsuario(txtTelefono.getText())){
+        		JOptionPane.showMessageDialog(dialog, "El número de teléfono no corresponde a ningún usuario registrado", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        	}
+        	else {
+        		JOptionPane.showMessageDialog(dialog, "El número de teléfono ya está registrado como otro contacto", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+        	}
+            
+        });
+
+        
+        btnCancelar.addActionListener(e -> dialog.dispose());
+
+        panelBotones.add(btnAceptar);
+        panelBotones.add(btnCancelar);
+
+        dialog.add(panelCampos, BorderLayout.CENTER);
+        dialog.add(panelBotones, BorderLayout.SOUTH);
+
+        dialog.setVisible(true);
+    }
+    
+    
     
     public void refrescarPanelIzquierdo() {
         frame.remove(scrollPanelIzquierdo); 

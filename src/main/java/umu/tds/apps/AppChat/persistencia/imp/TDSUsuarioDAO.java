@@ -39,7 +39,7 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 	/*
 	 * Patron singleton
 	 */
-	public static TDSUsuarioDAO getUnicaInstancia() {
+	public static TDSUsuarioDAO getInstance() {
 		if (unicaInstancia == null) {
 			return new TDSUsuarioDAO();
 		} else
@@ -51,8 +51,8 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 	}
 	
 	//PASAR DE ARRAY A STRING
-	TDSContactoIndividualDAO daoContactoIndividual = TDSContactoIndividualDAO.getUnicaInstancia();
-    TDSGrupoDAO daoGrupo = TDSGrupoDAO.getUnicaInstancia();
+	TDSContactoIndividualDAO daoContactoIndividual = TDSContactoIndividualDAO.getInstance();
+    TDSGrupoDAO daoGrupo = TDSGrupoDAO.getInstance();
 	private String obtenerIdsContactos(ArrayList<Contacto> contactos) {
 		StringBuilder sb = new StringBuilder();
 		for (Contacto c : contactos) {

@@ -29,7 +29,7 @@ public class TDSGrupoDAO implements GrupoDAO{
 	/*
 	 * Patron singleton
 	 */
-	public static TDSGrupoDAO getUnicaInstancia() {
+	public static TDSGrupoDAO getInstance() {
 		if (unicaInstancia == null) {
 			return new TDSGrupoDAO();
 		} else
@@ -117,7 +117,7 @@ public class TDSGrupoDAO implements GrupoDAO{
     
     private List<ContactoIndividual> obtenerContactosDesdeIds(String contactosStr) {
         List<ContactoIndividual> contactos = new ArrayList<>();
-        TDSContactoIndividualDAO daoContactoIndividual = TDSContactoIndividualDAO.getUnicaInstancia();
+        TDSContactoIndividualDAO daoContactoIndividual = TDSContactoIndividualDAO.getInstance();
         if (contactosStr == null || contactosStr.isEmpty()) {
             return contactos;
         }

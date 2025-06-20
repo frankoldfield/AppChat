@@ -5,18 +5,13 @@ import java.time.LocalDate;
 import umu.tds.apps.AppChat.controlador.AppChat;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Grupo;
-import umu.tds.apps.AppChat.dominio.Mensaje;
-import umu.tds.apps.AppChat.persistencia.RepositorioUsuarios;
 import umu.tds.apps.AppChat.vistas.*;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
-import umu.tds.apps.AppChat.dominio.Usuario;
 
 import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDarkerIJTheme;
-import com.sun.tools.javac.util.List;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.UIManager;
@@ -25,6 +20,8 @@ public class CargarAppChat {
 	private static final Logger LOGGER = Logger.getLogger(CargarAppChat.class.getName());
 
 	public static void main(String[] args) {
+		
+		
 		
 		
 		
@@ -43,13 +40,20 @@ public class CargarAppChat {
         UIManager.put("TabbedPane.selectedBackground", UIManager.getColor("TabbedPane.background").brighter());
         UIManager.put("Component.foreground", Color.BLACK); // o cualquier otro color
 
+
         AppChat appChat = AppChat.getInstance();
+        
+       
+        
+        
+        
 		VentanaLogin ventana = new VentanaLogin();
 		ventana.mostrarVentana();
 		
-		//cargarStubs(appChat);
+		cargarStubs(appChat);
 		
 	}
+	
 	
 	
 	public static void cargarStubs(AppChat appChat) {
@@ -97,7 +101,7 @@ public class CargarAppChat {
 		
 		
 		//ContactoIndividual c1 =appChat.agregarContacto("jesus", "11");
-		ContactoIndividual c1 = RepositorioUsuarios.INSTANCE.buscarUsuarioPorMovil("22").getContactoIndividual("11");
+		ContactoIndividual c1 = appChat.repoUsuarios.buscarUsuarioPorMovil("22").getContactoIndividual("11");
 		ContactoIndividual c4 = appChat.agregarContacto("diego", "44");
 		ContactoIndividual c5 = appChat.agregarContacto("anne", "55");
 		ContactoIndividual c6 = appChat.agregarContacto("anne", "55");

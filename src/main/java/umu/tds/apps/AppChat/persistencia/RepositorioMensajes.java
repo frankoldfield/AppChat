@@ -10,11 +10,26 @@ import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
+import umu.tds.apps.AppChat.persistencia.imp.TDSFactoriaDAO;
+import umu.tds.apps.AppChat.persistencia.imp.TDSMensajeDAO;
 
 public class RepositorioMensajes {
 	
 	public List<Mensaje> mensajes = new ArrayList<Mensaje>();
-	public static RepositorioMensajes INSTANCE = new RepositorioMensajes();
+	public static RepositorioMensajes unicaInstancia = new RepositorioMensajes();
+	public TDSMensajeDAO mensajeDAO;
+	
+	public static RepositorioMensajes getInstance() {
+		if (unicaInstancia == null) {
+			return new RepositorioMensajes();
+		} else
+			return unicaInstancia;
+	}
+	
+	public RepositorioMensajes() {
+		TDSFactoriaDAO factoriaDAO = TDSFactoriaDAO.getInstance();
+		mensajeDAO = factoriaDAO.getMensajeDAO();
+	}
 	
 	// 1) Mensajes que envía un usuario a otro, ORDENADOS por hora
 	public List<Mensaje> buscarMensajesPorEmisorReceptorOrdenados(
