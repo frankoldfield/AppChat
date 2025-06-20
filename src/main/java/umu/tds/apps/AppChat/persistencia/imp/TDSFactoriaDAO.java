@@ -1,4 +1,4 @@
-package umu.tds.apps.AppChat.persistencia;
+package umu.tds.apps.AppChat.persistencia.imp;
 
 public class TDSFactoriaDAO {
 

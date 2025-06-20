@@ -9,6 +9,9 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 public class VentanaRegistro {
@@ -18,6 +21,8 @@ public class VentanaRegistro {
     private JPasswordField txtPassword1, txtPassword2;
     private JTextArea txtSaludo;
     private JLabel lblImagen;
+    private Date fecha;
+    private String rutaAbsoluta;
 
     public VentanaRegistro() {
         initialize();
@@ -114,7 +119,7 @@ public class VentanaRegistro {
 
             JButton btnSeleccionar = new JButton("Aceptar");
             btnSeleccionar.addActionListener(ev -> {
-                java.util.Date fechaSeleccionada = calendar.getDate();
+                Date fechaSeleccionada = calendar.getDate();
                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
                 txtFecha.setText(sdf.format(fechaSeleccionada));
                 dialog.dispose();
@@ -177,7 +182,7 @@ public class VentanaRegistro {
             String telefono = txtTelefono.getText().trim();
             
             //Comprobacion de que todos los campos OBLIGATORIOS no están vacíos
-            if (nombre.isEmpty() || apellidos.isEmpty() || telefono.isEmpty() || con1.isEmpty() || con2.isEmpty()) {
+            if (nombre.isEmpty() || apellidos.isEmpty() || telefono.isEmpty() || con1.isEmpty() || con2.isEmpty() || txtFecha.getText().isEmpty() || rutaAbsoluta.isEmpty()) {
                 JOptionPane.showMessageDialog(frmRegistro, "Es necesario llenar todos los campos.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -188,6 +193,11 @@ public class VentanaRegistro {
                 return;
         	}
         	//TODO LLAMADA A CONTROLADOR: GUARDAR EN DB
+        	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate fecha = LocalDate.parse(txtFecha.getText(), formatter);
+            System.out.println("Fecha convertida: " + fecha);
+            
+        	AppChat.INSTANCE.registrarUsuario(nombre, apellidos, con1, telefono, con2, fecha, rutaAbsoluta, telefono);
         	VentanaLogin ventana = new VentanaLogin();
         	//Volvemos al login
         	ventana.mostrarVentana();
@@ -208,7 +218,7 @@ public class VentanaRegistro {
 
             if (imagenes != null && !imagenes.isEmpty()) {
                 File archivoImagen = imagenes.get(0);
-                String rutaAbsoluta = archivoImagen.getAbsolutePath();
+                rutaAbsoluta = archivoImagen.getAbsolutePath();
                 //Cargar la imagen directamente desde la ruta absoluta
                 ImageIcon iconoImagen = new ImageIcon(rutaAbsoluta);
                 Image imagenEscalada = iconoImagen.getImage()

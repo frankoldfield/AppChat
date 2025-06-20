@@ -46,7 +46,13 @@ public class CargarAppChat {
         AppChat appChat = AppChat.getInstance();
 		VentanaLogin ventana = new VentanaLogin();
 		ventana.mostrarVentana();
-
+		
+		//cargarStubs(appChat);
+		
+	}
+	
+	
+	public static void cargarStubs(AppChat appChat) {
 		appChat.registrarUsuario("jesus", "apellido", "aa", "11", "aa", LocalDate.of(1960, 10, 03),"/usuarios/fotoJGM.png", "Hola, soy jesus");
 		appChat.registrarUsuario("elena", "apellido","bb", "22", "bb", LocalDate.of(1995, 12, 28), "/usuarios/fotoJGM.png", "hola, soy elena");
 		appChat.registrarUsuario("rosalia", "apellido","cc", "33", "cc", LocalDate.of(2000, 5, 15), "/usuarios/fotoJGM.png", "hola, soy rosalia");

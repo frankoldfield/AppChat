@@ -1,4 +1,6 @@
-package umu.tds.apps.AppChat.persistencia;
+package umu.tds.apps.AppChat.persistencia.abstracta;
+
+import umu.tds.apps.AppChat.persistencia.DAOException;
 
 public abstract class FactoriaDAO {
 	public static final String DAO_TDS = "umu.tds.apps.AppChat.TDSFactoriaDAO";

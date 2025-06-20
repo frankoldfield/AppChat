@@ -92,8 +92,16 @@ public class AppChat {
 			}
 		}
 		//Comprobar fecha válida
-		if(fecha.isBefore(LocalDate.of(1930, 1, 1))) {
+		if(fecha.isBefore(LocalDate.of(1930, 1, 1)) || fecha==null) {
 			returnCode = -2;
+		}
+		
+		if(ruta_imagen.isEmpty()) {
+			returnCode = -3;
+		}
+		
+		if(!password.equals(confirma_password)) {
+			
 		}
 		
 		if(returnCode==0) {

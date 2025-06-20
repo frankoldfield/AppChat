@@ -27,6 +27,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -77,6 +78,7 @@ public class VentanaPrincipal {
         JComboBox<String> comboBusqueda = new JComboBox<>(new String[]{"Contactos o teléfonos", "Contactos", "Teléfonos"});
         JButton btnAceptar = new JButton("Filtrar");
         JButton btnBuscar = new JButton("🔍");
+        JButton btnContactos = new JButton("Contactos");
         JButton btnGrupos = new JButton("Grupos");
         
         JPanel contenedorPremium = new JPanel(new CardLayout());
@@ -124,11 +126,33 @@ public class VentanaPrincipal {
         iconoUsuario.setBorder(BorderFactory.createLineBorder(StyleUtils.ACCENT_COLOR));
         
         String path = AppChat.INSTANCE.usuarioActual.getImagen();
-        
-        ImageIcon iconoImagen = new ImageIcon(getClass().getResource(path));
-        Image imagenEscalada = iconoImagen.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-        iconoUsuario.setIcon(new ImageIcon(imagenEscalada));
-        iconoUsuario.setText("");
+        System.out.println("Ruta de imagen: " + path);
+
+        ImageIcon iconoImagen = null;
+
+        try {
+            if (new File(path).isAbsolute()) {
+                // Ruta absoluta del sistema
+                iconoImagen = new ImageIcon(new File(path).toURI().toURL());
+            } else {
+                // Ruta relativa dentro del classpath (como en resources/)
+                URL url = getClass().getResource(path);
+                if (url != null) {
+                    iconoImagen = new ImageIcon(url);
+                } else {
+                    throw new FileNotFoundException("No se encontró el recurso relativo: " + path);
+                }
+            }
+
+            Image imagenEscalada = iconoImagen.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            iconoUsuario.setIcon(new ImageIcon(imagenEscalada));
+            iconoUsuario.setText("");
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            iconoUsuario.setText("Sin imagen");
+            iconoUsuario.setIcon(null);
+        }
         
         iconoUsuario.addMouseListener(new MouseAdapter() {
         	@Override
@@ -160,7 +184,10 @@ public class VentanaPrincipal {
         
         
         
-        
+        btnContactos.addActionListener(e ->{ 
+        	entrarContactos();
+
+        });
         
         btnGrupos.addActionListener(e ->{ 
         	entrarGrupos();
@@ -179,6 +206,7 @@ public class VentanaPrincipal {
         panelSuperior.add(comboBusqueda);
         panelSuperior.add(btnAceptar);
         panelSuperior.add(btnBuscar);
+        panelSuperior.add(btnContactos);
         panelSuperior.add(btnGrupos);
         panelSuperior.add(contenedorPremium);
         panelSuperior.add(nombre1);
@@ -188,7 +216,78 @@ public class VentanaPrincipal {
         return panelSuperior;
     }
     
-    private void mostrarVentajasPremium(JPanel contenedorPremium) {
+    private void entrarContactos() {
+    	JDialog dialog = new JDialog(frame, "Lista de contactos", true);
+        dialog.setSize(500, 400);
+        dialog.setLocationRelativeTo(frame);
+
+        JPanel panelCentral = new JPanel();
+        panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
+        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20)); // margen uniforme
+
+        List<ContactoIndividual> contactos = AppChat.INSTANCE.getListaContactos();
+        List<String> nombres = contactos.stream()
+        	.map(c -> c.toString())
+            .collect(Collectors.toList());
+        
+        String[] arrayNombres = nombres.toArray(new String[0]);
+
+        JList<String> listaContactos = new JList<>(arrayNombres);
+        listaContactos.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        JScrollPane scroll = new JScrollPane(listaContactos);
+        scroll.setPreferredSize(new Dimension(450, 150));
+        scroll.setBorder(BorderFactory.createTitledBorder("Contactos"));
+        scroll.setAlignmentX(Component.LEFT_ALIGNMENT); // alineación izquierda
+
+
+        JTextField textField = new JTextField();
+        textField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+
+        JButton btnAdd = new JButton("+");
+        btnAdd.setPreferredSize(new Dimension(50, 30));
+        panelCentral.add(scroll);
+        panelCentral.add(Box.createVerticalStrut(10));
+
+        dialog.add(panelCentral, BorderLayout.CENTER);
+
+        JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        JButton btnAddContacto = new JButton("Añadir contacto");
+        JButton btnCancelar = new JButton("Cancelar");
+
+        btnCancelar.addActionListener(e -> dialog.dispose());
+
+        btnAddContacto.addActionListener(e -> {
+            VentanaGrupos ventana = new VentanaGrupos(this, listaContactos.getSelectedValue());
+            dialog.dispose();
+            ventana.mostrarVentana();
+        });
+
+        btnAdd.addActionListener(e -> {
+            boolean nombreCogido = false;
+            for (ContactoIndividual contacto : contactos) {
+                if (contacto.getNombre().equals(textField.getText())) {
+                    nombreCogido = true;
+                    break;
+                }
+            }
+            if (nombreCogido) {
+                JOptionPane.showMessageDialog(dialog, "Nombre de grupo usado", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                VentanaGrupos ventana = new VentanaGrupos(this, textField.getText());
+                dialog.dispose();
+                ventana.mostrarVentana();
+            }
+        });
+
+        panelInferior.add(btnAddContacto);
+        panelInferior.add(btnCancelar);
+
+        dialog.add(panelInferior, BorderLayout.SOUTH);
+        dialog.setVisible(true);
+	}
+
+	private void mostrarVentajasPremium(JPanel contenedorPremium) {
         CardLayout layout = (CardLayout) contenedorPremium.getLayout();
         JDialog dialogo = new JDialog(frame, "Ventajas Premium", true);
         dialogo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

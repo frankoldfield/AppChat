@@ -25,6 +25,8 @@ public class ExportPDF {
 		if (conversacion.isEmpty()) return;
 		
 		FileOutputStream archivo = new FileOutputStream("C:\\Users\\frank\\OneDrive - UNIVERSIDAD DE MURCIA\\Escritorio\\hola.pdf");
+//		FileOutputStream archivo = new FileOutputStream("usuarios/"+nombreUsuario+".pdf");
+
 		Document documento = new Document();
 		PdfWriter.getInstance(documento, archivo);
 		documento.open();
