@@ -31,6 +31,14 @@ public class RepositorioMensajes {
 		mensajeDAO = factoriaDAO.getMensajeDAO();
 	}
 	
+	public void addMensaje(Mensaje mensaje) {
+		mensajeDAO.create(mensaje);
+	}
+
+	public Mensaje getMensaje(int id) {
+		return mensajeDAO.get(id);
+	}
+	
 	// 1) Mensajes que envía un usuario a otro, ORDENADOS por hora
 	public List<Mensaje> buscarMensajesPorEmisorReceptorOrdenados(
 	        String numero_Emisor,
