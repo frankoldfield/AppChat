@@ -2,7 +2,7 @@ package umu.tds.apps.AppChat.dominio;
 
 public class ContactoIndividual extends Contacto {
 	
-	private String id;
+	private int id;
 	private String movil;
 	
 	public ContactoIndividual(String movil) {
@@ -35,4 +35,12 @@ public class ContactoIndividual extends Contacto {
 		}
         return nombre;
     }
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 }
