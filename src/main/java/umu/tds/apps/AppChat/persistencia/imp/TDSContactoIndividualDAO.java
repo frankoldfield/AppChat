@@ -26,9 +26,9 @@ public class TDSContactoIndividualDAO implements ContactoIndividualDAO{
 	 */
 	public static TDSContactoIndividualDAO getInstance() {
 		if (unicaInstancia == null) {
-			return new TDSContactoIndividualDAO();
-		} else
-			return unicaInstancia;
+			unicaInstancia =  new TDSContactoIndividualDAO();
+		}
+		return unicaInstancia;
 	}
 
 	private TDSContactoIndividualDAO() {

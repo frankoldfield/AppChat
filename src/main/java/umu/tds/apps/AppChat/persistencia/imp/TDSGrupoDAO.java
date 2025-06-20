@@ -31,8 +31,8 @@ public class TDSGrupoDAO implements GrupoDAO{
 	 */
 	public static TDSGrupoDAO getInstance() {
 		if (unicaInstancia == null) {
-			return new TDSGrupoDAO();
-		} else
+			unicaInstancia = new TDSGrupoDAO();
+		}
 			return unicaInstancia;
 	}
 

@@ -41,9 +41,9 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 	 */
 	public static TDSUsuarioDAO getInstance() {
 		if (unicaInstancia == null) {
-			return new TDSUsuarioDAO();
-		} else
-			return unicaInstancia;
+			unicaInstancia = new TDSUsuarioDAO();
+		}
+		return unicaInstancia;
 	}
 
 	private TDSUsuarioDAO() {
@@ -91,7 +91,7 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 	
 	
 	@Override
-	public void create(Usuario usuario) {
+	public Usuario create(Usuario usuario) {
 		Entidad eUsuario = null;
 		boolean existe = true;
 		eUsuario = servPersistencia.recuperarEntidad(usuario.getId());
@@ -100,8 +100,9 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 		}
 		// si ya existe no se crea de nuevo
 		if (existe) {
-			return;
+			return null;
 		}
+		eUsuario = new Entidad();
 		eUsuario.setNombre(USUARIO);
 		eUsuario.setPropiedades(new ArrayList<>(Arrays.asList(
 				new Propiedad(NOMBRE, usuario.getNombre()),
@@ -119,6 +120,7 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 
 		eUsuario = servPersistencia.registrarEntidad(eUsuario);
 		usuario.setId(eUsuario.getId());
+		return usuario;
 	}
 
 	@Override

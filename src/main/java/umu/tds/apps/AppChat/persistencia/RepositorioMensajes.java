@@ -15,15 +15,15 @@ import umu.tds.apps.AppChat.persistencia.imp.TDSMensajeDAO;
 
 public class RepositorioMensajes {
 	
-//	public List<Mensaje> mensajes = new ArrayList<Mensaje>();
+	public List<Mensaje> mensajes = new ArrayList<Mensaje>();
 	public static RepositorioMensajes unicaInstancia = new RepositorioMensajes();
 	public TDSMensajeDAO mensajeDAO;
 	
 	public static RepositorioMensajes getInstance() {
 		if (unicaInstancia == null) {
-			return new RepositorioMensajes();
-		} else
-			return unicaInstancia;
+			unicaInstancia = new RepositorioMensajes();
+		}
+		return unicaInstancia;
 	}
 	
 	public RepositorioMensajes() {
@@ -31,12 +31,18 @@ public class RepositorioMensajes {
 		mensajeDAO = factoriaDAO.getMensajeDAO();
 	}
 	
-	public void add(Mensaje mensaje) {
-		mensajeDAO.create(mensaje);
+	public Mensaje add(Mensaje mensaje) {
+		Mensaje mensajeActualizado = mensajeDAO.create(mensaje);
+		mensajes.add(mensajeActualizado);
+		return mensajeActualizado;
 	}
 
 	public Mensaje get(int id) {
 		return mensajeDAO.get(id);
+	}
+	
+	public List<Mensaje> getAll() {
+		return mensajeDAO.getAll();
 	}
 	
 	// 1) Mensajes que envía un usuario a otro, ORDENADOS por hora

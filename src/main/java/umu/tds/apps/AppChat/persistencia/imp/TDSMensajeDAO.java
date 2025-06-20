@@ -34,9 +34,9 @@ public class TDSMensajeDAO implements MensajeDAO{
 	 */
 	public static TDSMensajeDAO getInstance() {
 		if (unicaInstancia == null) {
-			return new TDSMensajeDAO();
-		} else
-			return unicaInstancia;
+			unicaInstancia = new TDSMensajeDAO();
+		} 
+		return unicaInstancia;
 	}
 
 	private TDSMensajeDAO() {
@@ -44,7 +44,7 @@ public class TDSMensajeDAO implements MensajeDAO{
 	}
 
 	@Override
-	public void create(Mensaje mensaje) {
+	public Mensaje create(Mensaje mensaje) {
 		Entidad eMensaje = null;
 		boolean existe = true;
 		eMensaje = servPersistencia.recuperarEntidad(mensaje.getId());
@@ -53,7 +53,7 @@ public class TDSMensajeDAO implements MensajeDAO{
 		}
 		// si ya existe no se crea de nuevo
 		if (existe) {
-			return;
+			return null;
 		}
 		eMensaje = new Entidad();
 		eMensaje.setNombre(MENSAJE);
@@ -62,9 +62,11 @@ public class TDSMensajeDAO implements MensajeDAO{
 						new Propiedad(EMOJI, String.valueOf(mensaje.getEmoji())),
 						new Propiedad(TIPO, mensaje.getTipo().toString()), new Propiedad(CONTACTO_EMISOR, String.valueOf(mensaje.getContacto_emisor().getId())), 
 						new Propiedad(CONTACTO_RECEPTOR, String.valueOf(mensaje.getContacto_receptor().getId())))));
-		// si no existe la registramos
+		
 		eMensaje = servPersistencia.registrarEntidad(eMensaje);
+		
 		mensaje.setId(eMensaje.getId());
+		return mensaje;
 	}
 
 	@Override
@@ -118,10 +120,9 @@ public class TDSMensajeDAO implements MensajeDAO{
 		ContactoIndividual ObjContacto_emisor = daoContactoIndividual.get(eContacto_emisor.getId());
 		
 		Entidad eContacto_receptor = servPersistencia.recuperarEntidad(Integer.parseInt(contacto_receptor));
-		
 		Contacto ObjContacto_receptor;
 		
-		if(eContacto_receptor.getNombre()== "contacto_individual") {
+		if(eContacto_receptor.getNombre().equals("contacto_individual")) {
 			ObjContacto_receptor = (Contacto) daoContactoIndividual.get(eContacto_receptor.getId());
 		}
 		else {

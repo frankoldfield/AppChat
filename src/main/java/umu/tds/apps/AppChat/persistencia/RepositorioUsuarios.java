@@ -11,15 +11,14 @@ import umu.tds.apps.AppChat.persistencia.imp.TDSUsuarioDAO;
 
 public class RepositorioUsuarios {
 	
-	public List<Usuario> usuarios = new ArrayList<Usuario>();
 	public static RepositorioUsuarios unicaInstancia = new RepositorioUsuarios();
 	public TDSUsuarioDAO usuarioDAO;
 	
 	public static RepositorioUsuarios getInstance() {
 		if (unicaInstancia == null) {
-			return new RepositorioUsuarios();
-		} else
-			return unicaInstancia;
+			unicaInstancia =  new RepositorioUsuarios();
+		}
+		return unicaInstancia;
 	}
 	
 	public RepositorioUsuarios() {
@@ -35,13 +34,30 @@ public class RepositorioUsuarios {
 		return usuarioDAO.get(id);
 	}
 	
+	public List<Usuario> getAll() {
+		return usuarioDAO.getAll();
+	}
+	
 	public Usuario buscarUsuarioPorMovil(String numero_telefono) {
-		for(Usuario usuario: usuarios) {
+		for(Usuario usuario: usuarioDAO.getAll()) {
 			if(usuario.getMovil().equals(numero_telefono)) {
 				return usuario;
 			}
 		}
 		return null;
+	}
+	
+	public Usuario add(Usuario usuario) {
+		return usuarioDAO.create(usuario);
+	}
+	
+	public boolean usuarioRegistrado(Usuario usuario) {
+		for(Usuario usuarioIt: usuarioDAO.getAll()) {
+			if(usuarioIt.getId() == (usuario.getId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	

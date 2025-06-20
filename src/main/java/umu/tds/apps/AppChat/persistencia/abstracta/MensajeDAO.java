@@ -7,7 +7,7 @@ import umu.tds.apps.AppChat.dominio.Mensaje;
 public interface MensajeDAO {
 
 	
-	void create(Mensaje mensaje);
+	Mensaje create(Mensaje mensaje);
 	void delete(Mensaje mensaje);
 	void update(Mensaje mensaje);
 	Mensaje get(int id);

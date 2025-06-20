@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import umu.tds.apps.AppChat.persistencia.imp.TDSFactoriaDAO;
+
 public class Usuario {
 
 	private int id;
@@ -93,10 +95,9 @@ public class Usuario {
 		return contactoNuevo;
 	}
 	
-	public ContactoIndividual addContacto(String movil) {
-		ContactoIndividual contactoNuevo = new ContactoIndividual(movil);
-		Contactos.add(contactoNuevo);
-		return contactoNuevo;
+	public ContactoIndividual addContacto(ContactoIndividual contacto) {
+		Contactos.add(contacto);
+		return contacto;
 	}
 	
 	public Grupo addOrUpdateGrupo(String nombreGrupo, List<ContactoIndividual> contactosGrupo) {
@@ -116,23 +117,32 @@ public class Usuario {
 	
 	public int registrarMensaje(Mensaje mensaje) { //USAR LAMBDAS
 		boolean registrado = false;
-		for(Contacto contacto: Contactos) {
-			if(contacto instanceof ContactoIndividual) {
-				if(((ContactoIndividual) contacto).getMovil().equals(mensaje.getContacto_emisor().getMovil())) {
-					mensaje.setContacto_emisor((ContactoIndividual) contacto);
-					contacto.addMensaje(mensaje);
-					registrado = true;
+		if(mensaje.getContacto_emisor().getMovil()==this.movil) {
+			return 0;
+		}
+		else {
+			for(Contacto contacto: Contactos) {
+				if(contacto instanceof ContactoIndividual) {
+					if(((ContactoIndividual) contacto).getMovil().equals(mensaje.getContacto_emisor().getMovil())) {
+						mensaje.setContacto_emisor((ContactoIndividual) contacto);
+						contacto.addMensaje(mensaje);
+						TDSFactoriaDAO.getInstance().getContactoIndividualDAO().update((ContactoIndividual) contacto);
+						registrado = true;
+					}
 				}
 			}
-		}
-		if(!registrado) {
-			ContactoIndividual contactoVacio = new ContactoIndividual(mensaje.getContacto_emisor().getMovil());
-			mensaje.setContacto_emisor(contactoVacio);
-			contactoVacio.addMensaje(mensaje);
-			Contactos.add(contactoVacio);
+			if(!registrado) {
+				
+				ContactoIndividual nuevoContactoVacio = TDSFactoriaDAO.getInstance().getContactoIndividualDAO().create(new ContactoIndividual(mensaje.getContacto_emisor().getMovil()));
+				mensaje.setContacto_emisor(nuevoContactoVacio);
+				nuevoContactoVacio.addMensaje(mensaje);
+				TDSFactoriaDAO.getInstance().getContactoIndividualDAO().update(nuevoContactoVacio);
+				Contactos.add(nuevoContactoVacio);
+			}
+			
+			return 0;
 		}
 		
-		return 0;
 	}
 
 	public String getSaludo() {

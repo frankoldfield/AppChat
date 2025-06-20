@@ -9,9 +9,9 @@ public class TDSFactoriaDAO {
 	 */
 	public static TDSFactoriaDAO getInstance() {
 		if (unicaInstancia == null) {
-			return new TDSFactoriaDAO();
-		} else
-			return unicaInstancia;
+			unicaInstancia = new TDSFactoriaDAO();
+		}
+		return unicaInstancia;
 	}
 	
 	public TDSFactoriaDAO() {	}

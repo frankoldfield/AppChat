@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import umu.tds.apps.AppChat.controlador.AppChat;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Grupo;
+import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.vistas.*;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
 
@@ -120,7 +121,11 @@ public class CargarAppChat {
 	    appChat.enviarMensajeContacto(c4, "Juegas esta semana?", -1, TipoMensaje.ENVIADO);
 	    appChat.enviarMensajeContacto(c5, "adios", -1, TipoMensaje.ENVIADO);
 	    
+	    
 	    System.out.println("Fin de la carga de datos");
+	    for(Mensaje mensaje: appChat.repoMensajes.mensajes) {
+//	    	System.out.println("Mensaje ID: "+mensaje.getId()+". Emisor ID: "+mensaje.getContacto_emisor().getId()+". Receptor ID: "+mensaje.getContacto_receptor().getId());
+	    }
 	}
 
 }

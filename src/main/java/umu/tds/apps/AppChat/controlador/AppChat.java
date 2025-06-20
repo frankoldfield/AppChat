@@ -20,6 +20,7 @@ import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
 import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
 import umu.tds.apps.AppChat.persistencia.RepositorioUsuarios;
+import umu.tds.apps.AppChat.persistencia.abstracta.ContactoIndividualDAO;
 import umu.tds.apps.AppChat.persistencia.imp.TDSContactoIndividualDAO;
 import umu.tds.apps.AppChat.persistencia.imp.TDSFactoriaDAO;
 import umu.tds.apps.AppChat.persistencia.imp.TDSGrupoDAO;
@@ -51,21 +52,22 @@ public class AppChat {
         repoMensajes= RepositorioMensajes.getInstance();
         repoUsuarios= RepositorioUsuarios.getInstance();
         
-        
-        
 	}
 	
 	public void enviarMensajeContacto(ContactoIndividual ContactoDestino, String texto, int emoji, TipoMensaje tipo_mensaje) {
 		//TODO PERSISTENCIA
 		
 		Mensaje mensaje = new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), ContactoDestino);
-		ContactoDestino.addMensaje(mensaje);
-		repoMensajes.add(mensaje);
 		
+		mensaje = repoMensajes.add(mensaje);
+		System.out.println(mensaje.getTexto());
+		ContactoDestino.addMensaje(mensaje);
+		contactoIndividualDAO.update(ContactoDestino);
 		Mensaje mensajeReceptor = new Mensaje(texto, LocalDateTime.now(), emoji, TipoMensaje.RECIBIDO, usuarioActual.getContactoPropio(), ContactoDestino);
 		Usuario usuarioReceptor = getUsuario(ContactoDestino.getMovil());
 		if(usuarioReceptor!=null) {
 			usuarioReceptor.registrarMensaje(mensajeReceptor);
+			repoMensajes.mensajes.add(mensajeReceptor);
 		}
 		
 		
@@ -96,9 +98,11 @@ public class AppChat {
 	
 	public ContactoIndividual agregarContacto(String nombre, String movil) { //Desde aquí se le dice al usuario que registre un nuevo contacto
 		//TODO PERSISTENCIA
-		ContactoIndividual nuevoContacto = usuarioActual.addContacto(nombre, movil);
-		contactoIndividualDAO.create(nuevoContacto);
-		return nuevoContacto;
+		if(!contactoYaGuardado(movil)) {
+			ContactoIndividual nuevoContacto = contactoIndividualDAO.create(new ContactoIndividual(nombre, movil));
+			return usuarioActual.addContacto(nuevoContacto);
+		}
+		return null;
 	}
 	
 	public Grupo CrearOActualizarGrupo(String nombreGrupo, List<ContactoIndividual> contactosGrupo) {
@@ -115,7 +119,7 @@ public class AppChat {
 		
 		int returnCode = 0;
 		//Comprobar que no esté ya registrado el número de teléfono
-		for(Usuario usuarioRegistrado: repoUsuarios.usuarios) {
+		for(Usuario usuarioRegistrado: repoUsuarios.getAll()) {
 			if(usuarioRegistrado.getMovil().equals(telefono)) {
 				returnCode = -1;
 			}
@@ -138,7 +142,7 @@ public class AppChat {
 			
 			ContactoIndividual contactoConId = contactoIndividualDAO.create(usuarioNuevo.getContactoPropio());
 			usuarioNuevo.setContactoPropio(contactoConId);
-			repoUsuarios.usuarios.add(usuarioNuevo);
+			repoUsuarios.add(usuarioNuevo);
 		}
 		
 		return returnCode;
@@ -149,7 +153,7 @@ public class AppChat {
 		//TODO PERSISTENCIA
 		
 		int returnCode = -1;
-		for(Usuario usuarioRegistrado: repoUsuarios.usuarios) {
+		for(Usuario usuarioRegistrado: repoUsuarios.getAll()) {
 			if(usuarioRegistrado.getMovil().equals(telefono)) {
 				if(usuarioRegistrado.getPassword().equals(password)) {
 					usuarioActual = usuarioRegistrado;
