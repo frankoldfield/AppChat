@@ -62,8 +62,8 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 	}
 	
 	//PASAR DE STRING A ARRAYS
-	private List<Contacto> obtenerContactosDesdeIds(String contactosStr) {
-		List<Contacto> contactos = new ArrayList<>();
+	private ArrayList<Contacto> obtenerContactosDesdeIds(String contactosStr) {
+		ArrayList<Contacto> contactos = new ArrayList<>();
 		if (contactosStr == null || contactosStr.isEmpty()) {
 			return contactos;
 		}
@@ -76,7 +76,7 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 			String tipo = eContacto.getNombre();
 			Contacto c = null;
 
-			if ("contactoIndividual".equalsIgnoreCase(tipo)) {
+			if ("contacto_individual".equalsIgnoreCase(tipo)) {
 				c = daoContactoIndividual.get(id);
 			} else if ("grupo".equalsIgnoreCase(tipo)) {
 				c = daoGrupo.get(id);
@@ -117,8 +117,9 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 				new Propiedad(CONTACTO_PROPIO, String.valueOf(usuario.getContactoPropio())),
 				new Propiedad(CONTACTOS, obtenerIdsContactos(usuario.getContactos()))
 		)));
-
+		
 		eUsuario = servPersistencia.registrarEntidad(eUsuario);
+		
 		usuario.setId(eUsuario.getId());
 		return usuario;
 	}
@@ -153,7 +154,7 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 			} else if (prop.getNombre().equals(PREMIUM)) {
 				prop.setValor(String.valueOf(usuario.isPremium()));
 			} else if (prop.getNombre().equals(CONTACTO_PROPIO)) {
-				prop.setValor(usuario.getContactoPropio().toString());
+				prop.setValor(String.valueOf(usuario.getContactoPropio().getId()));
 			} else if (prop.getNombre().equals(CONTACTOS)) {
 				prop.setValor(obtenerIdsContactos(usuario.getContactos()));
 			}
@@ -164,7 +165,6 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 	@Override
 	public Usuario get(int id) {
 		Entidad eUsuario = servPersistencia.recuperarEntidad(id);
-
 		String nombre = servPersistencia.recuperarPropiedadEntidad(eUsuario, NOMBRE);
 		String apellidos = servPersistencia.recuperarPropiedadEntidad(eUsuario, APELLIDOS);
 		String password = servPersistencia.recuperarPropiedadEntidad(eUsuario, PASSWORD);
@@ -179,7 +179,7 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 		Usuario usuario = new Usuario(nombre, apellidos, password, movil, fechaNac, imagen, saludo);
 		usuario.setPremium(premium);
 		usuario.setFechaCreacion(fechaCreacion);
-		usuario.getContactos().addAll(obtenerContactosDesdeIds(contactosStr));
+		usuario.setContactos(obtenerContactosDesdeIds(contactosStr));
 		usuario.setId(id);
 
 		return usuario;

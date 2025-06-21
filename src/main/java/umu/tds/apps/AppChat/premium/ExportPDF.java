@@ -1,4 +1,4 @@
-package umu.tds.apps.AppChat.servicios;
+package umu.tds.apps.AppChat.premium;
 
 import java.util.List;
 import java.io.FileNotFoundException;
@@ -16,6 +16,8 @@ import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
 
 public class ExportPDF {
+	
+	
 	public static ExportPDF INSTANCE = new ExportPDF();
 	Font fuenteEmisor = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD, BaseColor.BLUE);
 	Font fuenteMensaje = new Font(Font.FontFamily.HELVETICA, 11, Font.NORMAL, BaseColor.DARK_GRAY);

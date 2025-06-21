@@ -48,7 +48,9 @@ public class RepositorioUsuarios {
 	}
 	
 	public Usuario add(Usuario usuario) {
-		return usuarioDAO.create(usuario);
+		Usuario usuarioNuevo = usuarioDAO.create(usuario);
+		System.out.println("ID DEL USUARIO "+usuario.getNombre()+": "+usuarioNuevo.getId());
+		return usuarioNuevo;
 	}
 	
 	public boolean usuarioRegistrado(Usuario usuario) {
@@ -58,6 +60,11 @@ public class RepositorioUsuarios {
 			}
 		}
 		return false;
+	}
+
+	public void update(Usuario usuario) {
+		usuarioDAO.update(usuario);
+		
 	}
 	
 	

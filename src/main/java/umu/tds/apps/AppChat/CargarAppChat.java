@@ -19,7 +19,7 @@ import javax.swing.UIManager;
 
 public class CargarAppChat {
 	private static final Logger LOGGER = Logger.getLogger(CargarAppChat.class.getName());
-
+	private static final double PRECIO_PREMIUM = 100.0;
 	public static void main(String[] args) {
 		
 		
@@ -43,7 +43,7 @@ public class CargarAppChat {
 
 
         AppChat appChat = AppChat.getInstance();
-        
+        appChat.setPrecioPremium(PRECIO_PREMIUM);
        
         
         
@@ -51,7 +51,7 @@ public class CargarAppChat {
 		VentanaLogin ventana = new VentanaLogin();
 		ventana.mostrarVentana();
 		
-		cargarStubs(appChat);
+//		cargarStubs(appChat);
 		
 	}
 	

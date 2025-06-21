@@ -99,7 +99,7 @@ public class VentanaGrupos {
 	private JPanel crearPanelIzquierdo() {
 		modeloContactos = new DefaultListModel<ContactoIndividual>();
 		
-		List<ContactoIndividual> contactos = AppChat.INSTANCE.getListaContactos();
+		List<ContactoIndividual> contactos = AppChat.INSTANCE.getListaContactosIndividuales();
         List<ContactoIndividual> nombres = contactos.stream()
         		  .filter(c -> !modeloContactosEnGrupo.contains(c.getNombre()))
 				  .collect(Collectors.toList());
@@ -159,7 +159,7 @@ public class VentanaGrupos {
 		btnCancelar.addActionListener(e -> frmGrupos.dispose());
 		btnAceptar.addActionListener(e -> {
 			// TODO: Enviar cambios al backend
-			List<ContactoIndividual> contactosEnGrupo = AppChat.INSTANCE.getListaContactos().stream()
+			List<ContactoIndividual> contactosEnGrupo = AppChat.INSTANCE.getListaContactosIndividuales().stream()
 				    .filter(c -> (c instanceof ContactoIndividual) && IntStream.range(0, modeloContactosEnGrupo.getSize())
 				        .mapToObj(modeloContactosEnGrupo::getElementAt)
 				        .anyMatch(contacto -> contacto.getMovil().equals(c.getMovil())))

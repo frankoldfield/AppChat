@@ -41,7 +41,7 @@ public class TDSGrupoDAO implements GrupoDAO{
 	}
 
 	@Override
-	public void create(Grupo grupo) {
+	public Grupo create(Grupo grupo) {
 		Entidad eGrupo = null;
 		boolean existe = true;
 		eGrupo = servPersistencia.recuperarEntidad(grupo.getId());
@@ -50,7 +50,7 @@ public class TDSGrupoDAO implements GrupoDAO{
 		}
 		// si ya existe no se crea de nuevo
 		if (existe) {
-			return;
+			return null;
 		}
 		
 		eGrupo = new Entidad();
@@ -62,6 +62,7 @@ public class TDSGrupoDAO implements GrupoDAO{
 
 		eGrupo = servPersistencia.registrarEntidad(eGrupo);
 		grupo.setId(eGrupo.getId());
+		return grupo;
 	}
 
     @Override

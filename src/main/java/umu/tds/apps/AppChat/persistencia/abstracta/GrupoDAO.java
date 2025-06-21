@@ -6,7 +6,7 @@ import umu.tds.apps.AppChat.dominio.Grupo;
 
 public interface GrupoDAO {
 
-	void create(Grupo grupo);
+	Grupo create(Grupo grupo);
 	void delete(Grupo grupo);
 	void update(Grupo grupo);
 	Grupo get(int id);
