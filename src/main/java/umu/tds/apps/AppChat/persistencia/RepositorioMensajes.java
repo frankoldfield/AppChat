@@ -8,13 +8,13 @@ import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
-import umu.tds.apps.AppChat.persistencia.imp.TDSFactoriaDAO;
-import umu.tds.apps.AppChat.persistencia.imp.TDSMensajeDAO;
+import umu.tds.apps.AppChat.persistencia.abstracta.FactoriaDAO;
+import umu.tds.apps.AppChat.persistencia.abstracta.MensajeDAO;
 
 public class RepositorioMensajes {
 	
 	public static RepositorioMensajes unicaInstancia = new RepositorioMensajes();
-	public TDSMensajeDAO mensajeDAO;
+	public MensajeDAO mensajeDAO;
 	
 	public static RepositorioMensajes getInstance() {
 		if (unicaInstancia == null) {
@@ -24,8 +24,14 @@ public class RepositorioMensajes {
 	}
 	
 	public RepositorioMensajes() {
-		TDSFactoriaDAO factoriaDAO = TDSFactoriaDAO.getInstance();
-		mensajeDAO = factoriaDAO.getMensajeDAO();
+		FactoriaDAO factoriaDAO;
+		try {
+			factoriaDAO = FactoriaDAO.getInstancia();
+			mensajeDAO = factoriaDAO.getMensajeDAO();
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public Mensaje add(Mensaje mensaje) {

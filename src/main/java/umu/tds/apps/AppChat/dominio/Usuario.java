@@ -5,8 +5,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import umu.tds.apps.AppChat.persistencia.imp.TDSContactoIndividualDAO;
-import umu.tds.apps.AppChat.persistencia.imp.TDSFactoriaDAO;
+import umu.tds.apps.AppChat.persistencia.DAOException;
+import umu.tds.apps.AppChat.persistencia.abstracta.ContactoIndividualDAO;
+import umu.tds.apps.AppChat.persistencia.abstracta.FactoriaDAO;
+import umu.tds.apps.AppChat.persistencia.abstracta.GrupoDAO;
 
 public class Usuario {
 
@@ -34,7 +36,17 @@ public class Usuario {
 		this.saludo = saludo;
 		this.fechaCreacion = LocalDateTime.now();
 		this.isPremium = false;
-		this.contactoPropio = TDSFactoriaDAO.getInstance().getContactoIndividualDAO().create(new ContactoIndividual(nombre, movil));
+		FactoriaDAO factoriaDAO;
+		ContactoIndividualDAO contactoIndividualDAO;
+		try {
+			
+			factoriaDAO = FactoriaDAO.getInstancia();
+			contactoIndividualDAO = factoriaDAO.getContactoIndividualDAO();
+			this.contactoPropio = contactoIndividualDAO.create(new ContactoIndividual(nombre, movil));
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
+		
 		Contactos = new ArrayList<Contacto>();
 	}
 
@@ -106,8 +118,20 @@ public class Usuario {
 				}
 			}
 		}
-		ContactoIndividual contactoVacio = TDSContactoIndividualDAO.getInstance().create(new ContactoIndividual(numero_telefono));
-		Contactos.add(contactoVacio);
+		
+		FactoriaDAO factoriaDAO;
+		ContactoIndividualDAO contactoIndividualDAO;
+		ContactoIndividual contactoVacio = null;
+		try {
+			factoriaDAO = FactoriaDAO.getInstancia();
+			contactoIndividualDAO = factoriaDAO.getContactoIndividualDAO();
+			contactoVacio = contactoIndividualDAO.create(new ContactoIndividual(numero_telefono));
+			Contactos.add(contactoVacio);
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
+		
+		
 		return contactoVacio;
 	}
 	
@@ -128,16 +152,27 @@ public class Usuario {
 	}
 	
 	public Grupo addOrUpdateGrupo(String nombreGrupo, List<ContactoIndividual> contactosGrupo) {
-		for(Contacto contacto: Contactos) {
-			if (contacto instanceof Grupo && contacto.getNombre().equals(nombreGrupo)) {
-				((Grupo) contacto).setContactos(contactosGrupo);
-				TDSFactoriaDAO.getInstance().getGrupoDAO().update((Grupo) contacto);
-				return (Grupo) contacto;
+		FactoriaDAO factoriaDAO;
+		GrupoDAO grupoDAO;
+		Grupo grupoNuevo = null;
+		try {
+			
+			factoriaDAO = FactoriaDAO.getInstancia();
+			grupoDAO = factoriaDAO.getGrupoDAO();
+			for(Contacto contacto: Contactos) {
+				if (contacto instanceof Grupo && contacto.getNombre().equals(nombreGrupo)) {
+					((Grupo) contacto).setContactos(contactosGrupo);
+					grupoDAO.update((Grupo) contacto);
+					return (Grupo) contacto;
+				}
 			}
+			
+			grupoNuevo =grupoDAO.create(new Grupo(nombreGrupo, contactosGrupo));
+			Contactos.add(grupoNuevo);
+		} catch (DAOException e) {
+			e.printStackTrace();
 		}
 		
-		Grupo grupoNuevo =TDSFactoriaDAO.getInstance().getGrupoDAO().create(new Grupo(nombreGrupo, contactosGrupo));
-		Contactos.add(grupoNuevo);
 		
 		return grupoNuevo;
 	}
@@ -147,7 +182,16 @@ public class Usuario {
 			if(contacto instanceof ContactoIndividual) {
 				if(((ContactoIndividual) contacto).getMovil().equals(movil)) {
 					contacto.setNombre(nombre);
-					TDSFactoriaDAO.getInstance().getContactoIndividualDAO().update((ContactoIndividual) contacto);
+					FactoriaDAO factoriaDAO;
+					ContactoIndividualDAO contactoIndividualDAO;
+					try {
+						
+						factoriaDAO = FactoriaDAO.getInstancia();
+						contactoIndividualDAO = factoriaDAO.getContactoIndividualDAO();
+						contactoIndividualDAO.update((ContactoIndividual) contacto);
+					} catch (DAOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

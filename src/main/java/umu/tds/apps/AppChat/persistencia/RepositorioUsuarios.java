@@ -3,13 +3,13 @@ package umu.tds.apps.AppChat.persistencia;
 import java.util.List;
 
 import umu.tds.apps.AppChat.dominio.Usuario;
-import umu.tds.apps.AppChat.persistencia.imp.TDSFactoriaDAO;
-import umu.tds.apps.AppChat.persistencia.imp.TDSUsuarioDAO;
+import umu.tds.apps.AppChat.persistencia.abstracta.FactoriaDAO;
+import umu.tds.apps.AppChat.persistencia.abstracta.UsuarioDAO;
 
 public class RepositorioUsuarios {
 	
 	public static RepositorioUsuarios unicaInstancia = new RepositorioUsuarios();
-	public TDSUsuarioDAO usuarioDAO;
+	public UsuarioDAO usuarioDAO;
 	
 	public static RepositorioUsuarios getInstance() {
 		if (unicaInstancia == null) {
@@ -19,8 +19,15 @@ public class RepositorioUsuarios {
 	}
 	
 	public RepositorioUsuarios() {
-		TDSFactoriaDAO factoriaDAO = TDSFactoriaDAO.getInstance();
-		usuarioDAO = factoriaDAO.getUsuarioDAO();
+		FactoriaDAO factoriaDAO;
+		try {
+			factoriaDAO = FactoriaDAO.getInstancia();
+			usuarioDAO = factoriaDAO.getUsuarioDAO();
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	public Usuario getUsuario(int id) {

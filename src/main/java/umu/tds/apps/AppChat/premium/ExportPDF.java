@@ -26,7 +26,12 @@ public class ExportPDF {
 	public void exportarAPDF(List<Mensaje> conversacion, String nombreUsuario) throws FileNotFoundException, DocumentException{
 		if (conversacion.isEmpty()) return;
 		
-		FileOutputStream archivo = new FileOutputStream("C:\\Users\\frank\\OneDrive - UNIVERSIDAD DE MURCIA\\Escritorio\\hola.pdf");
+		String destinatario = conversacion.getFirst().getContacto_receptor().getNombre();
+		if(destinatario.isEmpty()) {
+			destinatario = ((ContactoIndividual) conversacion.getFirst().getContacto_receptor()).getMovil();
+		}
+
+		FileOutputStream archivo = new FileOutputStream("src\\\\main\\\\resources\\\\pdf\\\\"+nombreUsuario+"-"+destinatario+".pdf");
 
 		Document documento = new Document();
 		PdfWriter.getInstance(documento, archivo);

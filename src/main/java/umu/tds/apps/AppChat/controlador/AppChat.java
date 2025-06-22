@@ -17,11 +17,12 @@ import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
+import umu.tds.apps.AppChat.persistencia.DAOException;
 import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
 import umu.tds.apps.AppChat.persistencia.RepositorioUsuarios;
-import umu.tds.apps.AppChat.persistencia.imp.TDSContactoIndividualDAO;
-import umu.tds.apps.AppChat.persistencia.imp.TDSFactoriaDAO;
-import umu.tds.apps.AppChat.persistencia.imp.TDSGrupoDAO;
+import umu.tds.apps.AppChat.persistencia.abstracta.ContactoIndividualDAO;
+import umu.tds.apps.AppChat.persistencia.abstracta.FactoriaDAO;
+import umu.tds.apps.AppChat.persistencia.abstracta.GrupoDAO;
 import umu.tds.apps.AppChat.premium.EstrategiaDescuento;
 import umu.tds.apps.AppChat.premium.ExportPDF;
 import umu.tds.apps.AppChat.premium.FactoriaEstrategiaDescuento;
@@ -33,8 +34,8 @@ public class AppChat {
 	public static AppChat INSTANCE = null;
 	public RepositorioMensajes repoMensajes;
 	public RepositorioUsuarios repoUsuarios;
-	public TDSGrupoDAO grupoDAO;
-	public TDSContactoIndividualDAO contactoIndividualDAO;
+	public GrupoDAO grupoDAO;
+	public ContactoIndividualDAO contactoIndividualDAO;
 	public double precioPremium;
 
 	//Patrón singleton
@@ -45,12 +46,18 @@ public class AppChat {
 	}
 	
 	public AppChat() {
-		TDSFactoriaDAO factoriaDAO = TDSFactoriaDAO.getInstance();
-        contactoIndividualDAO = factoriaDAO.getContactoIndividualDAO();
-        grupoDAO = factoriaDAO.getGrupoDAO();
+		FactoriaDAO factoriaDAO;
+		try {
+			factoriaDAO = FactoriaDAO.getInstancia();
+			contactoIndividualDAO = factoriaDAO.getContactoIndividualDAO();
+	        grupoDAO = factoriaDAO.getGrupoDAO();
+	        
+	        repoMensajes= RepositorioMensajes.getInstance();
+	        repoUsuarios= RepositorioUsuarios.getInstance();
+		} catch (DAOException e) {
+			e.printStackTrace();
+		}
         
-        repoMensajes= RepositorioMensajes.getInstance();
-        repoUsuarios= RepositorioUsuarios.getInstance();
         
 	}
 	

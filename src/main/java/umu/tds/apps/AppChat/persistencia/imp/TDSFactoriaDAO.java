@@ -1,6 +1,8 @@
 package umu.tds.apps.AppChat.persistencia.imp;
 
-public class TDSFactoriaDAO {
+import umu.tds.apps.AppChat.persistencia.abstracta.FactoriaDAO;
+
+public class TDSFactoriaDAO extends FactoriaDAO{
 
 	public static TDSFactoriaDAO unicaInstancia = null;
 	

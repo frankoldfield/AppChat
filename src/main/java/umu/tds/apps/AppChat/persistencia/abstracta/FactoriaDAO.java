@@ -3,14 +3,15 @@ package umu.tds.apps.AppChat.persistencia.abstracta;
 import umu.tds.apps.AppChat.persistencia.DAOException;
 
 public abstract class FactoriaDAO {
-	public static final String DAO_TDS = "umu.tds.apps.AppChat.TDSFactoriaDAO";
+	public static final String DAO_TDS = "umu.tds.apps.AppChat.persistencia.imp.TDSFactoriaDAO";
 
 	private static FactoriaDAO INSTANCE = null;
 
 	public static FactoriaDAO getInstancia(String tipo) throws DAOException{
 		if (INSTANCE == null)
 			try { 
-				INSTANCE=(FactoriaDAO) Class.forName(tipo).newInstance();
+				Class<?> clazz = Class.forName(tipo);
+				INSTANCE = (FactoriaDAO) clazz.getDeclaredConstructor().newInstance();
 			} catch (Exception e) {	
 				throw new DAOException(e.getMessage());
 		} 
