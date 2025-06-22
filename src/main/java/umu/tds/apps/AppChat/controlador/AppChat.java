@@ -349,7 +349,7 @@ public class AppChat {
 		double diasTranscurridos = ChronoUnit.DAYS.between(usuarioActual.getFechaCreacion(), LocalDateTime.now());
 		EstrategiaDescuento estrategiaDescuento = FactoriaEstrategiaDescuento.create(estrategiaString, diasTranscurridos, (double) numMensajes());
         ServicioPremium servicio = new ServicioPremium(precioPremium, estrategiaDescuento);
-        double precioFinal = servicio.calculateFinalPrice();
+        double precioFinal = servicio.calcularPrecioFinal();
         return precioFinal;
 	}
 

@@ -221,9 +221,9 @@ public class VentanaPrincipal {
 
         for (int i = 0; i < contactos.size(); i++) {
             ContactoIndividual c = contactos.get(i);
-            datos[i][0] = c.getNombre();               // Asegúrate de que ContactoIndividual tiene este método
-            datos[i][1] = String.valueOf(c.getMovil()); // Asegúrate de que devuelve un número
-            datos[i][2] = appChat.getSaludo(c.getMovil());               // Asegúrate de que ContactoIndividual tiene este método
+            datos[i][0] = c.getNombre();      
+            datos[i][1] = String.valueOf(c.getMovil());
+            datos[i][2] = appChat.getSaludo(c.getMovil());
         }
 
         @SuppressWarnings("serial")
@@ -280,17 +280,17 @@ public class VentanaPrincipal {
         JButton btnAceptar = new JButton("Aceptar");
         btnAceptar.setEnabled(false);
 
-        // Panel fijo: precio original
+        //Panel fijo: precio original
         JPanel panel3 = crearPanel("Precio original", "Obtén Premium por el precio original", tamañoPanel, panelesSeleccionados, btnAceptar);
         panelVentajas.add(panel3);
         panelVentajas.add(Box.createVerticalStrut(10));
 
-        // Panel 1: descuento por mensajes
+        //Panel 1: descuento por mensajes
         JPanel panel1 = crearPanel("Descuento por mensajes", "Recibe un 1% de descuento por cada mensaje enviado o recibido (hasta 50%)", tamañoPanel, panelesSeleccionados, btnAceptar);
         panelVentajas.add(panel1);
         panelVentajas.add(Box.createVerticalStrut(10));
 
-        // Panel 2: descuento por fecha
+        //Panel 2: descuento por fecha
         JPanel panel2 = crearPanel("Descuento por fecha", "Recibe un 1% de descuento por cada día que lleves registrado (hasta 50%)", tamañoPanel, panelesSeleccionados, btnAceptar);
         panelVentajas.add(panel2);
 
@@ -352,7 +352,7 @@ public class VentanaPrincipal {
 
         JPanel panelCentral = new JPanel();
         panelCentral.setLayout(new BoxLayout(panelCentral, BoxLayout.Y_AXIS));
-        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20)); // margen uniforme
+        panelCentral.setBorder(BorderFactory.createEmptyBorder(20, 20, 10, 20)); 
 
         List<Grupo> grupos = appChat.getListaGrupos();
         List<String> nombres = grupos.stream()
@@ -366,14 +366,14 @@ public class VentanaPrincipal {
         JScrollPane scroll = new JScrollPane(listaGrupos);
         scroll.setPreferredSize(new Dimension(450, 150));
         scroll.setBorder(BorderFactory.createTitledBorder("Grupos"));
-        scroll.setAlignmentX(Component.LEFT_ALIGNMENT); // alineación izquierda
+        scroll.setAlignmentX(Component.LEFT_ALIGNMENT); 
 
         JLabel labelNuevoGrupo = new JLabel("Crear grupo nuevo");
         labelNuevoGrupo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JPanel panelCrearGrupo = new JPanel();
         panelCrearGrupo.setLayout(new BoxLayout(panelCrearGrupo, BoxLayout.X_AXIS));
-        panelCrearGrupo.setAlignmentX(Component.LEFT_ALIGNMENT); // alineación izquierda
+        panelCrearGrupo.setAlignmentX(Component.LEFT_ALIGNMENT); 
         panelCrearGrupo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
         JTextField textField = new JTextField();
@@ -483,7 +483,7 @@ public class VentanaPrincipal {
             }
 
             Mensaje ultimo = null;
-            // Buscar el último mensaje no vacío
+            //Buscar el último mensaje no vacío
             for (int i = conversacion.size() - 1; i >= 0; i--) {
                 Mensaje mensaje = conversacion.get(i);
                 if (!mensaje.getTexto().isEmpty()) {
@@ -499,7 +499,7 @@ public class VentanaPrincipal {
             if (a.ultimoMensaje == null && b.ultimoMensaje == null) return 0;
             if (a.ultimoMensaje == null) return 1;
             if (b.ultimoMensaje == null) return -1;
-            return b.ultimoMensaje.getHora().compareTo(a.ultimoMensaje.getHora()); // más reciente primero
+            return b.ultimoMensaje.getHora().compareTo(a.ultimoMensaje.getHora()); 
         });
 
         for (ContactoConUltimoMensaje par : listaOrdenada) {
@@ -508,7 +508,7 @@ public class VentanaPrincipal {
 
             JPanel elemento;
 
-            DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("HH:mm"); // 24h, o "hh:mm a" para 12h con AM/PM
+            DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("HH:mm"); 
 
             String textoMensaje = (ultimo == null) ? "" : "(" + ultimo.getHora().format(formatterHora)+") "+ultimo.getTexto();
 
@@ -776,14 +776,12 @@ public class VentanaPrincipal {
         
         chat = new JPanel();      
         chat.setLayout(new BoxLayout(chat, BoxLayout.Y_AXIS));
-//        chat.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));  // top, left, bottom, right
         chatConMargen = new JPanel(new BorderLayout());
         chatConMargen.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         chatConMargen.add(chat, BorderLayout.CENTER);
 
         scrollPane = new JScrollPane(chatConMargen);
 
-//        JScrollPane scrollPane = new JScrollPane(chat);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -802,17 +800,16 @@ public class VentanaPrincipal {
         JTextField enviarMensaje = new JTextField();
         JButton btnEnviar = new JButton("->");
 
-        // Botón de emojis
-        JButton btnEmojiToggle = new JButton("😊"); // El botón para mostrar emojis
+        JButton btnEmojiToggle = new JButton("😊"); 
         JPopupMenu menuEmojis = new JPopupMenu();
-        JPanel emojiPanel = new JPanel(new GridLayout(6, 4, 5, 5)); // 6 filas x 4 columnas
+        JPanel emojiPanel = new JPanel(new GridLayout(6, 4, 5, 5)); 
 
         for (int i = 0; i < BubbleText.MAXICONO; i++) {
             final int emojiIndex = i;
             ImageIcon iconoIter = BubbleText.getEmoji(emojiIndex);
 
             JButton btnEmoji = new JButton(iconoIter);
-            btnEmoji.setPreferredSize(new Dimension(40, 40)); // tamaño opcional
+            btnEmoji.setPreferredSize(new Dimension(40, 40)); 
             btnEmoji.setFocusPainted(false);
             btnEmoji.setBorderPainted(false);
             btnEmoji.setContentAreaFilled(false);
@@ -821,7 +818,7 @@ public class VentanaPrincipal {
             	if(contactoChat==null) {
             		return;
             	}
-                // Enviar emoji
+                //Enviar emoji
                 if (contactoChat instanceof ContactoIndividual) {
                 	appChat.enviarMensajeContacto((ContactoIndividual) contactoChat, "", emojiIndex, TipoMensaje.ENVIADO);
                 } else {
@@ -841,22 +838,21 @@ public class VentanaPrincipal {
             emojiPanel.add(btnEmoji);
         }
 
-        // OBLIGATORIO: establecer tamaño preferido del panel
-        emojiPanel.setPreferredSize(new Dimension(4 * 45, 6 * 45)); // 4 columnas × 45px, 6 filas × 45px
+        
+        emojiPanel.setPreferredSize(new Dimension(4 * 45, 6 * 45)); 
         menuEmojis.add(emojiPanel);
 
-        // MOSTRAR HACIA ARRIBA
+        //MOSTRAR HACIA ARRIBA
         btnEmojiToggle.addActionListener(e -> {
-            // Asegúrate de que el menú esté empaquetado correctamente
+           
             menuEmojis.pack();
             Dimension menuSize = menuEmojis.getPreferredSize();
 
-            // Mostrarlo sobre el botón
+            
             menuEmojis.show(btnEmojiToggle, 0, -menuSize.height);
         });
 
-
-        // Añadir a la interfaz
+      
         panelEnvio.add(btnEmojiToggle, BorderLayout.WEST);
         panelEnvio.add(enviarMensaje, BorderLayout.CENTER);
         panelEnvio.add(btnEnviar, BorderLayout.EAST);

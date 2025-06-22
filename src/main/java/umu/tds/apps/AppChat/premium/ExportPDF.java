@@ -50,7 +50,8 @@ public class ExportPDF {
 			
 			for (Mensaje msg : conversacion) {
 				Paragraph p = creaParrafo(msg);
-				p.setIndentationRight(msg.getTipo().equals(TipoMensaje.ENVIADO) ? 0f : 100f); // izquierda para receptor
+				//Izquierda para receptor
+				p.setIndentationRight(msg.getTipo().equals(TipoMensaje.ENVIADO) ? 0f : 100f); 
             	p.setAlignment(Element.ALIGN_LEFT);
 	            
 	            documento.add(p);
@@ -69,11 +70,13 @@ public class ExportPDF {
 				Paragraph p = creaParrafo(msg);
 				
 	            if(msg.getTipo().equals(TipoMensaje.ENVIADO)) {
-	            	p.setIndentationLeft(msg.getTipo().equals(TipoMensaje.ENVIADO) ? 100f : 0f); // derecha para emisor
+	            	//Derecha para emisor
+	            	p.setIndentationLeft(msg.getTipo().equals(TipoMensaje.ENVIADO) ? 100f : 0f); 
 	            	p.setAlignment(Element.ALIGN_RIGHT);
 	            }
 	            else {
-	            	p.setIndentationRight(msg.getTipo().equals(TipoMensaje.RECIBIDO) ? 0f : 100f); // izquierda para receptor
+	            	//Izquierda para receptor
+	            	p.setIndentationRight(msg.getTipo().equals(TipoMensaje.RECIBIDO) ? 0f : 100f); 
 	            	p.setAlignment(Element.ALIGN_LEFT);
 	            }
 	            

@@ -42,7 +42,7 @@ public class TDSGrupoDAO implements GrupoDAO{
 		if (eGrupo == null) {
 			existe = false;
 		}
-		// si ya existe no se crea de nuevo
+		//Si ya existe no se crea de nuevo
 		if (existe) {
 			return null;
 		}

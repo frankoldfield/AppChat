@@ -47,7 +47,7 @@ public class TDSMensajeDAO implements MensajeDAO{
 		if (eMensaje == null) {
 			existe = false;
 		}
-		// si ya existe no se crea de nuevo
+		//Si ya existe no se crea de nuevo
 		if (existe) {
 			return null;
 		}
@@ -76,8 +76,6 @@ public class TDSMensajeDAO implements MensajeDAO{
 
 		Entidad eMensaje = servPersistencia.recuperarEntidad(mensaje.getId());
 
-		// Pasar la lista de interpretes a un solo string para meterlo en el servidor de
-		// persistencia
 
 		for (Propiedad prop : eMensaje.getPropiedades()) {
 

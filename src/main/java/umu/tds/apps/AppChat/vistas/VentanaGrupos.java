@@ -60,7 +60,7 @@ public class VentanaGrupos {
 	private JPanel crearPanelCentral() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		panel.setBorder(new EmptyBorder(100, 10, 100, 10)); // Espacio superior/inferior
+		panel.setBorder(new EmptyBorder(100, 10, 100, 10)); 
 
 		JButton btnDcha = new JButton("->");
 		JButton btnIzq = new JButton("<-");
@@ -74,7 +74,7 @@ public class VentanaGrupos {
 		
 		btnDcha.addActionListener(e -> {
 		    int[] indices = listaContactos.getSelectedIndices();
-		    for (int i = indices.length - 1; i >= 0; i--) { // de atrás hacia adelante para evitar problemas al eliminar
+		    for (int i = indices.length - 1; i >= 0; i--) { 
 		    	ContactoIndividual contacto = modeloContactos.getElementAt(indices[i]);
 		        modeloContactosEnGrupo.addElement(contacto);
 		        modeloContactos.removeElementAt(indices[i]);
@@ -91,7 +91,7 @@ public class VentanaGrupos {
 		});
 
 		panel.add(btnDcha);
-		panel.add(Box.createVerticalStrut(10)); // Separación
+		panel.add(Box.createVerticalStrut(10)); 
 		panel.add(btnIzq);
 
 		return panel;
@@ -112,12 +112,12 @@ public class VentanaGrupos {
         listaContactos.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 	    JScrollPane scroll = new JScrollPane(listaContactos);
-	    scroll.setPreferredSize(new Dimension(300, 0)); // Aumentamos el ancho
+	    scroll.setPreferredSize(new Dimension(300, 0)); 
 	    scroll.setBorder(BorderFactory.createTitledBorder("Contactos"));
 
-	    // 👇 Lo envolvemos en un panel con margen
+	    
 	    JPanel contenedor = new JPanel(new BorderLayout());
-	    contenedor.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5)); // margen izquierdo
+	    contenedor.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 5)); 
 	    contenedor.add(scroll, BorderLayout.CENTER);
 
 	    return contenedor;
@@ -140,12 +140,12 @@ public class VentanaGrupos {
 	    listaContactosInGrupo.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 	    JScrollPane scroll = new JScrollPane(listaContactosInGrupo);
-	    scroll.setPreferredSize(new Dimension(300, 0)); // Aumentamos el ancho
+	    scroll.setPreferredSize(new Dimension(300, 0)); 
 	    scroll.setBorder(BorderFactory.createTitledBorder("Contactos añadidos"));
 
-	    // Lo envolvemos en un panel con margen
+	    
 	    JPanel contenedor = new JPanel(new BorderLayout());
-	    contenedor.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 10)); // margen derecho
+	    contenedor.setBorder(BorderFactory.createEmptyBorder(10, 5, 10, 10)); 
 	    contenedor.add(scroll, BorderLayout.CENTER);
 
 	    return contenedor;

@@ -1,6 +1,5 @@
 package umu.tds.apps.AppChat.persistencia;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,7 +13,6 @@ import umu.tds.apps.AppChat.persistencia.imp.TDSMensajeDAO;
 
 public class RepositorioMensajes {
 	
-	public List<Mensaje> mensajes = new ArrayList<Mensaje>();
 	public static RepositorioMensajes unicaInstancia = new RepositorioMensajes();
 	public TDSMensajeDAO mensajeDAO;
 	
@@ -32,11 +30,10 @@ public class RepositorioMensajes {
 	
 	public Mensaje add(Mensaje mensaje) {
 		Mensaje mensajeActualizado = mensajeDAO.create(mensaje);
-		mensajes.add(mensajeActualizado);
 		return mensajeActualizado;
 	}
 	
-	// Todos los mensajes de un usuario
+	//Todos los mensajes de un usuario
 	public List<Mensaje> buscar_Todos(String numeroUsuario) {
 
 		return mensajeDAO.getAll().stream()
@@ -48,7 +45,7 @@ public class RepositorioMensajes {
 		        .collect(Collectors.toList());
 	}
 	
-	// Mensajes que contienen un texto
+	//Mensajes que contienen un texto
 	public List<Mensaje> buscar_Texto(
 	        String texto,
 			String numeroUsuario) {
@@ -59,7 +56,7 @@ public class RepositorioMensajes {
 	        .collect(Collectors.toList());
 	}
 				
-	// Conversación con un contacto individual
+	//Conversación con un contacto individual
 		public List<Mensaje> getConversacion(
 		        String numero_Emisor,
 		        String numero_Receptor) {
@@ -75,7 +72,7 @@ public class RepositorioMensajes {
 		        .collect(Collectors.toList());
 		}
 		
-	// Conversación con un grupo
+	//Conversación con un grupo
 			public List<Mensaje> getConversacionGrupo(
 			        String numero_Emisor,
 			        String nombreGrupo) {
@@ -90,7 +87,7 @@ public class RepositorioMensajes {
 
 	/* -------------------------------------------------------------------- */
 
-	// Conversación con un número
+	//Conversación con un número
 	public List<Mensaje> buscar_Numero(
 	        String numeroUsuario,
 	        String numeroExterno) {
@@ -106,7 +103,7 @@ public class RepositorioMensajes {
 
 	/* -------------------------------------------------------------------- */
 	
-	// Mensajes que contienen un texto con un número
+	//Mensajes que contienen un texto con un número
 		public List<Mensaje> buscar_Texto_y_Numero(
 		        String texto,
 				String numeroUsuario,
@@ -120,7 +117,7 @@ public class RepositorioMensajes {
 		
 	
 		
-	// Mensajes de un contacto
+	//Mensajes de un contacto
 		public List<Mensaje> buscar_Contacto(
 		        String numeroUsuario,
 		        String nombreContacto) {
@@ -132,7 +129,7 @@ public class RepositorioMensajes {
 		        .collect(Collectors.toList());
 		}
 		
-	// Mensajes que contienen un texto de un contacto
+	//Mensajes que contienen un texto de un contacto
 		public List<Mensaje> buscar_Texto_y_Contacto(
 		        String texto,
 				String numeroUsuario,
@@ -144,9 +141,5 @@ public class RepositorioMensajes {
 			        .collect(Collectors.toList());
 		}
 		
-	
-		
-	
 			
-		
 }

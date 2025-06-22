@@ -40,7 +40,7 @@ public class TDSContactoIndividualDAO implements ContactoIndividualDAO{
 		if (eContacto == null) {
 			existe = false;
 		}
-		// si ya existe no se crea de nuevo
+		//Si ya existe no se crea de nuevo
 		if (existe) {
 			return contacto;
 		}

@@ -9,7 +9,7 @@ public class ServicioPremium {
         this.estrategiaDescuento = estrategiaDescuento;
     }
 
-    public double calculateFinalPrice() {
+    public double calcularPrecioFinal() {
         return estrategiaDescuento.aplicaDescuento(precioBase);
     }
 }

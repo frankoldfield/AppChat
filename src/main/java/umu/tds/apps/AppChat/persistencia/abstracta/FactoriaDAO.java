@@ -24,7 +24,7 @@ public abstract class FactoriaDAO {
 
 	protected FactoriaDAO (){}
 	
-	// Metodos factoria para obtener adaptadores
+	//Metodos factoria para obtener adaptadores
 	public abstract UsuarioDAO getUsuarioDAO();	
 	public abstract ContactoIndividualDAO getContactoIndividualDAO();
 	public abstract GrupoDAO getGrupoDAO();

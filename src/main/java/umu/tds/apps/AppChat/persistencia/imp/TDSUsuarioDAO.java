@@ -93,7 +93,7 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 		if (eUsuario == null) {
 			existe = false;
 		}
-		// si ya existe no se crea de nuevo
+		//Si ya existe no se crea de nuevo
 		if (existe) {
 			return null;
 		}

@@ -165,16 +165,16 @@ public class VentanaBuscar{
 
     private JPanel crearPanelMensaje(String emisor, String receptor, String mensaje, int Emoji) {
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2)); // Borde del panel principal del mensaje
+        panel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2)); 
         
-        // Subpanel para emisor y receptor
+        
         JPanel cabecera = new JPanel(new BorderLayout());
         JLabel labelEmisor = new JLabel(emisor);
         JLabel labelReceptor = new JLabel(receptor, SwingConstants.RIGHT);
         cabecera.add(labelEmisor, BorderLayout.WEST);
         cabecera.add(labelReceptor, BorderLayout.EAST);
 
-        // Área del mensaje con scroll opcional
+        
         JLabel areaMensaje;
         if(Emoji!=-1) {
         	areaMensaje = new JLabel(BubbleText.getEmoji(Emoji));
@@ -183,31 +183,30 @@ public class VentanaBuscar{
         	areaMensaje = new JLabel(mensaje);
         }
         
-        areaMensaje.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Márgenes internos del texto
+        areaMensaje.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); 
         areaMensaje.setBackground(StyleUtils.BACKGROUND_DARKER);
         
-        // Panel contenedor del área de mensaje
+        
         JPanel panelMensaje = new JPanel(new BorderLayout());
-        panelMensaje.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1)); // Borde del panel
-        panelMensaje.setMinimumSize(new Dimension(200, 60)); // Tamaño mínimo
+        panelMensaje.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1)); 
+        panelMensaje.setMinimumSize(new Dimension(200, 60)); 
         panelMensaje.add(areaMensaje, BorderLayout.CENTER);
 
 
-        // Ensamblar todo
         cabecera.setBackground(StyleUtils.BACKGROUND_DARKER);
         panelMensaje.setBackground(StyleUtils.BACKGROUND_DARKER);
         panel.add(cabecera, BorderLayout.NORTH);
         panel.add(panelMensaje, BorderLayout.CENTER);
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Espaciado interior (padding)
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); 
         panel.setBackground(StyleUtils.BACKGROUND_DARKER);
         JPanel panelConBorde = new JPanel(new BorderLayout());
-        panelConBorde.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2)); // Borde exterior final del panel
+        panelConBorde.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
         panelConBorde.add(panel, BorderLayout.CENTER);
         panelConBorde.setBackground(StyleUtils.BACKGROUND_DARKER);
         
         JPanel contenedor = new JPanel(new BorderLayout());
         contenedor.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
-        contenedor.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margen exterior
+        contenedor.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); 
         contenedor.add(panelConBorde, BorderLayout.CENTER);
         return contenedor;
 
