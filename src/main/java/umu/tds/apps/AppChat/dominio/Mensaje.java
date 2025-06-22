@@ -1,0 +1,61 @@
+package umu.tds.apps.AppChat.dominio;
+
+import java.time.LocalDateTime;
+
+public class Mensaje {
+	
+	private int id;
+	private String texto;
+	private LocalDateTime hora;
+	private int emoji;
+	private TipoMensaje tipo;
+	private ContactoIndividual contacto_emisor;
+	private Contacto contacto_receptor;
+	
+	public Mensaje(String texto, LocalDateTime hora, int emoji, TipoMensaje tipo, ContactoIndividual contacto_emisor, Contacto contacto_receptor) {
+		this.id = 0;
+		this.texto = texto;
+		this.hora = hora;
+		this.emoji = emoji;
+		this.tipo = tipo;
+		this.contacto_emisor = contacto_emisor;
+		this.contacto_receptor = contacto_receptor;
+	}
+
+	public String getTexto() {
+		return texto;
+	}
+
+	public LocalDateTime getHora() {
+		return hora;
+	}
+
+	public int getEmoji() {
+		return emoji;
+	}
+	
+	public TipoMensaje getTipo() {
+		return tipo;
+	}
+	
+	public ContactoIndividual getContacto_emisor() {
+		return contacto_emisor;
+	}
+
+	public void setContacto_emisor(ContactoIndividual contacto_emisor) {
+		this.contacto_emisor = contacto_emisor;
+	}
+
+	public Contacto getContacto_receptor() {
+		return contacto_receptor;
+	}
+	
+	public int getId() {
+		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
+	}
+
+}
