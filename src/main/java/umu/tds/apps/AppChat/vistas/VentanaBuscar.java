@@ -99,6 +99,7 @@ public class VentanaBuscar{
         panelResultados.setLayout(new BoxLayout(panelResultados, BoxLayout.Y_AXIS));
         JScrollPane scrollResultados = new JScrollPane(panelResultados);
         scrollResultados.setPreferredSize(new Dimension(500, 400));
+        scrollResultados.getVerticalScrollBar().setUnitIncrement(16);
         return scrollResultados;
     }
 
@@ -208,6 +209,7 @@ public class VentanaBuscar{
         panelConBorde.setBackground(StyleUtils.BACKGROUND_DARKER);
         
         JPanel contenedor = new JPanel(new BorderLayout());
+        contenedor.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
         contenedor.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Margen exterior
         contenedor.add(panelConBorde, BorderLayout.CENTER);
         return contenedor;
