@@ -18,6 +18,8 @@ import umu.tds.apps.AppChat.dominio.Usuario;
 import umu.tds.apps.AppChat.utils.StyleUtils;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -35,8 +37,12 @@ public class VentanaPrincipal {
     private Contacto contactoChat;
     private JPanel panelDerecho;
     private AppChat appChat;
-    String descuentoSeleccionado;
-    JLabel precioFinallbl;
+    private String descuentoSeleccionado;
+    private JLabel precioFinallbl;
+    private double chatSize;
+    private JPanel chatConMargen;
+    private JScrollPane scrollPane;
+    
     public VentanaPrincipal() {
         initialize();
     }
@@ -770,15 +776,27 @@ public class VentanaPrincipal {
         
         chat = new JPanel();      
         chat.setLayout(new BoxLayout(chat, BoxLayout.Y_AXIS));
-        
-        JScrollPane scrollPane = new JScrollPane(chat);
+//        chat.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));  // top, left, bottom, right
+        chatConMargen = new JPanel(new BorderLayout());
+        chatConMargen.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        chatConMargen.add(chat, BorderLayout.CENTER);
+
+        scrollPane = new JScrollPane(chatConMargen);
+
+//        JScrollPane scrollPane = new JScrollPane(chat);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getVerticalScrollBar().setUnitIncrement(10);
-        
-        
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        scrollPane.setViewportView(chatConMargen);
+        scrollPane.getViewport().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+            	chatConMargen.setPreferredSize(new Dimension(scrollPane.getViewport().getWidth(), (int)chatSize+10));
+            }
+        });
         JPanel panelEnvio = new JPanel(new BorderLayout(5, 5));
 
         JTextField enviarMensaje = new JTextField();
@@ -873,6 +891,7 @@ public class VentanaPrincipal {
     }
     
     private void mostrarConversacion(Contacto contacto) {
+    	chatSize=0;
         chat.removeAll();
         Usuario usuarioActual = appChat.usuarioActual;
         String miNumero = usuarioActual.getMovil();
@@ -912,10 +931,14 @@ public class VentanaPrincipal {
             	}
             	
             }
+            chatSize+=burbuja.getPreferredSize().getHeight();
             chat.add(burbuja);
         }
         
         chat.revalidate();
         chat.repaint();
+        chatConMargen.setPreferredSize(new Dimension(scrollPane.getViewport().getWidth(), (int)chatSize+10));
     }
+    
+    
 }

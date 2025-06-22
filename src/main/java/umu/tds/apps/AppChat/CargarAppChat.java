@@ -72,7 +72,6 @@ public class CargarAppChat {
 		
 		c3 = appChat.agregarContacto("rosalia", "33");
 		
-		
 		ContactoIndividual c1 = appChat.repoUsuarios.buscarUsuarioPorMovil("22").getContactoIndividual("11");
 		ContactoIndividual c4 = appChat.agregarContacto("diego", "44");
 		ContactoIndividual c5 = appChat.agregarContacto("anne", "55");
