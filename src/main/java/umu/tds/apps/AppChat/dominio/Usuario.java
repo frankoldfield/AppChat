@@ -52,94 +52,6 @@ public class Usuario {
 		this.isPremium = isPremium;
 	}
 	
-	public ContactoIndividual getContactoIndividual(String numero_telefono) {
-
-		for(Contacto contacto: Contactos) {
-			if(contacto instanceof ContactoIndividual) {
-				if(((ContactoIndividual) contacto).getMovil().equals(numero_telefono)) {
-					return (ContactoIndividual)contacto;
-				}
-			}
-		}
-		ContactoIndividual contactoVacio = TDSContactoIndividualDAO.getInstance().create(new ContactoIndividual(numero_telefono));
-		Contactos.add(contactoVacio);
-		return contactoVacio;
-	}
-	
-	public Grupo getGrupo(String nombreGrupo) {
-		for(Contacto contacto: Contactos) {
-			if(contacto instanceof Grupo) {
-				if(((Grupo) contacto).getNombre().equals(nombreGrupo)) {
-					return (Grupo)contacto;
-				}
-			}
-		}
-		return null;
-	}
-
-	
-
-	public ArrayList<Contacto> getContactos() {return Contactos;}
-	
-	public ContactoIndividual addContacto(ContactoIndividual contacto) {
-		Contactos.add(contacto);
-		return contacto;
-	}
-	
-	public Grupo addOrUpdateGrupo(String nombreGrupo, List<ContactoIndividual> contactosGrupo) {
-		for(Contacto contacto: Contactos) {
-			if (contacto instanceof Grupo && contacto.getNombre().equals(nombreGrupo)) {
-				((Grupo) contacto).setContactos(contactosGrupo);
-				TDSFactoriaDAO.getInstance().getGrupoDAO().update((Grupo) contacto);
-				return (Grupo) contacto;
-			}
-		}
-		
-		Grupo grupoNuevo =TDSFactoriaDAO.getInstance().getGrupoDAO().create(new Grupo(nombreGrupo, contactosGrupo));
-		Contactos.add(grupoNuevo);
-		
-		return grupoNuevo;
-	}
-	
-	public ContactoIndividual addNombreContacto(String nombre, String movil) {
-		for(Contacto contacto: Contactos) {
-			if(contacto instanceof ContactoIndividual) {
-				if(((ContactoIndividual) contacto).getMovil().equals(movil)) {
-					contacto.setNombre(nombre);
-					TDSFactoriaDAO.getInstance().getContactoIndividualDAO().update((ContactoIndividual) contacto);
-				}
-			}
-		}
-		return null;
-	}
-	
-	
-	public int actualizarContactoMensaje(Mensaje mensaje) {
-		boolean registrado = false;
-		if(mensaje.getContacto_emisor().getMovil()==this.movil) {
-			return 0;
-		}
-		else {
-			for(Contacto contacto: Contactos) {
-				if(contacto instanceof ContactoIndividual) {
-					if(((ContactoIndividual) contacto).equals(mensaje.getContacto_emisor()) || ((ContactoIndividual) contacto).equals(mensaje.getContacto_receptor())) {
-						registrado = true;
-					}
-				}
-			}
-			if(!registrado) {
-				
-				ContactoIndividual nuevoContactoVacio = TDSFactoriaDAO.getInstance().getContactoIndividualDAO().create(new ContactoIndividual(mensaje.getContacto_emisor().getMovil()));
-				mensaje.setContacto_emisor(nuevoContactoVacio);
-				TDSFactoriaDAO.getInstance().getContactoIndividualDAO().update(nuevoContactoVacio);
-				Contactos.add(nuevoContactoVacio);
-			}
-			
-			return 0;
-		}
-		
-	}
-
 	public String getSaludo() {
 		return saludo;
 	}
@@ -177,11 +89,69 @@ public class Usuario {
 		
 	}
 
+	public ArrayList<Contacto> getContactos() {return Contactos;}
+	
+	
 	public void setContactos(ArrayList<Contacto> Contactos) {
 		this.Contactos=Contactos;
 		
 	}
+	
+	public ContactoIndividual getContactoIndividual(String numero_telefono) {
 
+		for(Contacto contacto: Contactos) {
+			if(contacto instanceof ContactoIndividual) {
+				if(((ContactoIndividual) contacto).getMovil().equals(numero_telefono)) {
+					return (ContactoIndividual)contacto;
+				}
+			}
+		}
+		ContactoIndividual contactoVacio = TDSContactoIndividualDAO.getInstance().create(new ContactoIndividual(numero_telefono));
+		Contactos.add(contactoVacio);
+		return contactoVacio;
+	}
 	
+	public Grupo getGrupo(String nombreGrupo) {
+		for(Contacto contacto: Contactos) {
+			if(contacto instanceof Grupo) {
+				if(((Grupo) contacto).getNombre().equals(nombreGrupo)) {
+					return (Grupo)contacto;
+				}
+			}
+		}
+		return null;
+	}
+
+	public ContactoIndividual addContacto(ContactoIndividual contacto) {
+		Contactos.add(contacto);
+		return contacto;
+	}
 	
+	public Grupo addOrUpdateGrupo(String nombreGrupo, List<ContactoIndividual> contactosGrupo) {
+		for(Contacto contacto: Contactos) {
+			if (contacto instanceof Grupo && contacto.getNombre().equals(nombreGrupo)) {
+				((Grupo) contacto).setContactos(contactosGrupo);
+				TDSFactoriaDAO.getInstance().getGrupoDAO().update((Grupo) contacto);
+				return (Grupo) contacto;
+			}
+		}
+		
+		Grupo grupoNuevo =TDSFactoriaDAO.getInstance().getGrupoDAO().create(new Grupo(nombreGrupo, contactosGrupo));
+		Contactos.add(grupoNuevo);
+		
+		return grupoNuevo;
+	}
+	
+	public ContactoIndividual addNombreContacto(String nombre, String movil) {
+		for(Contacto contacto: Contactos) {
+			if(contacto instanceof ContactoIndividual) {
+				if(((ContactoIndividual) contacto).getMovil().equals(movil)) {
+					contacto.setNombre(nombre);
+					TDSFactoriaDAO.getInstance().getContactoIndividualDAO().update((ContactoIndividual) contacto);
+				}
+			}
+		}
+		return null;
+	}
+
 }
