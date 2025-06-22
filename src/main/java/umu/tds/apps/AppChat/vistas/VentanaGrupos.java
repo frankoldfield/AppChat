@@ -101,8 +101,13 @@ public class VentanaGrupos {
 		modeloContactos = new DefaultListModel<ContactoIndividual>();
 		
 		List<ContactoIndividual> contactos = appChat.getListaContactosIndividuales();
+		List<ContactoIndividual> listaContactosEnGrupo = 
+			    IntStream.range(0, modeloContactosEnGrupo.size())
+			             .mapToObj(modeloContactosEnGrupo::getElementAt)
+			             .collect(Collectors.toList());
+
         List<ContactoIndividual> nombres = contactos.stream()
-        		  .filter(c -> !modeloContactosEnGrupo.contains(c.getNombre()))
+        			.filter(c -> listaContactosEnGrupo.stream().noneMatch(c2 -> (c2).getMovil().equals(c.getMovil())))
 				  .collect(Collectors.toList());
         
         nombres.forEach(modeloContactos::addElement);
