@@ -6,11 +6,7 @@ public abstract class FactoriaDAO {
 	public static final String DAO_TDS = "umu.tds.apps.AppChat.TDSFactoriaDAO";
 
 	private static FactoriaDAO INSTANCE = null;
-	
-	/** 
-	 * Crea un tipo de factoria DAO.
-	 * Solo existe el tipo TDSFactoriaDAO
-	 */
+
 	public static FactoriaDAO getInstancia(String tipo) throws DAOException{
 		if (INSTANCE == null)
 			try { 

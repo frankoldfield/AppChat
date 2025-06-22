@@ -1,14 +1,11 @@
 package umu.tds.apps.AppChat.vistas;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,17 +16,11 @@ import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
 import umu.tds.apps.AppChat.utils.StyleUtils;
 
 import java.awt.Color;
-import java.awt.Component;
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 
 import java.awt.SystemColor;
@@ -43,10 +34,7 @@ public class PanelArrastraImagen extends JDialog {
 	private JButton btnAceptar;
 	private JButton btnCancelar;
 
-
-	/**
-	 * Create the dialog.
-	 */
+	@SuppressWarnings("serial")
 	public PanelArrastraImagen(JFrame owner) {
 		super(owner, "Agregar fotos", true);
 		this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -78,23 +66,17 @@ public class PanelArrastraImagen extends JDialog {
 		            
 		            if (!droppedFiles.isEmpty()) {
 		            	File file = droppedFiles.get(0);
-		                System.out.println(file.getPath());
 		                archivosSubidos.add(file);
-		            //lblArchivoSubido.setText(droppedFiles.get(0).getAbsolutePath());
-		            //lblArchivoSubido.setVisible(true);
 		            
 		         // Cargar la imagen en el JLabel
                     ImageIcon icon = new ImageIcon(file.getAbsolutePath());
                     Image img = icon.getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH);
                     imagenLabel.setIcon(new ImageIcon(img));
-                    //lblArchivoSubido.setText(file.getAbsolutePath());
-                    //lblArchivoSubido.setVisible(true);
 		          }
 		            
 		        } catch (Exception ex) {
 		            ex.printStackTrace();
 		        }
-		        // evt.dropComplete(true);
 		    }
 		});
 		

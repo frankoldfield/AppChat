@@ -1,13 +1,11 @@
 package umu.tds.apps.AppChat.controlador;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,12 +19,9 @@ import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
 import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
 import umu.tds.apps.AppChat.persistencia.RepositorioUsuarios;
-import umu.tds.apps.AppChat.persistencia.abstracta.ContactoIndividualDAO;
 import umu.tds.apps.AppChat.persistencia.imp.TDSContactoIndividualDAO;
 import umu.tds.apps.AppChat.persistencia.imp.TDSFactoriaDAO;
 import umu.tds.apps.AppChat.persistencia.imp.TDSGrupoDAO;
-import umu.tds.apps.AppChat.persistencia.imp.TDSMensajeDAO;
-import umu.tds.apps.AppChat.persistencia.imp.TDSUsuarioDAO;
 import umu.tds.apps.AppChat.premium.EstrategiaDescuento;
 import umu.tds.apps.AppChat.premium.ExportPDF;
 import umu.tds.apps.AppChat.premium.FactoriaEstrategiaDescuento;
@@ -60,7 +55,6 @@ public class AppChat {
 	}
 	
 	public void enviarMensajeContacto(ContactoIndividual ContactoDestino, String texto, int emoji, TipoMensaje tipo_mensaje) {
-		//TODO PERSISTENCIA
 		//Coger el contacto receptor del usuario emisor
 		//Si no existe registrar el contacto solo con el número en el usuario
 		//Registrar ese contacto en persistencia
@@ -68,14 +62,12 @@ public class AppChat {
 
 		//Crear el mensaje
 		//Registrar mensaje en persistencia
-		Mensaje mensaje = repoMensajes.add(new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), contactoReceptor));
+		repoMensajes.add(new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), contactoReceptor));
 
 		//Registrar el mensaje en ese contacto en el usuario emisor
 		//Actualizar el contacto
-		usuarioActual.actualizarContactoMensaje(mensaje); //No se si se actualiza en el usuario emisor
 		repoUsuarios.update(usuarioActual);
 
-		
 		//Hacer lo mismo para el usuario receptor
 		//Recuperar al usuario receptor
 		Usuario usuarioReceptor = getUsuario(contactoReceptor.getMovil());
@@ -87,12 +79,9 @@ public class AppChat {
 
 		//Crear el mensaje
 		//Registrar mensaje en persistencia
-		Mensaje mensajeReceptor = repoMensajes.add(new Mensaje(texto, LocalDateTime.now(), emoji, TipoMensaje.RECIBIDO, contactoEmisor, contactoReceptor));
-
-		//Registrar el mensaje en ese contacto emisor en el usuario receptor
-		//Actualizar el contacto
-		usuarioReceptor.actualizarContactoMensaje(mensajeReceptor); //No se si se actualiza en el usuario emisor
-
+		repoMensajes.add(new Mensaje(texto, LocalDateTime.now(), emoji, TipoMensaje.RECIBIDO, contactoEmisor, contactoReceptor));
+		
+		//Actualizar usuario
 		repoUsuarios.update(usuarioReceptor);
 		
 		
@@ -107,20 +96,14 @@ public class AppChat {
 
 		//Crear el mensaje
 		//Registrar mensaje en persistencia
-		Mensaje mensaje = repoMensajes.add(new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), grupoReceptor));
-
-		//Registrar el mensaje en ese contacto en el usuario emisor
-		//Actualizar el contacto
-			//		usuarioActual.actualizarContactoMensaje(mensaje); //No se si se actualiza en el usuario emisor
-			//		repoUsuarios.update(usuarioActual);
+		repoMensajes.add(new Mensaje(texto, LocalDateTime.now(), emoji, tipo_mensaje, usuarioActual.getContactoPropio(), grupoReceptor));		
 		
-		
-		
-		for(ContactoIndividual contactoReceptor: grupo_receptor.getContactos()) {
+		for(ContactoIndividual c: grupo_receptor.getContactos()) {
 			//Hacer lo mismo para el usuario receptor
 			//Recuperar al usuario receptor
-			Usuario usuarioReceptor = getUsuario(contactoReceptor.getMovil());
+			Usuario usuarioReceptor = getUsuario(c.getMovil());
 			
+			ContactoIndividual contactoReceptor = usuarioReceptor.getContactoPropio();
 			//Coger el contacto del emisor en el usuario receptor
 			//Si no existe registrar el contacto solo con el número en el usuario
 			//Registrar ese contacto en persistencia
@@ -128,20 +111,12 @@ public class AppChat {
 
 			//Crear el mensaje
 			//Registrar mensaje en persistencia
-			Mensaje mensajeReceptor = repoMensajes.add(new Mensaje(texto, LocalDateTime.now(), emoji, TipoMensaje.RECIBIDO, contactoEmisor, contactoReceptor));
+			repoMensajes.add(new Mensaje(texto, LocalDateTime.now(), emoji, TipoMensaje.RECIBIDO, contactoEmisor, contactoReceptor));
 
-			//Registrar el mensaje en ese contacto emisor en el usuario receptor
-			//Actualizar el contacto
-			usuarioReceptor.actualizarContactoMensaje(mensajeReceptor); //No se si se actualiza en el usuario emisor
+			//Actualizar usuario
 
 			repoUsuarios.update(usuarioReceptor);
 			
-			
-//			Mensaje mensajeReceptor = new Mensaje(texto, LocalDateTime.now(), emoji, TipoMensaje.RECIBIDO, usuarioActual.getContactoPropio(), contacto);
-//			Usuario usuarioReceptor = getUsuario(contacto.getMovil());
-//			if(usuarioReceptor!=null) {
-//				usuarioReceptor.actualizarContactoMensaje(mensajeReceptor);
-//			}
 		}
 	}
 	
@@ -151,17 +126,17 @@ public class AppChat {
 	}
 	
 	public ContactoIndividual agregarContacto(String nombre, String movil) { //Desde aquí se le dice al usuario que registre un nuevo contacto
-		//TODO PERSISTENCIA
 		
 		if(!contactoYaGuardado(movil)) {
 			ContactoIndividual nuevoContacto = usuarioActual.addContacto(contactoIndividualDAO.create(new ContactoIndividual(nombre, movil)));
-			System.out.println("Nuevo contacto: "+nuevoContacto.getId());
 			repoUsuarios.update(usuarioActual);
 			
 			return nuevoContacto;
 		}
+		else {	//Si ya está registrado, devuelve el preexistente
+			return usuarioActual.getContactoIndividual(movil);
+		}
 		
-		return null;
 	}
 	
 	public ContactoIndividual actualizarContacto(String nombre, String movil) {
@@ -169,16 +144,13 @@ public class AppChat {
 	}
 	
 	public Grupo CrearOActualizarGrupo(String nombreGrupo, List<ContactoIndividual> contactosGrupo) {
-		//TODO PERSISTENCIA
 		
 		Grupo grupoNuevo = usuarioActual.addOrUpdateGrupo(nombreGrupo, contactosGrupo);
 		repoUsuarios.update(usuarioActual);
 		return grupoNuevo;
 	}
 
-	//Called from: VentanaRegistro, CargarAppChat
 	public int registrarUsuario(String nombre, String apellidos, String password, String telefono, String confirma_password, LocalDate fecha, String ruta_imagen, String saludo) {
-		//TODO PERSISTENCIA
 		
 		int returnCode = 0;
 		//Comprobar que no esté ya registrado el número de teléfono
@@ -211,19 +183,13 @@ public class AppChat {
 		return returnCode;
 	}
 
-	//Called from: VentanaLogin, CargarAppChat
 	public int login(String telefono, String password) {
-		//TODO PERSISTENCIA
 		
 		int returnCode = -1;
 		for(Usuario usuarioRegistrado: repoUsuarios.getAll()) {
 			if(usuarioRegistrado.getMovil().equals(telefono)) {
 				if(usuarioRegistrado.getPassword().equals(password)) {
 					usuarioActual = usuarioRegistrado;
-					for(Contacto contacto: usuarioActual.getContactos()) {
-						System.out.println("Contacto: "+contacto.getNombre());
-					}
-					System.out.println("ID DEL USUARIO ACTUAL: "+usuarioActual.getId());
 					returnCode = 0;
 				}
 				else {
@@ -306,7 +272,6 @@ public class AppChat {
 	}
 
 	public void cambiarImagen(String rutaAbsoluta) {
-		// TODO PERSISTENCIA
 		int indice = rutaAbsoluta.toLowerCase().lastIndexOf("usuarios" + File.separator);
 		String rutaRelativa = (indice != -1) ? rutaAbsoluta.substring(indice) : "";
 		rutaRelativa = '/'+rutaRelativa.replace('\\', '/');
@@ -314,8 +279,6 @@ public class AppChat {
 	}
 	
 	public int buyPremium() {
-		//TODO PERSISTENCIA
-		
 		usuarioActual.setPremium(true);
 		repoUsuarios.update(usuarioActual);
 		return 0;
@@ -323,8 +286,6 @@ public class AppChat {
 
 	
 	public int removePremium() {
-		//TODO PERSISTENCIA
-		
 		usuarioActual.setPremium(false);
 		repoUsuarios.update(usuarioActual);
 		return 0;
@@ -338,10 +299,6 @@ public class AppChat {
 		return repoMensajes.buscar_Todos(usuarioActual.getMovil()).size();
 	}
 	
-	public LocalDateTime getFechaRegistro() {
-		return usuarioActual.getFechaCreacion();
-	}
-	
 	public void exportPDF(Contacto contacto) {
 		if(contacto!=null) {
 			List<Mensaje> conversacion;
@@ -353,7 +310,6 @@ public class AppChat {
 			try {
 				ExportPDF.INSTANCE.exportarAPDF(conversacion, usuarioActual.getNombre());
 			} catch (FileNotFoundException | DocumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -394,7 +350,6 @@ public class AppChat {
 		EstrategiaDescuento estrategiaDescuento = FactoriaEstrategiaDescuento.create(estrategiaString, diasTranscurridos, (double) numMensajes());
         ServicioPremium servicio = new ServicioPremium(precioPremium, estrategiaDescuento);
         double precioFinal = servicio.calculateFinalPrice();
-        System.out.println("Precio final: "+precioFinal+". Número de mensajes: "+numMensajes());
         return precioFinal;
 	}
 

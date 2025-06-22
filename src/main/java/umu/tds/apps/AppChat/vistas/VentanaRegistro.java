@@ -1,14 +1,11 @@
 package umu.tds.apps.AppChat.vistas;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import umu.tds.apps.AppChat.controlador.AppChat;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -21,8 +18,8 @@ public class VentanaRegistro {
     private JPasswordField txtPassword1, txtPassword2;
     private JTextArea txtSaludo;
     private JLabel lblImagen;
-    private Date fecha;
     private String rutaAbsoluta;
+    private AppChat appChat;
 
     public VentanaRegistro() {
         initialize();
@@ -34,6 +31,7 @@ public class VentanaRegistro {
     }
 
     private void initialize() {
+    	appChat = AppChat.getInstance();
         frmRegistro = new JFrame("VentanaRegistro");
         frmRegistro.setBounds(100, 100, 600, 400);
         frmRegistro.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -192,12 +190,11 @@ public class VentanaRegistro {
                 JOptionPane.showMessageDialog(frmRegistro, "Contraseñas desiguales", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
         	}
-        	//TODO LLAMADA A CONTROLADOR: GUARDAR EN DB
+        	
         	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDate fecha = LocalDate.parse(txtFecha.getText(), formatter);
-            System.out.println("Fecha convertida: " + fecha);
             
-        	AppChat.INSTANCE.registrarUsuario(nombre, apellidos, con1, telefono, con2, fecha, rutaAbsoluta, telefono);
+            appChat.registrarUsuario(nombre, apellidos, con1, telefono, con2, fecha, rutaAbsoluta, telefono);
         	VentanaLogin ventana = new VentanaLogin();
         	//Volvemos al login
         	ventana.mostrarVentana();

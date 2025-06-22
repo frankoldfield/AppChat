@@ -81,21 +81,6 @@ public class Usuario {
 
 	public ArrayList<Contacto> getContactos() {return Contactos;}
 	
-	public ContactoIndividual addContacto(String nombre, String movil) {
-		for(Contacto contacto: Contactos) {
-			if(contacto instanceof ContactoIndividual) {
-				if(((ContactoIndividual) contacto).getMovil().equals(movil)) {
-					contacto.setNombre(nombre);
-					return ((ContactoIndividual) contacto);
-				}
-			}
-			
-		}
-		ContactoIndividual contactoNuevo = new ContactoIndividual(nombre, movil);
-		Contactos.add(contactoNuevo);
-		return contactoNuevo;
-	}
-	
 	public ContactoIndividual addContacto(ContactoIndividual contacto) {
 		Contactos.add(contacto);
 		return contacto;
@@ -129,7 +114,7 @@ public class Usuario {
 	}
 	
 	
-	public int actualizarContactoMensaje(Mensaje mensaje) { //USAR LAMBDAS
+	public int actualizarContactoMensaje(Mensaje mensaje) {
 		boolean registrado = false;
 		if(mensaje.getContacto_emisor().getMovil()==this.movil) {
 			return 0;
@@ -137,10 +122,7 @@ public class Usuario {
 		else {
 			for(Contacto contacto: Contactos) {
 				if(contacto instanceof ContactoIndividual) {
-//					if(((ContactoIndividual) contacto).getMovil().equals(mensaje.getContacto_emisor().getMovil())) {
 					if(((ContactoIndividual) contacto).equals(mensaje.getContacto_emisor()) || ((ContactoIndividual) contacto).equals(mensaje.getContacto_receptor())) {
-//						contacto.addMensaje(mensaje);
-//						TDSFactoriaDAO.getInstance().getContactoIndividualDAO().update((ContactoIndividual) contacto);
 						registrado = true;
 					}
 				}
@@ -149,7 +131,6 @@ public class Usuario {
 				
 				ContactoIndividual nuevoContactoVacio = TDSFactoriaDAO.getInstance().getContactoIndividualDAO().create(new ContactoIndividual(mensaje.getContacto_emisor().getMovil()));
 				mensaje.setContacto_emisor(nuevoContactoVacio);
-//				nuevoContactoVacio.addMensaje(mensaje);
 				TDSFactoriaDAO.getInstance().getContactoIndividualDAO().update(nuevoContactoVacio);
 				Contactos.add(nuevoContactoVacio);
 			}
@@ -169,17 +150,6 @@ public class Usuario {
 
 	public LocalDateTime getFechaCreacion() {
 		return fechaCreacion;
-	}
-
-	public ContactoIndividual getContactoIndividualConNombre(String nombreContacto) {
-		for(Contacto contacto: Contactos) {
-			if(contacto instanceof ContactoIndividual) {
-				if(((ContactoIndividual) contacto).getNombre().equals(nombreContacto)) {
-					return (ContactoIndividual)contacto;
-				}
-			}
-		}
-		return null;
 	}
 
 	public String getApellidos() {

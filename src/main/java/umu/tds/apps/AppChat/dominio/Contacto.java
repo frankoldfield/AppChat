@@ -1,8 +1,5 @@
 package umu.tds.apps.AppChat.dominio;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Contacto {
 
 	protected String nombre;

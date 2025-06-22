@@ -18,15 +18,6 @@ public class ContactoIndividual extends Contacto {
 		return this.movil;
 	}
 	
-	public void setMovil(String movil) {
-		this.movil = movil;
-	}
-
-	public Usuario getUsuario() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	@Override
     public String toString() {
 		if(nombre.isEmpty()) {

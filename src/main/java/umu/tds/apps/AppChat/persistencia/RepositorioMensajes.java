@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import umu.tds.apps.AppChat.controlador.AppChat;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
@@ -36,14 +35,6 @@ public class RepositorioMensajes {
 		mensajes.add(mensajeActualizado);
 		return mensajeActualizado;
 	}
-
-	public Mensaje get(int id) {
-		return mensajeDAO.get(id);
-	}
-	
-	public List<Mensaje> getAll() {
-		return mensajeDAO.getAll();
-	}
 	
 	// Todos los mensajes de un usuario
 	public List<Mensaje> buscar_Todos(String numeroUsuario) {
@@ -53,7 +44,7 @@ public class RepositorioMensajes {
 		        				&& m.getTipo().equals(TipoMensaje.ENVIADO))
 		        		  	  || (m.getContacto_receptor() instanceof ContactoIndividual && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numeroUsuario)
 		        		  	  	&& m.getTipo().equals(TipoMensaje.RECIBIDO))))
-		        .sorted(Comparator.comparing(Mensaje::getHora)) // ascendente. Usa .reversed() si quieres descendente
+		        .sorted(Comparator.comparing(Mensaje::getHora))
 		        .collect(Collectors.toList());
 	}
 	
@@ -80,7 +71,7 @@ public class RepositorioMensajes {
 		        		  	  || (m.getContacto_emisor().getMovil().equals(numero_Receptor)
 				                && m.getContacto_receptor() instanceof ContactoIndividual && ((ContactoIndividual) m.getContacto_receptor()).getMovil().equals(numero_Emisor)
 		        		  	  	&& m.getTipo().equals(TipoMensaje.RECIBIDO)))
-		        .sorted(Comparator.comparing(Mensaje::getHora)) // ascendente. Usa .reversed() si quieres descendente
+		        .sorted(Comparator.comparing(Mensaje::getHora))
 		        .collect(Collectors.toList());
 		}
 		
@@ -93,7 +84,7 @@ public class RepositorioMensajes {
 			        .filter(m -> m.getContacto_emisor().getMovil().equals(numero_Emisor)
 			                  		&& m.getContacto_receptor() instanceof Grupo && ((Grupo) m.getContacto_receptor()).getNombre().equals(nombreGrupo)
 			        				&& m.getTipo().equals(TipoMensaje.ENVIADO))
-			        .sorted(Comparator.comparing(Mensaje::getHora)) // ascendente. Usa .reversed() si quieres descendente
+			        .sorted(Comparator.comparing(Mensaje::getHora))
 			        .collect(Collectors.toList());
 			}
 

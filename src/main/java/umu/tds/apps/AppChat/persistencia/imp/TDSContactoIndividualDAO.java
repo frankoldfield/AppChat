@@ -21,9 +21,6 @@ public class TDSContactoIndividualDAO implements ContactoIndividualDAO{
 	private static ServicioPersistencia servPersistencia;
 	private static TDSContactoIndividualDAO unicaInstancia = null;
 
-	/*
-	 * Patron singleton
-	 */
 	public static TDSContactoIndividualDAO getInstance() {
 		if (unicaInstancia == null) {
 			unicaInstancia =  new TDSContactoIndividualDAO();

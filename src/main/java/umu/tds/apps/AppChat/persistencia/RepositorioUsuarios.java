@@ -1,12 +1,9 @@
 package umu.tds.apps.AppChat.persistencia;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.dominio.Usuario;
 import umu.tds.apps.AppChat.persistencia.imp.TDSFactoriaDAO;
-import umu.tds.apps.AppChat.persistencia.imp.TDSMensajeDAO;
 import umu.tds.apps.AppChat.persistencia.imp.TDSUsuarioDAO;
 
 public class RepositorioUsuarios {
@@ -24,10 +21,6 @@ public class RepositorioUsuarios {
 	public RepositorioUsuarios() {
 		TDSFactoriaDAO factoriaDAO = TDSFactoriaDAO.getInstance();
 		usuarioDAO = factoriaDAO.getUsuarioDAO();
-	}
-	
-	public void addMensaje(Usuario usuario) {
-		usuarioDAO.create(usuario);
 	}
 
 	public Usuario getUsuario(int id) {
@@ -49,17 +42,7 @@ public class RepositorioUsuarios {
 	
 	public Usuario add(Usuario usuario) {
 		Usuario usuarioNuevo = usuarioDAO.create(usuario);
-		System.out.println("ID DEL USUARIO "+usuario.getNombre()+": "+usuarioNuevo.getId());
 		return usuarioNuevo;
-	}
-	
-	public boolean usuarioRegistrado(Usuario usuario) {
-		for(Usuario usuarioIt: usuarioDAO.getAll()) {
-			if(usuarioIt.getId() == (usuario.getId())) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public void update(Usuario usuario) {

@@ -4,9 +4,6 @@ public class TDSFactoriaDAO {
 
 	public static TDSFactoriaDAO unicaInstancia = null;
 	
-	/*
-	 * Patron singleton
-	 */
 	public static TDSFactoriaDAO getInstance() {
 		if (unicaInstancia == null) {
 			unicaInstancia = new TDSFactoriaDAO();

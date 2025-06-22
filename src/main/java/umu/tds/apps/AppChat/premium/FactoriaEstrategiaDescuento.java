@@ -1,6 +1,5 @@
 package umu.tds.apps.AppChat.premium;
 
-//3. Método Factoría para crear estrategias según algún criterio
 public class FactoriaEstrategiaDescuento {
 	
  public static EstrategiaDescuento create(String tipoDescuento, double diasTranscurridos, double numeroMensajes) {

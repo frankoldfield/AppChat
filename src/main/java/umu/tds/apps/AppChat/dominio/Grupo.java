@@ -17,11 +17,6 @@ public class Grupo extends Contacto{
 		this.contactos = contactos;
 	}
 	
-	public int addContacto(ContactoIndividual contacto) {
-		contactos.add(contacto);
-		return 0;
-	}
-	
 	public List<ContactoIndividual> getContactos(){
 		return contactos;
 	}

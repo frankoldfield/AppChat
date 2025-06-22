@@ -12,9 +12,7 @@ import beans.Propiedad;
 import tds.driver.FactoriaServicioPersistencia;
 import tds.driver.ServicioPersistencia;
 import umu.tds.apps.AppChat.dominio.Contacto;
-import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Usuario;
-import umu.tds.apps.AppChat.persistencia.abstracta.FactoriaDAO;
 import umu.tds.apps.AppChat.persistencia.abstracta.UsuarioDAO;
 
 public class TDSUsuarioDAO implements UsuarioDAO{
@@ -36,9 +34,6 @@ public class TDSUsuarioDAO implements UsuarioDAO{
 	private static TDSUsuarioDAO unicaInstancia = null;
 	
 
-	/*
-	 * Patron singleton
-	 */
 	public static TDSUsuarioDAO getInstance() {
 		if (unicaInstancia == null) {
 			unicaInstancia = new TDSUsuarioDAO();

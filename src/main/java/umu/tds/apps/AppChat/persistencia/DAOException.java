@@ -4,6 +4,6 @@ package umu.tds.apps.AppChat.persistencia;
 public class DAOException extends Exception {
 
 	public DAOException(final String mensaje) {
-		super(mensaje);
+		super("DAO EXCEPTION: "+mensaje);
 	}
 }

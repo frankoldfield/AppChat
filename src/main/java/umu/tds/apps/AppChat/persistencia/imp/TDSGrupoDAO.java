@@ -1,6 +1,5 @@
 package umu.tds.apps.AppChat.persistencia.imp;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -13,8 +12,6 @@ import tds.driver.ServicioPersistencia;
 import umu.tds.apps.AppChat.dominio.Contacto;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
 import umu.tds.apps.AppChat.dominio.Grupo;
-import umu.tds.apps.AppChat.dominio.Mensaje;
-import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.persistencia.abstracta.GrupoDAO;
 
 public class TDSGrupoDAO implements GrupoDAO{
@@ -26,9 +23,6 @@ public class TDSGrupoDAO implements GrupoDAO{
 	private static ServicioPersistencia servPersistencia;
 	private static TDSGrupoDAO unicaInstancia = null;
 
-	/*
-	 * Patron singleton
-	 */
 	public static TDSGrupoDAO getInstance() {
 		if (unicaInstancia == null) {
 			unicaInstancia = new TDSGrupoDAO();

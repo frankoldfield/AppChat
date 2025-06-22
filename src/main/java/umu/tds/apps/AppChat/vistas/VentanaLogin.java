@@ -11,6 +11,7 @@ public class VentanaLogin {
 	private JFrame frmLogin;
 	private JTextField textUsuario;
 	private JPasswordField textPassword;
+	private AppChat appChat;
 
 	public VentanaLogin() {
 		initialize();
@@ -22,6 +23,7 @@ public class VentanaLogin {
 	}
 
 	private void initialize() {
+		appChat = AppChat.getInstance();
 		frmLogin = new JFrame("VentanaLogin");
 		frmLogin.setBounds(100, 100, 450, 300);
 		frmLogin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -112,9 +114,8 @@ public class VentanaLogin {
 	        System.exit(0);
 	    });
 	    
-	    //TODO LLAMADA A CONTROLADOR: COMPROBACION DE USUARIO
 	    btnAceptar.addActionListener(e -> {
-	    	int returnCode = AppChat.INSTANCE.login(textUsuario.getText(), new String(textPassword.getPassword()));
+	    	int returnCode = appChat.login(textUsuario.getText(), new String(textPassword.getPassword()));
 	    	switch(returnCode) {
 	    		case 0:
 	    			VentanaPrincipal ventana = new VentanaPrincipal();

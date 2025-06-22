@@ -12,7 +12,6 @@ import tds.driver.FactoriaServicioPersistencia;
 import tds.driver.ServicioPersistencia;
 import umu.tds.apps.AppChat.dominio.Contacto;
 import umu.tds.apps.AppChat.dominio.ContactoIndividual;
-import umu.tds.apps.AppChat.dominio.Grupo;
 import umu.tds.apps.AppChat.dominio.Mensaje;
 import umu.tds.apps.AppChat.dominio.TipoMensaje;
 import umu.tds.apps.AppChat.persistencia.abstracta.MensajeDAO;
@@ -29,9 +28,6 @@ public class TDSMensajeDAO implements MensajeDAO{
 	private static ServicioPersistencia servPersistencia;
 	private static TDSMensajeDAO unicaInstancia = null;
 
-	/*
-	 * Patron singleton
-	 */
 	public static TDSMensajeDAO getInstance() {
 		if (unicaInstancia == null) {
 			unicaInstancia = new TDSMensajeDAO();

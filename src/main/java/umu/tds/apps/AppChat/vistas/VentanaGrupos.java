@@ -1,7 +1,6 @@
 package umu.tds.apps.AppChat.vistas;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -20,6 +19,7 @@ public class VentanaGrupos {
 	private JPanel scrollPanelIzquierdo;
     private JPanel scrollPanelDerecho;
     private String nombreGrupo;
+    private AppChat appChat;
     
     
     DefaultListModel<ContactoIndividual> modeloContactos;
@@ -41,6 +41,7 @@ public class VentanaGrupos {
     }
 
 	private void initialize() {
+		appChat = AppChat.getInstance();
 		frmGrupos = new JFrame("AppChat");
 		frmGrupos.setSize(750, 400);
 		frmGrupos.setLayout(new BorderLayout());
@@ -99,7 +100,7 @@ public class VentanaGrupos {
 	private JPanel crearPanelIzquierdo() {
 		modeloContactos = new DefaultListModel<ContactoIndividual>();
 		
-		List<ContactoIndividual> contactos = AppChat.INSTANCE.getListaContactosIndividuales();
+		List<ContactoIndividual> contactos = appChat.getListaContactosIndividuales();
         List<ContactoIndividual> nombres = contactos.stream()
         		  .filter(c -> !modeloContactosEnGrupo.contains(c.getNombre()))
 				  .collect(Collectors.toList());
@@ -126,7 +127,7 @@ public class VentanaGrupos {
 		modeloContactosEnGrupo = new DefaultListModel<ContactoIndividual>();
 		
 		Grupo grupo;
-		grupo = AppChat.INSTANCE.getGrupo(nombreGrupo);
+		grupo = appChat.getGrupo(nombreGrupo);
         if(grupo != null) {
         	List<ContactoIndividual> nombres = grupo.getContactos().stream()
   				  .collect(Collectors.toList());
@@ -158,14 +159,13 @@ public class VentanaGrupos {
 
 		btnCancelar.addActionListener(e -> frmGrupos.dispose());
 		btnAceptar.addActionListener(e -> {
-			// TODO: Enviar cambios al backend
-			List<ContactoIndividual> contactosEnGrupo = AppChat.INSTANCE.getListaContactosIndividuales().stream()
+			List<ContactoIndividual> contactosEnGrupo = appChat.getListaContactosIndividuales().stream()
 				    .filter(c -> (c instanceof ContactoIndividual) && IntStream.range(0, modeloContactosEnGrupo.getSize())
 				        .mapToObj(modeloContactosEnGrupo::getElementAt)
 				        .anyMatch(contacto -> contacto.getMovil().equals(c.getMovil())))
 				    .collect(Collectors.toList());
 
-			AppChat.INSTANCE.CrearOActualizarGrupo(nombreGrupo, contactosEnGrupo);
+			appChat.CrearOActualizarGrupo(nombreGrupo, contactosEnGrupo);
 			
 			JOptionPane.showMessageDialog(frmGrupos, "Grupo creado o modificado");
 			frmGrupos.dispose();

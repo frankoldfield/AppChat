@@ -26,34 +26,18 @@ public class Mensaje {
 		return texto;
 	}
 
-	public void setTexto(String texto) {
-		this.texto = texto;
-	}
-
 	public LocalDateTime getHora() {
 		return hora;
-	}
-
-	public void setHora(LocalDateTime hora) {
-		this.hora = hora;
 	}
 
 	public int getEmoji() {
 		return emoji;
 	}
-
-	public void setEmoji(int emoji) {
-		this.emoji = emoji;
-	}
-
+	
 	public TipoMensaje getTipo() {
 		return tipo;
 	}
-
-	public void setTipo(TipoMensaje tipo) {
-		this.tipo = tipo;
-	}
-
+	
 	public ContactoIndividual getContacto_emisor() {
 		return contacto_emisor;
 	}
@@ -64,10 +48,6 @@ public class Mensaje {
 
 	public Contacto getContacto_receptor() {
 		return contacto_receptor;
-	}
-
-	public void setContacto_receptor(ContactoIndividual contacto_receptor) {
-		this.contacto_receptor = contacto_receptor;
 	}
 	
 	public int getId() {

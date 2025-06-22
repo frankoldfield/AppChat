@@ -2,7 +2,6 @@ package umu.tds.apps.AppChat.vistas;
 
 import umu.tds.apps.AppChat.controlador.AppChat;
 import umu.tds.apps.AppChat.dominio.*;
-import umu.tds.apps.AppChat.persistencia.RepositorioMensajes;
 import umu.tds.apps.AppChat.utils.StyleUtils;
 
 import javax.swing.*;
@@ -10,7 +9,6 @@ import javax.swing.*;
 import tds.BubbleText;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.List;
 
 public class VentanaBuscar{
@@ -21,7 +19,7 @@ public class VentanaBuscar{
     private JPanel panelResultados;
     private JFrame frmBuscar;
     private JScrollPane scrollPanelResultados; 
-
+    private AppChat appChat;
 
 
     public VentanaBuscar() {
@@ -34,6 +32,7 @@ public class VentanaBuscar{
 	}
     
     private void initialize() {
+    	appChat = AppChat.getInstance();
         frmBuscar = new JFrame("Buscar mensajes");
         frmBuscar.setLayout(new BorderLayout());
         frmBuscar.setSize(700, 500);
@@ -110,7 +109,7 @@ public class VentanaBuscar{
         String telefono = txtTelefono.getText().trim();
         String nombre = txtNombreContacto.getText().trim();
 
-        Usuario usuario = AppChat.getInstance().usuarioActual;
+        Usuario usuario = appChat.usuarioActual;
         String miNumero = usuario.getMovil();
 
         
@@ -120,7 +119,7 @@ public class VentanaBuscar{
         	return;
         }
        
-        List<Mensaje> resultados = AppChat.INSTANCE.buscarMensajes(texto, telefono, nombre);
+        List<Mensaje> resultados = appChat.buscarMensajes(texto, telefono, nombre);
         
         
     	if (resultados.isEmpty()) {
@@ -175,7 +174,7 @@ public class VentanaBuscar{
         cabecera.add(labelEmisor, BorderLayout.WEST);
         cabecera.add(labelReceptor, BorderLayout.EAST);
 
-     // Área del mensaje con scroll opcional
+        // Área del mensaje con scroll opcional
         JLabel areaMensaje;
         if(Emoji!=-1) {
         	areaMensaje = new JLabel(BubbleText.getEmoji(Emoji));
@@ -183,9 +182,7 @@ public class VentanaBuscar{
         else {
         	areaMensaje = new JLabel(mensaje);
         }
-//        areaMensaje.setLineWrap(true);
-//        areaMensaje.setWrapStyleWord(true);
-//        areaMensaje.setEditable(false);
+        
         areaMensaje.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Márgenes internos del texto
         areaMensaje.setBackground(StyleUtils.BACKGROUND_DARKER);
         
