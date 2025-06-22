@@ -1,6 +1,6 @@
 package umu.tds.apps.AppChat.dominio;
 
-public class Contacto {
+public abstract class Contacto {
 
 	protected String nombre;
 	protected int id;

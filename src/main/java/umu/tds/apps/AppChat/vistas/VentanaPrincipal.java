@@ -513,7 +513,7 @@ public class VentanaPrincipal {
             String textoMensaje = (ultimo == null) ? "" : "(" + ultimo.getHora().format(formatterHora)+") "+ultimo.getTexto();
 
             if (contacto instanceof ContactoIndividual) {
-                elemento = crearElementoChat(contacto.toString(), textoMensaje, ((ContactoIndividual) contacto).getMovil());
+                elemento = crearElementoChat(contacto.getNombre(), textoMensaje, ((ContactoIndividual) contacto).getMovil());
             } else {
                 elemento = crearElementoChat(contacto.getNombre(), textoMensaje, "");
             }
@@ -585,8 +585,8 @@ public class VentanaPrincipal {
         
         panel.add(icono, BorderLayout.WEST);
         panel.add(texto, BorderLayout.CENTER);
-        
-        if(nombre.isEmpty()) {
+        System.out.println("NOMBRE: "+nombre);
+        if(nombre.isEmpty() || nombre.equals("")) {
         	texto.add(new JLabel(movil));
         	JButton btnAñadir = new JButton("+");
             btnAñadir.addActionListener(e -> {
@@ -719,7 +719,7 @@ public class VentanaPrincipal {
         btnCancelar.setPreferredSize(botonDim);
 
         btnAceptar.addActionListener(e -> {
-        	if(txtNombre.getText().isEmpty() || txtTelefono.getText().isEmpty()) {
+        	if(txtTelefono.getText().isEmpty()) {
         		JOptionPane.showMessageDialog(dialog, "Rellena todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
         	}
