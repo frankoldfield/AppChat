@@ -286,12 +286,12 @@ public class VentanaPrincipal {
         panelVentajas.add(Box.createVerticalStrut(10));
 
         // Panel 1: descuento por mensajes
-        JPanel panel1 = crearPanel("Descuento por mensajes", "Recibe un 30% de descuento por enviar más de 10 mensajes en tu cuenta", tamañoPanel, panelesSeleccionados, btnAceptar);
+        JPanel panel1 = crearPanel("Descuento por mensajes", "Recibe un 1% de descuento por cada mensaje enviado o recibido (hasta 50%)", tamañoPanel, panelesSeleccionados, btnAceptar);
         panelVentajas.add(panel1);
         panelVentajas.add(Box.createVerticalStrut(10));
 
         // Panel 2: descuento por fecha
-        JPanel panel2 = crearPanel("Descuento por fecha", "Recibe un 20% de descuento por ser usuario desde el 10/01/2024", tamañoPanel, panelesSeleccionados, btnAceptar);
+        JPanel panel2 = crearPanel("Descuento por fecha", "Recibe un 1% de descuento por cada día que lleves registrado (hasta 50%)", tamañoPanel, panelesSeleccionados, btnAceptar);
         panelVentajas.add(panel2);
 
         JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
